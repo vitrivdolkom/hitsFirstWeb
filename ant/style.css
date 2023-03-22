@@ -1,0 +1,28 @@
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wrapper {
+  width: 60%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+canvas {
+  flex: 0 0 500px;
+  border: 1px solid black;
+}
+
+.table-wrapper {
+  flex: 0 0 700px;
+}
+
+
+td input {
+  width: 20px;
+  height: 20px;
+}
