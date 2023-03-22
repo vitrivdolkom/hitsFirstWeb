@@ -7,19 +7,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ant Algorithm</title>
   <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/picnic">
 </head>
 
 <body>
 
   <div class="wrapper">
-    <div class="table-wrapper">
-      <table>
-        <caption>Таблица смежности</caption>
-      </table>
+    <div class="top">
+      <button data-reset class="error btn_mid">Сбросить</button>
+      <button data-execute class="success btn_mid">Запустить алгоритм</button>
     </div>
-    <button data-draw-edges>Нарисовать пути</button>
-    <button data-execute>Запустить алгоритм</button>
-    <canvas></canvas>
+    <div class="content">
+      <canvas class="canvas"></canvas>
+      <div class="table-wrapper">
+        <table>
+          <caption>Таблица смежности</caption>
+        </table>
+      </div>
+    </div>
   </div>
 
   <script type="module" src="./scripts/script.js"></script>

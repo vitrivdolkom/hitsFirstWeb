@@ -1,27 +1,33 @@
 import { Vertex } from "./Vertex.js"
-import { addCell } from "./adjacency.js"
+import { addCell } from "./adjacencyMatrix.js"
+import { canvas, ctx, resetVertexes, vertexes } from "./global.js"
 import { drawEdges } from "./drawEdges.js"
-import { canvas, ctx, vertexes } from "./global.js"
 
 // DOM
-const drawEdgesBtn = document.querySelector('button[data-draw-edges]')
 const executeBtn = document.querySelector('button[data-execute]')
+const resetBtn = document.querySelector('button[data-reset]')
 
 // determine size
-const CANVAS_WIDTH = 500
-const CANVAS_HEIGHT = 500
-ctx.canvas.width = CANVAS_WIDTH
-ctx.canvas.height = CANVAS_HEIGHT
+ctx.canvas.width = 500
+ctx.canvas.height = 500
 
 // event listeners
-
 canvas.addEventListener('click', onCanvasClick)
-drawEdgesBtn.addEventListener('click', drawEdges)
 executeBtn.addEventListener('click', antAlgorithm)
+resetBtn.addEventListener('click', () => {
+  resetVertexes()
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  document.querySelector('table').innerHTML = '<caption>Таблица смежности</caption>'
+})
+
 
 // draw vertex
-
 function onCanvasClick(e) {
+  if (vertexes.length > 10) {
+    alert('Too much vertexes')
+    return
+  }
+
   addCell()
   const rect = canvas.getBoundingClientRect();
   const x = e.clientX - rect.left
