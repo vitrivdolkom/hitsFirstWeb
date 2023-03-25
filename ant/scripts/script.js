@@ -1,6 +1,8 @@
 import { Vertex } from "./Vertex.js"
 import { addCell } from "./adjacencyMatrix.js"
 import { canvas, ctx, resetVertexes, vertexes } from "./global.js"
+import { drawPath } from "./drawPath.js"
+import { Ant } from "./Ant.js"
 import { drawEdges } from "./drawEdges.js"
 
 // DOM
@@ -46,34 +48,27 @@ function distanceBetweenTwoVertexes(a, b) {
   return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2))
 }
 
-function fullDistance(q) {
+function fullDistance(q, vertexes) {
   let sum = 0
 
   for (let i = 0; i < q.length - 1; i++) {
-    const element = q[i];
-
-    sum += distanceBetweenTwoVertexes(q[i], q[i + 1])
+    sum += distanceBetweenTwoVertexes(vertexes[q[i]], vertexes[q[i + 1]])
   }
 
-  sum += distanceBetweenTwoVertexes(q[q.length - 1], q[0])
+  sum += distanceBetweenTwoVertexes(vertexes[q[q.length - 1]], vertexes[q[0]])
 
   return sum
 }
 
 
 // main
+
+const EVAPORATION = 0.9
+const DEFAULT_PHERO = 0.1
+
 function antAlgorithm() {
   const len = vertexes.length
   let bestAnt = []
-
-  let q = []
-
-  for (let i = 0; i < len; ++i) {
-    q.push(vertexes[i])
-  }
-
-  bestAnt.push([q, fullDistance(q)])
-
 
   let pheromones = new Array(len)
   let distances = new Array(len)
@@ -83,6 +78,70 @@ function antAlgorithm() {
     distances[i] = new Array(len)
   }
 
+  // fill distances
+  for (let i = 0; i < len; i++) {
+    for (let j = i; j < len; j++) {
+      let dis = !vertexes[i].adjacency.includes(j) || i === j ? Infinity : distanceBetweenTwoVertexes(vertexes[i], vertexes[j])
+
+      distances[i][j] = dis
+      distances[j][i] = dis
+
+      pheromones[i][j] = DEFAULT_PHERO
+      pheromones[j][i] = DEFAULT_PHERO
+    }
+  }
+
+  let count = 0
+  let minDis = Infinity
+  while (count < 20) {
+    let ants = []
+
+    for (let i = 0; i < len; i++) {
+      ants[i] = new Ant(i)
+
+      while (ants[i].canMove(vertexes)) {
+        // debugger
+        ants[i].makeChoice(distances, pheromones, vertexes)
+      }
+
+      const path = ants[i].taboo
+
+      if (!ants[i].isOnStart() || path.length !== vertexes.length) {
+        continue
+      }
+
+      const dis = fullDistance(path, vertexes)
+
+      if (dis < minDis) {
+        bestAnt.push({ path, distance: dis })
+        minDis = dis
+        count = 0
+
+        // drawEdges()
+        // drawPath(bestAnt[bestAnt.length - 1].path, vertexes, 'red')
+      }
+    }
+
+    ++count
+
+    // todo: pheromones evapoation
+    for (let i = 0; i < len; i++) {
+      for (let j = 0; j < len; j++) {
+        pheromones[i][j] *= EVAPORATION
+      }
+    }
+  }
+
+  const bestPath = bestAnt[bestAnt.length - 1].path
+  drawPath(bestPath, vertexes, 'green')
+  ctx.beginPath()
+  ctx.arc(vertexes[bestPath[vertexes.length - 1]].x, vertexes[bestPath[vertexes.length - 1]].y, 10, 0, Math.PI * 2)
+  ctx.fillStyle = 'orange'
+  ctx.fill()
 
 
+  bestAnt.forEach(ant => {
+    console.log(ant.distance)
+    console.log(ant.path)
+  });
 }
