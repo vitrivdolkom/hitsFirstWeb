@@ -8,6 +8,7 @@ import { drawEdges } from "./drawEdges.js"
 // DOM
 const executeBtn = document.querySelector('button[data-execute]')
 const resetBtn = document.querySelector('button[data-reset]')
+const fullAdjacencyBtn = document.querySelector('button[data-full-adj]')
 
 // determine size
 ctx.canvas.width = 500
@@ -20,6 +21,9 @@ resetBtn.addEventListener('click', () => {
   resetVertexes()
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   document.querySelector('table').innerHTML = '<caption>Таблица смежности</caption>'
+})
+fullAdjacencyBtn.addEventListener('click', function (e) {
+  drawEdges(e, true)
 })
 
 

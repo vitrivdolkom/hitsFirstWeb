@@ -1,5 +1,5 @@
 export class Vertex {
-  constructor(x, y) {
+  constructor(x, y, n = 0) {
     this.x = x
     this.y = y
     this.adjacency = []
