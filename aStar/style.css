@@ -1,0 +1,26 @@
+.grid {
+  width: 1000px;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 1000px;
+  height: 80px;
+  max-height: 80px;
+  margin: 30px auto;
+}
+
+.item {
+  border: 1px solid black;
+  width: 10px;
+  height: 10px;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+.nameOfAlgorithm {
+  font-size: 4rem;
+  font-weight: 500;
+}
+
+canvas {
+  border: 1px solid black;
+}
