@@ -1,5 +1,3 @@
-const EXTINCTION = 0.8
-const PHERO_PER_ANT = 5
 
 function getRandomArbitrary(min, max) {
   return Math.random() * (max - min) + min
@@ -13,13 +11,10 @@ export class Ant {
     this.taboo = []
     this.alfa = 1
     this.beta = 1
+    this.pheroPerAnt = 5
   }
 
   canMove(vertexes) {
-    if (this.id === 4) {
-      debugger
-    }
-    // console.log(this.id, this.location, this.taboo)
     if (!this.taboo.length) return true
 
     for (let i = 0; i < vertexes[this.location].adjacency.length; i++) {
@@ -53,7 +48,6 @@ export class Ant {
       }
     }
 
-
     // todo: calculate probabilities
     let sum = 0;
     const probabilities = []
@@ -86,7 +80,6 @@ export class Ant {
     }
 
     const rand = getRandomArbitrary(0, probabilitiesSum)
-    // debugger
     let toVertex
 
     for (let i = 0; i < probabilitiesSegment.length; i++) {
@@ -100,5 +93,6 @@ export class Ant {
 
     this.location = toVertex
     this.taboo.push(toVertex)
+    pheromones[from][toVertex] += this.pheroPerAnt / vertexes.length
   }
 }

@@ -29,11 +29,6 @@ fullAdjacencyBtn.addEventListener('click', function (e) {
 
 // draw vertex
 function onCanvasClick(e) {
-  if (vertexes.length > 10) {
-    alert('Too much vertexes')
-    return
-  }
-
   addCell()
   const rect = canvas.getBoundingClientRect();
   const x = e.clientX - rect.left
@@ -68,9 +63,9 @@ function fullDistance(q, vertexes) {
 // main
 
 const EVAPORATION = 0.9
-const DEFAULT_PHERO = 0.1
+const Q = 1
 
-function antAlgorithm() {
+async function antAlgorithm() {
   const len = vertexes.length
   let bestAnt = []
 
@@ -90,8 +85,8 @@ function antAlgorithm() {
       distances[i][j] = dis
       distances[j][i] = dis
 
-      pheromones[i][j] = DEFAULT_PHERO
-      pheromones[j][i] = DEFAULT_PHERO
+      pheromones[i][j] = Q / dis
+      pheromones[j][i] = Q / dis
     }
   }
 
@@ -103,8 +98,7 @@ function antAlgorithm() {
     for (let i = 0; i < len; i++) {
       ants[i] = new Ant(i)
 
-      while (ants[i].canMove(vertexes)) {
-        // debugger
+      while (ants[i].location !== -1 && ants[i].canMove(vertexes)) {
         ants[i].makeChoice(distances, pheromones, vertexes)
       }
 
@@ -121,8 +115,12 @@ function antAlgorithm() {
         minDis = dis
         count = 0
 
-        // drawEdges()
-        // drawPath(bestAnt[bestAnt.length - 1].path, vertexes, 'red')
+        await new Promise((res, rej) => {
+          setTimeout(() => res(), 100);
+        })
+
+        drawEdges([], true)
+        drawPath(bestAnt[bestAnt.length - 1].path, vertexes, 'red')
       }
     }
 
@@ -137,12 +135,8 @@ function antAlgorithm() {
   }
 
   const bestPath = bestAnt[bestAnt.length - 1].path
+  drawEdges([], true)
   drawPath(bestPath, vertexes, 'green')
-  ctx.beginPath()
-  ctx.arc(vertexes[bestPath[vertexes.length - 1]].x, vertexes[bestPath[vertexes.length - 1]].y, 10, 0, Math.PI * 2)
-  ctx.fillStyle = 'orange'
-  ctx.fill()
-
 
   bestAnt.forEach(ant => {
     console.log(ant.distance)
