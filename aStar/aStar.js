@@ -155,13 +155,15 @@ function draw() {
   for (let i = 0; i < canvasWidth; i += canvasWidth / size) {
     for (let j = 0; j < canvasHeight; j += canvasHeight / size) {
       ctx.beginPath();
+      ctx.strokeStyle = "black";
+      ctx.lineWidth = "1";
       ctx.strokeRect(i, j, canvasWidth / size, canvasHeight / size);
     }
   }
 }
 
 let input = document.querySelector(".matrixSize");
-let sizeButton = document.querySelector(".confirmSize");
+let confirmButton = document.querySelector(".confirmSize");
 let inputObstacle = document.querySelector(".obstacle");
 let calculateButton = document.querySelector(".calculate");
 
@@ -179,115 +181,125 @@ inputObstacle.addEventListener("click", function (e) {
   }
 });
 
-sizeButton.addEventListener("click", function (e) {
+confirmButton.addEventListener("click", function (e) {
   size = +input.value;
   field = new Array(size);
   field = createMatrix(field, size);
+  start = undefined;
+  end = undefined;
   startFlag = false;
   endFlag = false;
   draw();
   ctx.fillStyle = "#000000";
   ctx.fill();
-  canvas.addEventListener("click", function (e) {
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+});
 
-    for (let i = 0; i < canvasWidth; i += canvasWidth / size) {
-      for (let j = 0; j < canvasHeight; j += canvasHeight / size) {
-        if (
-          i < x &&
-          j < y &&
-          i + canvasWidth / size > x &&
-          j + canvasHeight / size > y
-        ) {
-          if (startFlag == true && startX == i && startY == j) {
-            ctx.fillStyle = "white";
-            ctx.fillRect(i, j, canvasWidth / size, canvasHeight / size);
-            ctx.strokeRect(i, j, canvasWidth / size, canvasHeight / size);
-            startFlag = false;
-            start = undefined;
-          } else if (endFlag == true && endX == i && endY == j) {
-            ctx.fillStyle = "white";
-            ctx.fillRect(i, j, canvasWidth / size, canvasHeight / size);
-            ctx.strokeRect(i, j, canvasWidth / size, canvasHeight / size);
-            endFlag = false;
-            end = undefined;
-          } else if (startFlag == false) {
-            ctx.fillStyle = "aqua";
-            ctx.fillRect(i, j, canvasWidth / size, canvasHeight / size);
-            startFlag = true;
-            startX = i;
-            startY = j;
-            start =
-              field[Math.round(i / (canvasWidth / size))][
-                Math.round(j / (canvasHeight / size))
-              ];
-          } else if (endFlag == false) {
-            ctx.fillStyle = "red";
-            ctx.fillRect(i, j, canvasWidth / size, canvasHeight / size);
-            endFlag = true;
-            endX = i;
-            endY = j;
-            end =
-              field[Math.round(i / (canvasWidth / size))][
-                Math.round(j / (canvasHeight / size))
-              ];
-          } else if (removeObstacles == false) {
-            ctx.fillStyle = "black";
-            ctx.fillRect(i, j, canvasWidth / size, canvasHeight / size);
+canvas.addEventListener("click", function (e) {
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+
+  for (let i = 0; i < canvasWidth; i += canvasWidth / size) {
+    for (let j = 0; j < canvasHeight; j += canvasHeight / size) {
+      if (
+        i < x &&
+        j < y &&
+        i + canvasWidth / size > x &&
+        j + canvasHeight / size > y
+      ) {
+        if (startFlag == true && startX == i && startY == j) {
+          ctx.fillStyle = "white";
+          ctx.fillRect(i, j, canvasWidth / size, canvasHeight / size);
+          ctx.strokeRect(i, j, canvasWidth / size, canvasHeight / size);
+          startFlag = false;
+          start = undefined;
+        } else if (endFlag == true && endX == i && endY == j) {
+          ctx.fillStyle = "white";
+          ctx.fillRect(i, j, canvasWidth / size, canvasHeight / size);
+          ctx.strokeRect(i, j, canvasWidth / size, canvasHeight / size);
+          endFlag = false;
+          end = undefined;
+        } else if (startFlag == false) {
+          ctx.fillStyle = "aqua";
+          ctx.fillRect(i, j, canvasWidth / size, canvasHeight / size);
+          startFlag = true;
+          startX = i;
+          startY = j;
+          start =
             field[Math.round(i / (canvasWidth / size))][
               Math.round(j / (canvasHeight / size))
-            ].wall = true;
-          } else if (removeObstacles == true) {
-            ctx.fillStyle = "white";
-            ctx.fillRect(i, j, canvasWidth / size, canvasHeight / size);
-            ctx.strokeRect(i, j, canvasWidth / size, canvasHeight / size);
+            ];
+        } else if (endFlag == false) {
+          ctx.fillStyle = "red";
+          ctx.fillRect(i, j, canvasWidth / size, canvasHeight / size);
+          endFlag = true;
+          endX = i;
+          endY = j;
+          end =
             field[Math.round(i / (canvasWidth / size))][
               Math.round(j / (canvasHeight / size))
-            ].wall = false;
-          }
+            ];
+        } else if (removeObstacles == false) {
+          ctx.fillStyle = "black";
+          ctx.fillRect(i, j, canvasWidth / size, canvasHeight / size);
+          field[Math.round(i / (canvasWidth / size))][
+            Math.round(j / (canvasHeight / size))
+          ].wall = true;
+        } else if (removeObstacles == true) {
+          ctx.fillStyle = "white";
+          ctx.fillRect(i, j, canvasWidth / size, canvasHeight / size);
+          ctx.strokeRect(i, j, canvasWidth / size, canvasHeight / size);
+          field[Math.round(i / (canvasWidth / size))][
+            Math.round(j / (canvasHeight / size))
+          ].wall = false;
         }
       }
     }
-  });
+  }
+});
 
-  calculateButton.addEventListener("click", function (e) {
-    let openSet = [];
-    let closedSet = [];
+calculateButton.addEventListener("click", function (e) {
+  let openSet = [];
+  let closedSet = [];
 
-    openSet.push(start);
-    if (start == undefined || end == undefined) {
-      alert("Вы не поставили точку старта или точку конца");
+  openSet.push(start);
+  if (start == undefined || end == undefined) {
+    alert("Вы не поставили точку старта или точку конца");
+  } else {
+    if (aStar(field, start, end) == 1) {
+      console.log("Путь найден");
+      let path = reconstructPath(start, end);
+      console.log(path);
+      for (let i = 0; i < path.length - 1; i++) {
+        ctx.moveTo(
+          Math.round(path[i].x * (canvasWidth / size)) + canvasWidth / size / 2,
+          Math.round(path[i].y * (canvasHeight / size)) + canvasWidth / size / 2
+        );
+        ctx.lineTo(
+          Math.round(path[i + 1].x * (canvasWidth / size)) +
+            canvasWidth / size / 2,
+          Math.round(path[i + 1].y * (canvasHeight / size)) +
+            canvasWidth / size / 2
+        );
+        ctx.strokeStyle = "green";
+        if (size <= 5) {
+          ctx.lineWidth = "13";
+        } else if (size <= 10) {
+          ctx.lineWidth = "7";
+        } else {
+          ctx.lineWidth = "3";
+        }
+        ctx.stroke();
+        /*ctx.fillStyle = "green";
+        ctx.fillRect(
+          path[i].x * (canvasWidth / size),
+          path[i].y * (canvasHeight / size),
+          canvasWidth / size,
+          canvasHeight / size
+        );*/
+      }
     } else {
-      if (aStar(field, start, end) == 1) {
-        console.log("Путь найден");
-        let path = reconstructPath(start, end);
-        console.log(path);
-        for (let i = 0; i < path.length - 1; i++) {
-          debugger;
-          ctx.moveTo(
-            path[i].x * (canvasWidth / size) + 50,
-            path[i].y * (canvasHeight / size) + 50
-          );
-          ctx.lineTo(
-            path[i + 1].x * (canvasWidth / size) + 50,
-            path[i + 1].y * (canvasHeight / size) + 50
-          );
-          ctx.strokeStyle = "green";
-          ctx.lineWidth = "10";
-          ctx.stroke();
-          /*ctx.fillStyle = "green";
-          ctx.fillRect(
-            path[i].x * (canvasWidth / size),
-            path[i].y * (canvasHeight / size),
-            canvasWidth / size,
-            canvasHeight / size
-          );*/
-        }
-      } else {
-        console.log("Пути нет");
-      }
+      console.log("Пути нет");
     }
-  });
+  }
 });
