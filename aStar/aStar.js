@@ -28,6 +28,7 @@ class Point {
     this.g = 0;
     this.h = 0;
     this.neighbors = undefined;
+    this.visited = false;
     this.wall = false;
     this.prev = undefined;
   }
@@ -41,6 +42,46 @@ function createMatrix(field, size) {
   for (let i = 0; i < size; i++) {
     for (let j = 0; j < size; j++) {
       field[i][j] = new Point(i, j);
+    }
+  }
+
+  return field;
+}
+
+function generateMaze(field) {
+  let row = Math.floor(Math.random() * size);
+  let col = Math.floor(Math.random() * size);
+  let countWalls = 0;
+  field[row][col].wall = false;
+
+  let stack = [field[row][col]];
+
+  while (stack.length > 0) {
+    let currentCell = stack.pop();
+
+    let neighbors = findNeighbors(field, field[row][col], size);
+    if (neighbors.length > 0) {
+      let randomIndex = Math.floor(Math.random() * neighbors.length);
+      let nextRow = Math.floor(Math.random() * size);
+      let nextCol = Math.floor(Math.random() * size);
+
+      let randomNumber = Math.floor(Math.random() * 100) + 1;
+      if (randomNumber > 85) {
+        field[nextRow][nextCol].wall = true;
+        ctx.fillStyle = "black";
+        ctx.fillRect(
+          Math.round(field[nextRow][nextCol].x * (canvasWidth / size)),
+          Math.round(field[nextRow][nextCol].y * (canvasWidth / size)),
+          canvasWidth / size,
+          canvasHeight / size
+        );
+        countWalls++;
+      }
+
+      stack.push(field[nextRow][nextCol]);
+    }
+    if (countWalls > (size * size) / 2) {
+      break;
     }
   }
 
@@ -66,28 +107,28 @@ function deleteElement(array, element) {
   }
 }
 
-function foundNeighbors(field, currentPoint, size) {
+function findNeighbors(field, currentPoint, size) {
   let neighbors = [];
 
-  if (currentPoint.x > 0 && field[currentPoint.x][currentPoint.y]) {
+  if (currentPoint.x > 0) {
     if (field[currentPoint.x - 1][currentPoint.y].wall != true) {
       neighbors.push(field[currentPoint.x - 1][currentPoint.y]);
     }
   }
 
-  if (currentPoint.y + 1 < size && field[currentPoint.x][currentPoint.y]) {
+  if (currentPoint.y + 1 < size) {
     if (field[currentPoint.x][currentPoint.y + 1].wall != true) {
       neighbors.push(field[currentPoint.x][currentPoint.y + 1]);
     }
   }
 
-  if (currentPoint.y > 0 && field[currentPoint.x][currentPoint.y]) {
+  if (currentPoint.y > 0) {
     if (field[currentPoint.x][currentPoint.y - 1].wall != true) {
       neighbors.push(field[currentPoint.x][currentPoint.y - 1]);
     }
   }
 
-  if (currentPoint.x + 1 < size && field[currentPoint.x][currentPoint.y]) {
+  if (currentPoint.x + 1 < size) {
     if (field[currentPoint.x + 1][currentPoint.y].wall != true) {
       neighbors.push(field[currentPoint.x + 1][currentPoint.y]);
     }
@@ -127,7 +168,7 @@ function aStar(field, start, end) {
     deleteElement(openSet, currentNode);
     cameFrom.push(currentNode);
 
-    let neighbors = foundNeighbors(field, currentNode, size);
+    let neighbors = findNeighbors(field, currentNode, size);
 
     for (let i = 0; i < neighbors.length; i++) {
       let neighbor = neighbors[i];
@@ -190,6 +231,7 @@ confirmButton.addEventListener("click", function (e) {
   startFlag = false;
   endFlag = false;
   draw();
+  field = generateMaze(field);
   ctx.fillStyle = "#000000";
   ctx.fill();
 });
@@ -281,6 +323,7 @@ calculateButton.addEventListener("click", function (e) {
           Math.round(path[i + 1].y * (canvasHeight / size)) +
             canvasWidth / size / 2
         );
+        ctx.save();
         ctx.strokeStyle = "green";
         if (size <= 5) {
           ctx.lineWidth = "13";
@@ -290,6 +333,7 @@ calculateButton.addEventListener("click", function (e) {
           ctx.lineWidth = "3";
         }
         ctx.stroke();
+        ctx.restore();
         /*ctx.fillStyle = "green";
         ctx.fillRect(
           path[i].x * (canvasWidth / size),
