@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ant Algorithm</title>
+  <link rel="stylesheet" href="./bonus.css">
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <div class="top">
+      <label for="locateColony">Поставить колонию</label>
+      <input type="checkbox" name="locateColony" id="locateColony">
+
+      <label for="foodAmount">Выберете количество еды</label>
+      <input type="range" min="10" max="200" name="locateColony" id="foodAmount">
+
+      <label for="locateFood">Поставить Еду</label>
+      <input type="checkbox" name="locateFood" id="locateFood">
+
+      <button class="execute">Запустить</button>
+    </div>
+    <div class="canvas"></div>
+  </div>
+
+  <script type="module" src="./bonus/script.js"></script>
+</body>
+
+</html>

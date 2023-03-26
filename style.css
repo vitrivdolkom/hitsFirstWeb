@@ -1,0 +1,81 @@
+@import './colors.css';
+@import url(https://fonts.googleapis.com/css?family=Shantell+Sans:300,regular,500,600,700,800,300italic,italic,500italic,600italic,700italic,800italic);
+@import url(https://fonts.googleapis.com/css?family=Montserrat:100,200,300,regular,500,600,700,800,900,100italic,200italic,300italic,italic,500italic,600italic,700italic,800italic,900italic);
+
+body {
+  font-family: Montserrat;
+}
+
+/* todo general */
+.wrapper {
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--back);
+  /* display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr); */
+}
+
+.box {
+  margin: 0 auto;
+  height: 100%;
+  width: 80%;
+}
+
+/* todo header */
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 90px;
+  border-bottom: 1px solid var(--blue);
+  z-index: 10;
+  background-color: var(--back);
+}
+
+.logoWrapper {
+  width: 70px;
+}
+
+.logoWrapper img {
+  max-width: 100%;
+}
+
+.pageTitle {
+  margin-left: 100px;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+/* todo card */
+
+.content {
+  margin: 100px auto 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.algorithmCard {
+  background-color: var(--blue);
+  border: 1px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.algorithmCard a {
+  color: var(--orange);
+  font-size: 20px;
+  text-align: center;
+}

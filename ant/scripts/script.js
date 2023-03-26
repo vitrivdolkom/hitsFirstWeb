@@ -26,7 +26,6 @@ fullAdjacencyBtn.addEventListener('click', function (e) {
   drawEdges(e, true)
 })
 
-
 // draw vertex
 function onCanvasClick(e) {
   addCell()
@@ -92,7 +91,7 @@ async function antAlgorithm() {
 
   let count = 0
   let minDis = Infinity
-  while (count < 20) {
+  while (count < 40) {
     let ants = []
 
     for (let i = 0; i < len; i++) {

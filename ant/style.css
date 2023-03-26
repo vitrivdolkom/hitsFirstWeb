@@ -1,11 +1,7 @@
-/* body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-} */
+@import '../colors.css';
 
 .wrapper {
-  /* width: 100%; */
+  width: 100%;
   margin: 0 auto;
   max-width: 1400px;
   min-height: 100vh;
