@@ -1,13 +1,16 @@
+body {
+  background-color: #111;
+}
+
 .canvas {
   position: relative;
   width: 500px;
   height: 500px;
-  border: 1px solid black;
+  border: 1px solid white;
 }
 
 .colony {
   background-color: red;
-  border-radius: 50%;
   width: 40px;
   height: 40px;
   position: absolute;
@@ -17,7 +20,6 @@
 
 .food {
   background-color: green;
-  border-radius: 50%;
   position: absolute;
   z-index: 2;
 }
@@ -27,6 +29,6 @@
   height: 3px;
   background-color: blue;
   position: absolute;
+  transition: all .4s linear;
   border-radius: 50%;
-  transition: all .04s linear;
 }

@@ -6,26 +6,57 @@ export class Ant {
     this.location = { x, y }
     this.alfa = 1
     this.beta = 1
-    this.pheroPerAnt = 5
+    this.pheroPerAnt = 10
     this.path = []
+    this.isHero = false
+  }
+
+  checkStep(variant, points) {
+    if (variant.y < 0 || variant.x < 0 || variant.y >= points.length || variant.x >= points.length) {
+      return false
+    }
+
+    const point = points[variant.y][variant.x]
+
+    const prevPoint = this.path.length > 1 ? this.path[this.path.length - 2] : undefined
+
+    if (prevPoint && prevPoint.x === point.x && prevPoint.y === point.y) {
+      return false
+    }
+
+    if (point.isHome) {
+      debugger
+    }
+
+    return !point.isHome
   }
 
   makeChoice(points) {
+    this.path.push(this.location)
     const alfa = this.alfa
     const beta = this.beta
     const x = this.location.x
     const y = this.location.y
-    let variations = [{ x: x + 1, y: y }, { x: x + 1, y: y + 1 }, { x: x - 1, y: y - 1 }]
+    let allVariations = [{ x: x + 10, y: y }, { x: x + 10, y: y + 10 }, { x: x - 10, y: y - 10 }, { x: x - 10, y: y + 10 }, { x: x, y: y - 10 }, { x: x, y: y + 10 }, { x: x - 10, y: y }, { x: x + 10, y: y - 10 }]
+    let variations = []
 
     let sum = 0
     // debugger
 
-    variations.forEach(variant => {
+    for (let i = 0; i < allVariations.length; i++) {
+      const variant = allVariations[i];
+      if (!this.checkStep(variant, points)) {
+        continue
+      }
+
+      variations.push(variant)
       const point = points[variant.y][variant.x]
+
+
       const a = Math.pow(point.visit, alfa)
       const b = Math.pow(point.phero, beta)
       sum += a * b
-    })
+    }
 
     // todo: calculate probabilities
 
@@ -66,7 +97,5 @@ export class Ant {
     }
 
     this.location = toPoint
-    this.path.push(this.location)
-
   }
 }

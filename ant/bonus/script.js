@@ -10,6 +10,7 @@ const locateColonyInput = document.querySelector('input[name=locateColony]')
 const locateFood = document.querySelector('input[name=locateFood]')
 const foodAmount = document.querySelector('input[type=range]')
 const executeBtn = document.querySelector('.execute')
+let colony
 
 // todo init vars
 let points
@@ -32,7 +33,6 @@ canvas.addEventListener('click', (e) => {
   if (locateColonyInput.checked) {
     colonyCoord = { x: Math.floor(x), y: Math.floor(y) }
     drawColony(e)
-    fillPoints()
     locateColonyInput.checked = false
     locateColonyInput.disabled = true
     return
@@ -44,6 +44,9 @@ canvas.addEventListener('click', (e) => {
 })
 
 const fillPoints = () => {
+  const colonyRect = document.querySelector('.colony').getBoundingClientRect()
+  const foods = document.querySelectorAll('.food')
+
   points = new Array(canvas.clientHeight)
 
   for (let i = 0; i < canvas.clientHeight; i++) {
@@ -53,6 +56,18 @@ const fillPoints = () => {
   for (let i = 0; i < canvas.clientHeight; i++) {
     for (let j = 0; j < canvas.clientWidth; j++) {
       points[i][j] = new Point(i, j)
+
+      foods.forEach(food => {
+        const foodRect = food.getBoundingClientRect()
+
+        if (foodRect.left <= j && foodRect.top <= i && foodRect.right >= j && foodRect.bottom >= i) {
+          points[i][j].isFood = true
+        }
+      })
+
+      if (colonyRect.left <= j && colonyRect.top <= i && colonyRect.right >= j && colonyRect.bottom >= i) {
+        points[i][j].isHome = true
+      }
     }
   }
 }
@@ -60,7 +75,7 @@ const fillPoints = () => {
 executeBtn.addEventListener('click', algorithm)
 
 const chooseCoordinates = (coord) => {
-  const colony = document.querySelector('.colony')
+  colony = document.querySelector('.colony')
   const rand = getRandomArbitrary(0, 1)
 
   if (rand <= 0.25) {
@@ -84,10 +99,10 @@ const chooseCoordinates = (coord) => {
 }
 
 async function algorithm() {
+  fillPoints()
 
   let ants = new Array(100)
   for (let i = 0; i < 100; i++) {
-    debugger
     const coord = { ...colonyCoord }
     chooseCoordinates(coord)
 
@@ -101,14 +116,21 @@ async function algorithm() {
       const antDiv = document.querySelector(`div[data-ant-id="${i}"]`)
 
       ants[i].makeChoice(points)
+
       await new Promise((res, rej) => {
-        setTimeout(() => res(), 40);
+        setTimeout(() => res(), 0);
       })
+      // debugger
 
       const toPoint = ants[i].location
 
       points[toPoint.y][toPoint.x].phero += 0.1
       points[toPoint.y][toPoint.x].visit += 1
+
+      // const divX = toPoint.x - ants[i].path[ants[i].path.length - 1].x
+      // const divY = toPoint.y - ants[i].path[ants[i].path.length - 1].y
+
+      // antDiv.style.transform = 'translateX(' + divX + 'px) translateY(' + divY + 'px)'
 
       antDiv.style.top = withPixel(toPoint.y)
       antDiv.style.left = withPixel(toPoint.x)
