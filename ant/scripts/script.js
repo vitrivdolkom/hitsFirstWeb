@@ -5,141 +5,144 @@ import { drawPath } from "./drawPath.js"
 import { Ant } from "./Ant.js"
 import { drawEdges } from "./drawEdges.js"
 
-// DOM
-const executeBtn = document.querySelector('button[data-execute]')
-const resetBtn = document.querySelector('button[data-reset]')
-const fullAdjacencyBtn = document.querySelector('button[data-full-adj]')
+export const antFn = () => {
+  // DOM
+  const executeBtn = document.querySelector('button[data-execute]')
+  const resetBtn = document.querySelector('button[data-reset]')
+  const fullAdjacencyBtn = document.querySelector('button[data-full-adj]')
 
-// determine size
-ctx.canvas.width = 500
-ctx.canvas.height = 500
+  // determine size
+  ctx.canvas.width = 500
+  ctx.canvas.height = 500
 
-// event listeners
-canvas.addEventListener('click', onCanvasClick)
-executeBtn.addEventListener('click', antAlgorithm)
-resetBtn.addEventListener('click', () => {
-  resetVertexes()
-  ctx.clearRect(0, 0, canvas.width, canvas.height)
-  document.querySelector('table').innerHTML = '<caption>Таблица смежности</caption>'
-})
-fullAdjacencyBtn.addEventListener('click', function (e) {
-  drawEdges(e, true)
-})
+  // event listeners
+  canvas.addEventListener('click', onCanvasClick)
+  executeBtn.addEventListener('click', antAlgorithm)
+  resetBtn.addEventListener('click', () => {
+    resetVertexes()
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    document.querySelector('table').innerHTML = '<caption>Таблица смежности</caption>'
+  })
+  fullAdjacencyBtn.addEventListener('click', function (e) {
+    drawEdges(e, true)
+  })
 
 
-// draw vertex
-function onCanvasClick(e) {
-  addCell()
-  const rect = canvas.getBoundingClientRect();
-  const x = e.clientX - rect.left
-  const y = e.clientY - rect.top
+  // draw vertex
+  function onCanvasClick(e) {
+    addCell()
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
 
-  const vertex = new Vertex(x, y)
-  vertexes.push(vertex)
+    const vertex = new Vertex(x, y)
+    vertexes.push(vertex)
 
-  ctx.beginPath()
-  ctx.arc(x, y, 5, 0, Math.PI * 2)
-  ctx.fillStyle = '#000000'
-  ctx.fill()
-}
-
-function distanceBetweenTwoVertexes(a, b) {
-  return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2))
-}
-
-function fullDistance(q, vertexes) {
-  let sum = 0
-
-  for (let i = 0; i < q.length - 1; i++) {
-    sum += distanceBetweenTwoVertexes(vertexes[q[i]], vertexes[q[i + 1]])
+    ctx.beginPath()
+    ctx.arc(x, y, 5, 0, Math.PI * 2)
+    ctx.fillStyle = '#000000'
+    ctx.fill()
   }
 
-  sum += distanceBetweenTwoVertexes(vertexes[q[q.length - 1]], vertexes[q[0]])
-
-  return sum
-}
-
-
-// main
-
-const EVAPORATION = 0.9
-const Q = 1
-
-async function antAlgorithm() {
-  const len = vertexes.length
-  let bestAnt = []
-
-  let pheromones = new Array(len)
-  let distances = new Array(len)
-
-  for (let i = 0; i < len; ++i) {
-    pheromones[i] = new Array(len)
-    distances[i] = new Array(len)
+  function distanceBetweenTwoVertexes(a, b) {
+    return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2))
   }
 
-  // fill distances
-  for (let i = 0; i < len; i++) {
-    for (let j = i; j < len; j++) {
-      let dis = !vertexes[i].adjacency.includes(j) || i === j ? Infinity : distanceBetweenTwoVertexes(vertexes[i], vertexes[j])
+  function fullDistance(q, vertexes) {
+    let sum = 0
 
-      distances[i][j] = dis
-      distances[j][i] = dis
-
-      pheromones[i][j] = Q / dis
-      pheromones[j][i] = Q / dis
+    for (let i = 0; i < q.length - 1; i++) {
+      sum += distanceBetweenTwoVertexes(vertexes[q[i]], vertexes[q[i + 1]])
     }
+
+    sum += distanceBetweenTwoVertexes(vertexes[q[q.length - 1]], vertexes[q[0]])
+
+    return sum
   }
 
-  let count = 0
-  let minDis = Infinity
-  while (count < 20) {
-    let ants = []
 
+  // main
+
+  const EVAPORATION = 0.9
+  const Q = 1
+
+  async function antAlgorithm() {
+    const len = vertexes.length
+    let bestAnt = []
+
+    let pheromones = new Array(len)
+    let distances = new Array(len)
+
+    for (let i = 0; i < len; ++i) {
+      pheromones[i] = new Array(len)
+      distances[i] = new Array(len)
+    }
+
+    // fill distances
     for (let i = 0; i < len; i++) {
-      ants[i] = new Ant(i)
+      for (let j = i; j < len; j++) {
+        let dis = !vertexes[i].adjacency.includes(j) || i === j ? Infinity : distanceBetweenTwoVertexes(vertexes[i], vertexes[j])
 
-      while (ants[i].location !== -1 && ants[i].canMove(vertexes)) {
-        ants[i].makeChoice(distances, pheromones, vertexes)
-      }
+        distances[i][j] = dis
+        distances[j][i] = dis
 
-      const path = ants[i].taboo
-
-      if (!ants[i].isOnStart() || path.length !== vertexes.length) {
-        continue
-      }
-
-      const dis = fullDistance(path, vertexes)
-
-      if (dis < minDis) {
-        bestAnt.push({ path, distance: dis })
-        minDis = dis
-        count = 0
-
-        await new Promise((res, rej) => {
-          setTimeout(() => res(), 100);
-        })
-
-        drawEdges([], true)
-        drawPath(bestAnt[bestAnt.length - 1].path, vertexes, 'red')
+        pheromones[i][j] = Q / dis
+        pheromones[j][i] = Q / dis
       }
     }
 
-    ++count
+    let count = 0
+    let minDis = Infinity
+    while (count < 20) {
+      let ants = []
 
-    // todo: pheromones evapoation
-    for (let i = 0; i < len; i++) {
-      for (let j = 0; j < len; j++) {
-        pheromones[i][j] *= EVAPORATION
+      for (let i = 0; i < len; i++) {
+        ants[i] = new Ant(i)
+
+        while (ants[i].location !== -1 && ants[i].canMove(vertexes)) {
+          ants[i].makeChoice(distances, pheromones, vertexes)
+        }
+
+        const path = ants[i].taboo
+
+        if (!ants[i].isOnStart() || path.length !== vertexes.length) {
+          continue
+        }
+
+        const dis = fullDistance(path, vertexes)
+
+        if (dis < minDis) {
+          bestAnt.push({ path, distance: dis })
+          minDis = dis
+          count = 0
+
+          await new Promise((res, rej) => {
+            setTimeout(() => res(), 100);
+          })
+
+          drawEdges([], true)
+          drawPath(bestAnt[bestAnt.length - 1].path, vertexes, 'red')
+        }
+      }
+
+      ++count
+
+      // todo: pheromones evapoation
+      for (let i = 0; i < len; i++) {
+        for (let j = 0; j < len; j++) {
+          pheromones[i][j] *= EVAPORATION
+        }
       }
     }
+
+    const bestPath = bestAnt[bestAnt.length - 1].path
+    drawEdges([], true)
+    drawPath(bestPath, vertexes, 'green')
+
+    bestAnt.forEach(ant => {
+      console.log(ant.distance)
+      console.log(ant.path)
+    });
   }
 
-  const bestPath = bestAnt[bestAnt.length - 1].path
-  drawEdges([], true)
-  drawPath(bestPath, vertexes, 'green')
-
-  bestAnt.forEach(ant => {
-    console.log(ant.distance)
-    console.log(ant.path)
-  });
 }
