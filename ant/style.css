@@ -23,6 +23,7 @@
 }
 
 .table-wrapper {
+  display: none;
   flex: 0 0 700px;
   margin-left: 30px;
 }
