@@ -191,6 +191,7 @@ async function aStar(field, start, end) {
             setTimeout(() => res(), 20)
         })
         ctx.fillStyle = 'yellow'
+        ctx.strokeStyle = 'yellow'
         ctx.fillRect(
             Math.round(currentNode.x * (canvasWidth / size)),
             Math.round(currentNode.y * (canvasWidth / size)),
@@ -290,6 +291,7 @@ inputObstacle.addEventListener('click', function (e) {
 
 confirmButton.addEventListener('click', function (e) {
     if (+input.value == input.value && input.value > 1) {
+        alreadyCalculate = false
         size = +input.value
         field = new Array(size)
         field = createMatrix(field, size)
@@ -387,6 +389,7 @@ calculateButton.addEventListener('click', async function (e) {
                     for (let j = 0; j < size; j++) {
                         if (copyField[i][j].visited == true) {
                             ctx.fillStyle = 'red'
+                            ctx.strokeStyle = 'red'
                             ctx.fillRect(
                                 Math.round(field[i][j].x * (canvasWidth / size)),
                                 Math.round(field[i][j].y * (canvasWidth / size)),
