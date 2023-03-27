@@ -1,24 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>aStar</title>
-    <link rel="stylesheet" href="./style.css" />
-  </head>
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>aStar</title>
+        <link rel="stylesheet" href="./style.css" />
+    </head>
 
-  <body>
-    <div class="nameOfAlgorithm">A*</div>
-    <div>Введите размер матрицы</div>
-    <input class="matrixSize" />
-    <button class="confirmSize">confirm</button>
-    <canvas></canvas>
-    <label class="obstacleLabel"
-      >Если вы хотите стереть препятствия, включите галочку</label
-    >
-    <input type="checkbox" class="obstacle" />
-    <button class="calculate">Начать вычисления</button>
-    <script type="module" src="./aStar.js" />
-  </body>
+    <body>
+        <div class="nameOfAlgorithm">A*</div>
+        <div>Введите размер матрицы</div>
+        <input class="matrixSize" />
+        <button class="confirmSize">Построить лабиринт</button>
+        <button class="field">Построить пустую карту</button>
+        <canvas></canvas>
+        <label class="obstacleLabel">Если вы хотите стереть препятствия, включите галочку</label>
+        <input type="checkbox" class="obstacle" />
+        <div class="length"></div>
+        <div class="lengthOfPath"></div>
+        <button class="calculate">Начать вычисления</button>
+        <button class="restart">Очистить лабиринт</button>
+        <script type="module" src="./aStar.js" />
+    </body>
 </html>
