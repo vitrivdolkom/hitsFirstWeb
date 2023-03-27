@@ -190,8 +190,8 @@ async function aStar(field, start, end) {
         await new Promise((res, rej) => {
             setTimeout(() => res(), 20)
         })
+        ctx.beginPath()
         ctx.fillStyle = 'yellow'
-        ctx.strokeStyle = 'yellow'
         ctx.fillRect(
             Math.round(currentNode.x * (canvasWidth / size)),
             Math.round(currentNode.y * (canvasWidth / size)),
@@ -389,7 +389,6 @@ calculateButton.addEventListener('click', async function (e) {
                     for (let j = 0; j < size; j++) {
                         if (copyField[i][j].visited == true) {
                             ctx.fillStyle = 'red'
-                            ctx.strokeStyle = 'red'
                             ctx.fillRect(
                                 Math.round(field[i][j].x * (canvasWidth / size)),
                                 Math.round(field[i][j].y * (canvasWidth / size)),
