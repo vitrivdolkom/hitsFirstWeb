@@ -9,6 +9,8 @@ let startFlag = false
 let endFlag = false
 let alreadyCalculate = false
 let stopAlgorithm = false
+let secondCalculating = false
+let fastDoing = false
 
 class Point {
     constructor(i, j) {
@@ -230,24 +232,27 @@ function generateMaze(field) {
 }
 
 function returnStartState() {
-    draw()
-    alreadyCalculate = false
-    stopAlgorithm = false
-    startFlag = false
-    endFlag = false
-    answer.innerHTML = ''
-    textForAnswer.innerHTML = ''
-    for (let i = 0; i < size; i++) {
-        for (let j = 0; j < size; j++) {
-            field[i][j].visited = false
-            if (copyField[i][j].wall == true) {
-                ctx.fillStyle = 'black'
-                ctx.fillRect(
-                    field[i][j].x * (canvasWidth / size),
-                    field[i][j].y * (canvasWidth / size),
-                    canvasWidth / size,
-                    canvasHeight / size
-                )
+    if (alreadyCalculate == false) {
+        draw()
+        alreadyCalculate = false
+        secondCalculating = false
+        stopAlgorithm = false
+        startFlag = false
+        endFlag = false
+        answer.innerHTML = ''
+        textForAnswer.innerHTML = ''
+        for (let i = 0; i < size; i++) {
+            for (let j = 0; j < size; j++) {
+                field[i][j].visited = false
+                if (copyField[i][j].wall == true) {
+                    ctx.fillStyle = 'black'
+                    ctx.fillRect(
+                        field[i][j].x * (canvasWidth / size),
+                        field[i][j].y * (canvasWidth / size),
+                        canvasWidth / size,
+                        canvasHeight / size
+                    )
+                }
             }
         }
     }
@@ -329,9 +334,15 @@ async function aStar(field, start, end) {
         }
         let currentNode = openSet[win]
         currentNode.visited = true
-        await new Promise((res, rej) => {
-            setTimeout(() => res(), 20)
-        })
+        if (fastDoing == false) {
+            await new Promise((res, rej) => {
+                setTimeout(() => res(), 25)
+            })
+        } else if (fastDoing == true) {
+            await new Promise((res, rej) => {
+                setTimeout(() => res(), 0)
+            })
+        }
         ctx.beginPath()
         ctx.fillStyle = 'yellow'
         ctx.fillRect(
@@ -379,8 +390,10 @@ function draw() {
             ctx.strokeStyle = 'black'
             if (size < 100) {
                 ctx.lineWidth = '1'
-            } else {
+            } else if (size <= 500) {
                 ctx.lineWidth = '0.5'
+            } else {
+                ctx.lineWidth = '0.1'
             }
             ctx.strokeRect(i, j, canvasWidth / size, canvasHeight / size)
         }
@@ -412,64 +425,99 @@ let answer = document.querySelector('.lengthOfPath')
 let textForAnswer = document.querySelector('.length')
 let nullField = document.querySelector('.field')
 let stopButton = document.querySelector('.stop')
+let switcher = document.querySelector('.switcher')
 
 let startX
 let startY
 let endX
 let endY
-let removeObstacles = false
+
+switcher.addEventListener('click', function (e) {
+    if (fastDoing == false) {
+        fastDoing = true
+    } else {
+        fastDoing = false
+    }
+})
 
 stopButton.addEventListener('click', function (e) {
     stopAlgorithm = true
+    alreadyCalculate = false
 })
 
 nullField.addEventListener('click', function (e) {
-    if (+input.value == input.value && input.value > 1) {
-        alreadyCalculate = false
-        size = +input.value
-        field = new Array(size)
-        field = createMatrix(field, size)
-        start = undefined
-        end = undefined
-        startFlag = false
-        endFlag = false
-        copyField = field
-        draw()
-        ctx.fillStyle = '#000000'
-        ctx.fill()
-    } else if (input.value <= 1) {
-        alert('Введите число, большее 1')
-    } else {
-        alert('Введите корректное число')
+    if (alreadyCalculate == false && secondCalculating == false) {
+        if (+input.value == input.value && input.value > 1) {
+            answer.innerHTML = ''
+            textForAnswer.innerHTML = ''
+            size = +input.value
+            field = new Array(size)
+            field = createMatrix(field, size)
+            start = undefined
+            end = undefined
+            startFlag = false
+            endFlag = false
+            copyField = field
+            draw()
+            ctx.fillStyle = '#000000'
+            ctx.fill()
+            for (let i = 0; i < size; i++) {
+                for (let j = 0; j < size; j++) {
+                    field[i][j].wall = false
+                    ctx.fillStyle = 'white'
+                    ctx.fillRect(
+                        field[i][j].x * (canvasWidth / size),
+                        field[i][j].y * (canvasWidth / size),
+                        canvasWidth / size,
+                        canvasHeight / size
+                    )
+                    ctx.strokeRect(
+                        field[i][j].x * (canvasWidth / size),
+                        field[i][j].y * (canvasWidth / size),
+                        canvasWidth / size,
+                        canvasHeight / size
+                    )
+                }
+            }
+            normalizeCanvas(field)
+        } else if (input.value <= 1) {
+            alert('Введите число, большее 1')
+        } else {
+            alert('Введите корректное число')
+        }
     }
 })
 
 restartButton.addEventListener('click', function (e) {
-    returnStartState()
+    if (alreadyCalculate == false) {
+        returnStartState()
+    }
 })
 
 confirmButton.addEventListener('click', function (e) {
-    if (+input.value == input.value && input.value > 1) {
-        alreadyCalculate = false
-        answer.innerHTML = ''
-        textForAnswer.innerHTML = ''
-        size = +input.value
-        field = new Array(size)
-        field = createMatrix(field, size)
-        start = undefined
-        end = undefined
-        startFlag = false
-        endFlag = false
-        draw()
-        field = maze(field)
-        copyField = field
-        normalizeCanvas(field)
-        ctx.fillStyle = '#000000'
-        ctx.fill()
-    } else if (input.value <= 1) {
-        alert('Введите число, большее 1')
-    } else {
-        alert('Введите корректное число')
+    if (alreadyCalculate == false && secondCalculating == false) {
+        if (+input.value == input.value && input.value > 1) {
+            alreadyCalculate = false
+            answer.innerHTML = ''
+            textForAnswer.innerHTML = ''
+            size = +input.value
+            field = new Array(size)
+            field = createMatrix(field, size)
+            start = undefined
+            end = undefined
+            startFlag = false
+            endFlag = false
+            draw()
+            field = maze(field)
+            copyField = field
+            normalizeCanvas(field)
+            ctx.fillStyle = '#000000'
+            ctx.fill()
+        } else if (input.value <= 1) {
+            alert('Введите число, большее 1')
+        } else {
+            alert('Введите корректное число')
+        }
     }
 })
 
@@ -533,8 +581,9 @@ canvas.addEventListener('click', function (e) {
 })
 
 calculateButton.addEventListener('click', async function (e) {
-    if (alreadyCalculate == false && startFlag == true && endFlag == true) {
+    if (alreadyCalculate == false && startFlag == true && endFlag == true && secondCalculating == false) {
         let openSet = []
+        secondCalculating = true
         alreadyCalculate = true
         openSet.push(start)
         if (start == undefined || end == undefined) {
@@ -554,6 +603,7 @@ calculateButton.addEventListener('click', async function (e) {
                     )
                     textForAnswer.innerHTML = 'Длина вашего пути равна:'
                     answer.innerHTML = path.length
+                    alreadyCalculate = false
                 }
             } else {
                 for (let i = 0; i < size; i++) {
@@ -576,10 +626,13 @@ calculateButton.addEventListener('click', async function (e) {
                     textForAnswer.innerHTML = 'Путь не найден'
                 }
                 stopAlgorithm = false
+                alreadyCalculate = false
             }
         }
     } else if (startFlag == false || endFlag == false) {
         alert('Вы не поставили стартовую или конечную точку')
+    } else if (alreadyCalculate == true || secondCalculating == true) {
+        alert('Вы уже вычисляете')
     } else {
         alert('Очистите лабиринт')
     }
