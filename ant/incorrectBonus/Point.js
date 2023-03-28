@@ -8,5 +8,6 @@ export class Point {
     this.isFood = false
     this.isHome = false
     this.isWall = false
+    this.food = 0
   }
 }

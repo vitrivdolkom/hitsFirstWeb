@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ant Algorithm</title>
   <link rel="stylesheet" href="./bonus.css">
+  <link rel="stylesheet" href="../zero.css">
 </head>
 
 <body>
@@ -16,15 +17,18 @@
       <label for="locateColony">Поставить колонию</label>
       <input type="checkbox" name="locateColony" id="locateColony">
 
-      <label for="foodAmount">Выберете количество еды</label>
-      <input type="range" min="10" max="200" name="locateColony" id="foodAmount">
+      <label for="foodAmount">Выберите количество еды</label>
+      <input type="range" min="100" max="1000" name="locateColony" id="foodAmount">
 
       <label for="locateFood">Поставить Еду</label>
       <input type="checkbox" name="locateFood" id="locateFood">
 
       <button class="execute">Запустить</button>
     </div>
-    <div class="canvas"></div>
+    <div class="canvasWrapper">
+        <canvas></canvas>
+        <div class="ants"></div>
+    </div>
   </div>
 
   <script type="module" src="./bonus/script.js"></script>

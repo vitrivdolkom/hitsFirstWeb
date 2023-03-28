@@ -1,142 +1,53 @@
-import { Ant } from "./Ant.js"
-import { canvas, canvasRect, withPixel } from "./canvas.js"
-import { drawAnt, drawColony, drawFood } from "./drawing.js"
-import { getRandomArbitrary } from "./helpers.js"
-import { Point } from "./Point.js"
-
-// todo DOM
+import { Ant } from './Ant.js'
+import { canvas, canvasRect, withPixel } from './canvas.js'
+import { drawColony, drawFood } from './drawing.js'
+import { getRandomArbitrary } from './helpers.js'
 
 const locateColonyInput = document.querySelector('input[name=locateColony]')
 const locateFood = document.querySelector('input[name=locateFood]')
 const foodAmount = document.querySelector('input[type=range]')
 const executeBtn = document.querySelector('.execute')
-let colony
+const canvasWrapper = document.querySelector('.canvasWrapper')
 
-// todo init vars
-let points
 let colonyCoord
-const Q = 1
+const ANTS_NUM = 200
+let ants = new Array(ANTS_NUM)
 
-// todo helpers
+canvas.addEventListener('click', onCanvasClick)
+executeBtn.addEventListener('click', startAnts)
 
+function onCanvasClick(e) {
+    const x = e.clientX - canvasRect.left
+    const y = e.clientY - canvasRect.top
 
-export const distanceBetweenTwoPoints = (x1, y1, x2, y2) => {
-  return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
-}
+    if (locateColonyInput.checked) {
+        colonyCoord = { x: Math.floor(x), y: Math.floor(y) }
+        drawColony(colonyCoord)
 
-// todo draw functions
-
-canvas.addEventListener('click', (e) => {
-  const x = e.clientX - canvasRect.left
-  const y = e.clientY - canvasRect.top
-
-  if (locateColonyInput.checked) {
-    colonyCoord = { x: Math.floor(x), y: Math.floor(y) }
-    drawColony(e)
-    locateColonyInput.checked = false
-    locateColonyInput.disabled = true
-    return
-  }
-
-  if (locateFood.checked) {
-    drawFood(e, foodAmount.value)
-  }
-})
-
-const fillPoints = () => {
-  const colonyRect = document.querySelector('.colony').getBoundingClientRect()
-  const foods = document.querySelectorAll('.food')
-
-  points = new Array(canvas.clientHeight)
-
-  for (let i = 0; i < canvas.clientHeight; i++) {
-    points[i] = new Array(canvas.clientWidth)
-  }
-
-  for (let i = 0; i < canvas.clientHeight; i++) {
-    for (let j = 0; j < canvas.clientWidth; j++) {
-      points[i][j] = new Point(i, j)
-
-      foods.forEach(food => {
-        const foodRect = food.getBoundingClientRect()
-
-        if (foodRect.left <= j && foodRect.top <= i && foodRect.right >= j && foodRect.bottom >= i) {
-          points[i][j].isFood = true
-        }
-      })
-
-      if (colonyRect.left <= j && colonyRect.top <= i && colonyRect.right >= j && colonyRect.bottom >= i) {
-        points[i][j].isHome = true
-      }
-    }
-  }
-}
-
-executeBtn.addEventListener('click', algorithm)
-
-const chooseCoordinates = (coord) => {
-  colony = document.querySelector('.colony')
-  const rand = getRandomArbitrary(0, 1)
-
-  if (rand <= 0.25) {
-    coord.x -= Math.floor(colony.clientWidth / 2)
-    coord.y -= Math.floor(colony.clientWidth / 2)
-    return
-  }
-  if (rand <= 0.5) {
-    coord.x -= Math.floor(colony.clientWidth / 2)
-    coord.y += Math.floor(colony.clientWidth / 2)
-    return
-  }
-  if (rand <= 0.75) {
-    coord.x += Math.floor(colony.clientWidth / 2)
-    coord.y -= Math.floor(colony.clientWidth / 2)
-    return
-  }
-
-  coord.x += Math.floor(colony.clientWidth / 2)
-  coord.y += Math.floor(colony.clientWidth / 2)
-}
-
-async function algorithm() {
-  fillPoints()
-
-  let ants = new Array(100)
-  for (let i = 0; i < 100; i++) {
-    const coord = { ...colonyCoord }
-    chooseCoordinates(coord)
-
-    ants[i] = new Ant(i, coord.x, coord.y)
-    drawAnt(i, coord.x, coord.y)
-  }
-
-  let count = 0
-  while (count < 1000) {
-    for (let i = 0; i < 100; i++) {
-      const antDiv = document.querySelector(`div[data-ant-id="${i}"]`)
-
-      ants[i].makeChoice(points)
-
-      await new Promise((res, rej) => {
-        setTimeout(() => res(), 0);
-      })
-      // debugger
-
-      const toPoint = ants[i].location
-
-      points[toPoint.y][toPoint.x].phero += 0.1
-      points[toPoint.y][toPoint.x].visit += 1
-
-      // const divX = toPoint.x - ants[i].path[ants[i].path.length - 1].x
-      // const divY = toPoint.y - ants[i].path[ants[i].path.length - 1].y
-
-      // antDiv.style.transform = 'translateX(' + divX + 'px) translateY(' + divY + 'px)'
-
-      antDiv.style.top = withPixel(toPoint.y)
-      antDiv.style.left = withPixel(toPoint.x)
+        locateColonyInput.checked = false
+        locateColonyInput.disabled = true
+        return
     }
 
-    count++
-  }
+    if (locateFood.checked) {
+        const foodX = e.clientX - canvasRect.left
+        const foodY = e.clientY - canvasRect.top
+        const foodCoord = { x: Math.floor(foodX), y: Math.floor(foodY) }
+
+        drawFood(e, +foodAmount.value, foodCoord)
+    }
 }
 
+function startAnts(e) {
+    for (let i = 0; i < ANTS_NUM; i++) {
+        const ant = document.createElement('div')
+        ant.classList.add('ant')
+        ant.style.top = withPixel(colonyCoord.y)
+        ant.style.left = withPixel(colonyCoord.x)
+        document.querySelector('.ants').appendChild(ant)
+
+        ants[i] = new Ant(i, ant, colonyCoord, canvasWrapper.clientWidth, canvasWrapper.clientHeight)
+        ants[i].angle = getRandomArbitrary(0, 360)
+        ants[i].startWalk()
+    }
+}
