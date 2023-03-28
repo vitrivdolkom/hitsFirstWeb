@@ -79,7 +79,7 @@ function createMatrix(field, size) {
     return field
 }*/
 
-function maze(field) {
+function generateMaze(field) {
     let walls = 0
     while (walls < (size * size) / 2.5) {
         let startX = Math.floor(Math.random() * size)
@@ -121,7 +121,7 @@ function maze(field) {
     return field
 }
 
-function makeCaves(field) {
+/*function makeCaves(field) {
     let caves = []
     for (let i = 0; i < size; i++) {
         for (let j = 0; j < size; j++) {
@@ -229,7 +229,7 @@ function generateMaze(field) {
     }
 
     return field
-}
+} */
 
 function returnStartState() {
     if (alreadyCalculate == false) {
@@ -508,7 +508,7 @@ confirmButton.addEventListener('click', function (e) {
             startFlag = false
             endFlag = false
             draw()
-            field = maze(field)
+            field = generateMaze(field)
             copyField = field
             normalizeCanvas(field)
             ctx.fillStyle = '#000000'
@@ -594,6 +594,15 @@ calculateButton.addEventListener('click', async function (e) {
             if (result == 1) {
                 let path = reconstructPath(start, end)
                 for (let i = 0; i < path.length; i++) {
+                    if (fastDoing == false) {
+                        await new Promise((res, rej) => {
+                            setTimeout(() => res(), 25)
+                        })
+                    } else {
+                        await new Promise((res, rej) => {
+                            setTimeout(() => res(), 0)
+                        })
+                    }
                     ctx.fillStyle = 'green'
                     ctx.fillRect(
                         Math.round(path[i].x * (canvasWidth / size)),
