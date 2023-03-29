@@ -26,6 +26,10 @@ class Point {
     }
 }
 
+const getRandomArbitrary = (min, max) => {
+    return Math.random() * (max - min) + min
+}
+
 function createMatrix(field, size) {
     for (var i = 0; i < size; i++) {
         field[i] = new Array(size)
@@ -40,50 +44,11 @@ function createMatrix(field, size) {
     return field
 }
 
-/*function maze(field) {
-    let startX = Math.floor(Math.random() * size)
-    let startY = Math.floor(Math.random() * size)
-    field[startY][startX].wall = false
-
-    const stack = [[startX, startY]]
-
-    while (stack.length > 0) {
-        debugger
-        const [currentX, currentY] = stack.pop()
-        field[currentY][currentX].mazeVisit = true
-        const neighbors = []
-
-        if (currentX > 0 && field[currentY][currentX - 1].wall && !field[currentY][currentX - 1].mazeVisit) {
-            neighbors.push([currentX - 1, currentY])
-        }
-
-        if (currentX < size - 1 && field[currentY][currentX + 1].wall && !field[currentY][currentX + 1].mazeVisit) {
-            neighbors.push([currentX + 1, currentY])
-        }
-
-        if (currentY > 0 && field[currentY - 1][currentX].wall && !field[currentY - 1][currentX].mazeVisit) {
-            neighbors.push([currentX, currentY - 1])
-        }
-
-        if (currentY < size - 1 && field[currentY + 1][currentX].wall && !field[currentY + 1][currentX].mazeVisit) {
-            neighbors.push([currentX, currentY + 1])
-        }
-
-        if (neighbors.length > 0) {
-            const [nextX, nextY] = neighbors[Math.floor(Math.random() * neighbors.length)]
-            field[nextY][nextX].wall = false
-            stack.push([nextX, nextY])
-        }
-    }
-
-    return field
-}*/
-
 function generateMaze(field) {
     let walls = 0
     while (walls < (size * size) / 2.5) {
-        let startX = Math.floor(Math.random() * size)
-        let startY = Math.floor(Math.random() * size)
+        let startX = Math.floor(getRandomArbitrary(0, size))
+        let startY = Math.floor(getRandomArbitrary(0, size))
         field[startY][startX].wall = false
 
         const stack = [[startX, startY]]
@@ -121,41 +86,128 @@ function generateMaze(field) {
     return field
 }
 
-/*function makeCaves(field) {
-    let caves = []
-    for (let i = 0; i < size; i++) {
-        for (let j = 0; j < size; j++) {
-            if (field[i][j].wall == true) {
-                let amountOfNeighbors = 0
-                for (let a = 0; a < 3; a++) {
-                    for (let b = 0; b < 3; b++) {
-                        let neighborX = i - a
-                        let neighborY = j - b
-                        if (neighborX >= 0 && neighborX < size && neighborY >= 0 && neighborY < size) {
-                            if (field[neighborX][neighborY].wall == false) {
-                                amountOfNeighbors++
-                            }
-                        }
-                    }
-                }
+function primMaze(field) {
+    let x = Math.floor(getRandomArbitrary(0, size))
+    let y = Math.floor(getRandomArbitrary(0, size))
+    field[x][y].wall = false
+    let coords = [{ x: x, y: y }]
 
-                if (amountOfNeighbors >= 8) {
-                    caves.push(field[i][j])
-                }
+    if (y - 2 >= 0) {
+        coords.push({ x: x, y: y - 2 })
+    }
+
+    if (y + 2 < size) {
+        coords.push({ x: x, y: y + 2 })
+    }
+
+    if (x - 2 >= 0) {
+        coords.push({ x: x - 2, y: y })
+    }
+
+    if (x + 2 < size) {
+        coords.push({ x: x + 2, y: y })
+    }
+
+    while (coords.length > 0) {
+        let index = Math.floor(getRandomArbitrary(0, coords.length))
+        let x = coords[index].x
+        let y = coords[index].y
+        if (field[x][y].wall == false) {
+            coords.splice(index, 1)
+            continue
+        }
+        field[x][y].wall = false
+        coords.splice(index, 1)
+
+        let directions = ['north', 'south', 'east', 'west']
+        while (directions.length > 0) {
+            let directIndex = Math.floor(getRandomArbitrary(0, directions.length))
+            switch (directions[directIndex]) {
+                case 'north':
+                    if (y - 2 >= 0 && field[x][y - 2].wall == false) {
+                        field[x][y - 1].wall = false
+                        directions = []
+                    }
+                    break
+                case 'south':
+                    if (y + 2 < size && field[x][y + 2].wall == false) {
+                        field[x][y + 1].wall = false
+                        directions = []
+                    }
+                    break
+                case 'east':
+                    if (x - 2 >= 0 && field[x - 2][y].wall == false) {
+                        field[x - 1][y].wall = false
+                        directions = []
+                    }
+                    break
+                case 'west':
+                    if (x + 2 < size && field[x + 2][y].wall == false) {
+                        field[x + 1][y].wall = false
+                        directions = []
+                    }
+                    break
             }
+            directions.splice(directIndex, 1)
+        }
+
+        if (y - 2 >= 0 && field[x][y - 2].wall) {
+            coords.push({ x: x, y: y - 2 })
+        }
+
+        if (y + 2 < size && field[x][y + 2].wall) {
+            coords.push({ x: x, y: y + 2 })
+        }
+
+        if (x - 2 >= 0 && field[x - 2][y].wall) {
+            coords.push({ x: x - 2, y: y })
+        }
+
+        if (x + 2 < size && field[x + 2][y].wall) {
+            coords.push({ x: x + 2, y: y })
         }
     }
 
-    for (let i = 0; i < caves.length; i++) {
-        caves[i].wall = false
-        ctx.fillStyle = 'white'
-        ctx.fillRect(caves[i].x * (canvasWidth / size), caves[i].y * (canvasWidth / size), canvasWidth / size, canvasHeight / size)
-        ctx.strokeRect(caves[i].x * (canvasWidth / size), caves[i].y * (canvasWidth / size), canvasWidth / size, canvasHeight / size)
+    return field
+}
+
+function makeCaves(field) {
+    for (let j = 0; j < 1; j++) {
+        let caves = []
+        for (let i = 0; i < size; i++) {
+            for (let j = 0; j < size; j++) {
+                if (field[i][j].wall == true) {
+                    let amountOfNeighbors = 0
+                    for (let a = 0; a < 3; a++) {
+                        for (let b = 0; b < 3; b++) {
+                            let neighborX = i - a
+                            let neighborY = j - b
+                            if (neighborX >= 0 && neighborX < size && neighborY >= 0 && neighborY < size) {
+                                if (field[neighborX][neighborY].wall == false) {
+                                    amountOfNeighbors++
+                                }
+                            }
+                        }
+                    }
+
+                    if (amountOfNeighbors >= 4) {
+                        caves.push(field[i][j])
+                    }
+                }
+            }
+        }
+
+        for (let i = 0; i < caves.length; i++) {
+            caves[i].wall = false
+            ctx.fillStyle = 'white'
+            ctx.fillRect(caves[i].x * (canvasWidth / size), caves[i].y * (canvasWidth / size), canvasWidth / size, canvasHeight / size)
+            ctx.strokeRect(caves[i].x * (canvasWidth / size), caves[i].y * (canvasWidth / size), canvasWidth / size, canvasHeight / size)
+        }
     }
 }
 
 function clearDeadEnds(field) {
-    for (let k = 0; k < 6; k++) {
+    for (let k = 0; k < 4; k++) {
         let deadEnd = []
         for (let i = 0; i < size; i++) {
             for (let j = 0; j < size; j++) {
@@ -190,46 +242,6 @@ function clearDeadEnds(field) {
         }
     }
 }
-
-function generateMaze(field) {
-    let row = Math.floor(Math.random() * size)
-    let col = Math.floor(Math.random() * size)
-    let countWalls = 0
-    field[row][col].wall = false
-
-    let stack = [field[row][col]]
-
-    while (stack.length > 0) {
-        let currentCell = stack.pop()
-
-        let neighbors = findNeighbors(field, field[row][col], size)
-        if (neighbors.length > 0) {
-            let randomIndex = Math.floor(Math.random() * neighbors.length)
-            let nextRow = Math.floor(Math.random() * size)
-            let nextCol = Math.floor(Math.random() * size)
-
-            let randomNumber = Math.floor(Math.random() * 100) + 1
-            if (randomNumber > 95) {
-                field[nextRow][nextCol].wall = true
-                ctx.fillStyle = 'black'
-                ctx.fillRect(
-                    field[nextRow][nextCol].x * (canvasWidth / size),
-                    field[nextRow][nextCol].y * (canvasWidth / size),
-                    canvasWidth / size,
-                    canvasHeight / size
-                )
-                countWalls++
-            }
-
-            stack.push(field[nextRow][nextCol])
-        }
-        if (countWalls > (size * size) / 2) {
-            break
-        }
-    }
-
-    return field
-} */
 
 function returnStartState() {
     if (alreadyCalculate == false) {
@@ -390,7 +402,7 @@ function draw() {
             ctx.strokeStyle = 'black'
             if (size < 100) {
                 ctx.lineWidth = '1'
-            } else if (size <= 500) {
+            } else if (size < 500) {
                 ctx.lineWidth = '0.5'
             } else {
                 ctx.lineWidth = '0.1'
@@ -508,7 +520,7 @@ confirmButton.addEventListener('click', function (e) {
             startFlag = false
             endFlag = false
             draw()
-            field = generateMaze(field)
+            field = primMaze(field)
             copyField = field
             normalizeCanvas(field)
             ctx.fillStyle = '#000000'
