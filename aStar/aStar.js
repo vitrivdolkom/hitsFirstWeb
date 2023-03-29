@@ -1,3 +1,9 @@
+import { primMaze } from './maze.js'
+import { generateMaze } from './maze.js'
+import { deleteElement } from './additionalFunctions.js'
+import { createMatrix } from './additionalFunctions.js'
+import { reconstructPath } from './additionalFunctions.js'
+
 const canvas = document.querySelector('canvas')
 const ctx = canvas.getContext('2d')
 ctx.canvas.width = 1000
@@ -11,6 +17,7 @@ let alreadyCalculate = false
 let stopAlgorithm = false
 let secondCalculating = false
 let fastDoing = false
+let pleasureFlag = false
 
 class Point {
     constructor(i, j) {
@@ -23,223 +30,6 @@ class Point {
         this.visited = false
         this.wall = true
         this.prev = undefined
-    }
-}
-
-const getRandomArbitrary = (min, max) => {
-    return Math.random() * (max - min) + min
-}
-
-function createMatrix(field, size) {
-    for (var i = 0; i < size; i++) {
-        field[i] = new Array(size)
-    }
-
-    for (let i = 0; i < size; i++) {
-        for (let j = 0; j < size; j++) {
-            field[i][j] = new Point(i, j)
-        }
-    }
-
-    return field
-}
-
-function generateMaze(field) {
-    let walls = 0
-    while (walls < (size * size) / 2.5) {
-        let startX = Math.floor(getRandomArbitrary(0, size))
-        let startY = Math.floor(getRandomArbitrary(0, size))
-        field[startY][startX].wall = false
-
-        const stack = [[startX, startY]]
-
-        while (stack.length > 0) {
-            debugger
-            const [currentX, currentY] = stack.pop()
-            const neighbors = []
-
-            if (currentX > 0 && field[currentY][currentX - 1].wall) {
-                neighbors.push([currentX - 1, currentY])
-            }
-
-            if (currentX < size - 1 && field[currentY][currentX + 1].wall) {
-                neighbors.push([currentX + 1, currentY])
-            }
-
-            if (currentY > 0 && field[currentY - 1][currentX].wall) {
-                neighbors.push([currentX, currentY - 1])
-            }
-
-            if (currentY < size - 1 && field[currentY + 1][currentX].wall) {
-                neighbors.push([currentX, currentY + 1])
-            }
-
-            if (neighbors.length > 0) {
-                const [nextX, nextY] = neighbors[Math.floor(Math.random() * neighbors.length)]
-                field[nextY][nextX].wall = false
-                walls++
-                stack.push([nextX, nextY])
-            }
-        }
-    }
-
-    return field
-}
-
-function primMaze(field) {
-    let x = Math.floor(getRandomArbitrary(0, size))
-    let y = Math.floor(getRandomArbitrary(0, size))
-    field[x][y].wall = false
-    let coords = [{ x: x, y: y }]
-
-    if (y - 2 >= 0) {
-        coords.push({ x: x, y: y - 2 })
-    }
-
-    if (y + 2 < size) {
-        coords.push({ x: x, y: y + 2 })
-    }
-
-    if (x - 2 >= 0) {
-        coords.push({ x: x - 2, y: y })
-    }
-
-    if (x + 2 < size) {
-        coords.push({ x: x + 2, y: y })
-    }
-
-    while (coords.length > 0) {
-        let index = Math.floor(getRandomArbitrary(0, coords.length))
-        let x = coords[index].x
-        let y = coords[index].y
-        if (field[x][y].wall == false) {
-            coords.splice(index, 1)
-            continue
-        }
-        field[x][y].wall = false
-        coords.splice(index, 1)
-
-        let directions = ['north', 'south', 'east', 'west']
-        while (directions.length > 0) {
-            let directIndex = Math.floor(getRandomArbitrary(0, directions.length))
-            switch (directions[directIndex]) {
-                case 'north':
-                    if (y - 2 >= 0 && field[x][y - 2].wall == false) {
-                        field[x][y - 1].wall = false
-                        directions = []
-                    }
-                    break
-                case 'south':
-                    if (y + 2 < size && field[x][y + 2].wall == false) {
-                        field[x][y + 1].wall = false
-                        directions = []
-                    }
-                    break
-                case 'east':
-                    if (x - 2 >= 0 && field[x - 2][y].wall == false) {
-                        field[x - 1][y].wall = false
-                        directions = []
-                    }
-                    break
-                case 'west':
-                    if (x + 2 < size && field[x + 2][y].wall == false) {
-                        field[x + 1][y].wall = false
-                        directions = []
-                    }
-                    break
-            }
-            directions.splice(directIndex, 1)
-        }
-
-        if (y - 2 >= 0 && field[x][y - 2].wall) {
-            coords.push({ x: x, y: y - 2 })
-        }
-
-        if (y + 2 < size && field[x][y + 2].wall) {
-            coords.push({ x: x, y: y + 2 })
-        }
-
-        if (x - 2 >= 0 && field[x - 2][y].wall) {
-            coords.push({ x: x - 2, y: y })
-        }
-
-        if (x + 2 < size && field[x + 2][y].wall) {
-            coords.push({ x: x + 2, y: y })
-        }
-    }
-
-    return field
-}
-
-function makeCaves(field) {
-    for (let j = 0; j < 1; j++) {
-        let caves = []
-        for (let i = 0; i < size; i++) {
-            for (let j = 0; j < size; j++) {
-                if (field[i][j].wall == true) {
-                    let amountOfNeighbors = 0
-                    for (let a = 0; a < 3; a++) {
-                        for (let b = 0; b < 3; b++) {
-                            let neighborX = i - a
-                            let neighborY = j - b
-                            if (neighborX >= 0 && neighborX < size && neighborY >= 0 && neighborY < size) {
-                                if (field[neighborX][neighborY].wall == false) {
-                                    amountOfNeighbors++
-                                }
-                            }
-                        }
-                    }
-
-                    if (amountOfNeighbors >= 4) {
-                        caves.push(field[i][j])
-                    }
-                }
-            }
-        }
-
-        for (let i = 0; i < caves.length; i++) {
-            caves[i].wall = false
-            ctx.fillStyle = 'white'
-            ctx.fillRect(caves[i].x * (canvasWidth / size), caves[i].y * (canvasWidth / size), canvasWidth / size, canvasHeight / size)
-            ctx.strokeRect(caves[i].x * (canvasWidth / size), caves[i].y * (canvasWidth / size), canvasWidth / size, canvasHeight / size)
-        }
-    }
-}
-
-function clearDeadEnds(field) {
-    for (let k = 0; k < 4; k++) {
-        let deadEnd = []
-        for (let i = 0; i < size; i++) {
-            for (let j = 0; j < size; j++) {
-                if (field[i][j].wall == false) {
-                    let numberOfNormalNeigbours = 0
-                    if (i - 1 >= 0 && field[i - 1][j].wall == false) {
-                        numberOfNormalNeigbours++
-                    }
-
-                    if (i + 1 < size && field[i + 1][j].wall == false) {
-                        numberOfNormalNeigbours++
-                    }
-
-                    if (j - 1 >= 0 && field[i][j - 1].wall == false) {
-                        numberOfNormalNeigbours++
-                    }
-
-                    if (j + 1 < size && field[i][j + 1].wall == false) {
-                        numberOfNormalNeigbours++
-                    }
-
-                    if (numberOfNormalNeigbours <= 1) {
-                        deadEnd.push(field[i][j])
-                    }
-                }
-            }
-        }
-        for (let i = 0; i < deadEnd.length; i++) {
-            deadEnd[i].wall = true
-            ctx.fillStyle = 'black'
-            ctx.fillRect(deadEnd[i].x * (canvasWidth / size), deadEnd[i].y * (canvasWidth / size), canvasWidth / size, canvasHeight / size)
-        }
     }
 }
 
@@ -256,7 +46,7 @@ function returnStartState() {
         for (let i = 0; i < size; i++) {
             for (let j = 0; j < size; j++) {
                 field[i][j].visited = false
-                if (copyField[i][j].wall == true) {
+                if (copyField[i][j].wall) {
                     ctx.fillStyle = 'black'
                     ctx.fillRect(
                         field[i][j].x * (canvasWidth / size),
@@ -266,25 +56,6 @@ function returnStartState() {
                     )
                 }
             }
-        }
-    }
-}
-
-function reconstructPath(start, end) {
-    let finalPath = []
-    let current = end
-    finalPath.push(current)
-    while (current != start) {
-        current = current.prev
-        finalPath.push(current)
-    }
-    return finalPath.reverse()
-}
-
-function deleteElement(array, element) {
-    for (let i = array.length - 1; i >= 0; i--) {
-        if (array[i] == element) {
-            array.splice(i, 1)
         }
     }
 }
@@ -346,11 +117,11 @@ async function aStar(field, start, end) {
         }
         let currentNode = openSet[win]
         currentNode.visited = true
-        if (fastDoing == false) {
+        if (!fastDoing) {
             await new Promise((res, rej) => {
                 setTimeout(() => res(), 25)
             })
-        } else if (fastDoing == true) {
+        } else if (fastDoing) {
             await new Promise((res, rej) => {
                 setTimeout(() => res(), 0)
             })
@@ -416,7 +187,7 @@ function normalizeCanvas(field) {
     for (let i = 0; i < size; i++) {
         for (let j = 0; j < size; j++) {
             field[i][j].visited = false
-            if (copyField[i][j].wall == true) {
+            if (copyField[i][j].wall) {
                 ctx.fillStyle = 'black'
                 ctx.fillRect(
                     field[i][j].x * (canvasWidth / size),
@@ -438,14 +209,24 @@ let textForAnswer = document.querySelector('.length')
 let nullField = document.querySelector('.field')
 let stopButton = document.querySelector('.stop')
 let switcher = document.querySelector('.switcher')
+let pleasure = document.querySelector('.pleasure')
 
 let startX
 let startY
 let endX
 let endY
 
+pleasure.addEventListener('click', function (e) {
+    if (!pleasureFlag) {
+        alert('Ставьте размер матрицы не менее 300')
+        pleasureFlag = true
+    } else {
+        pleasureFlag = false
+    }
+})
+
 switcher.addEventListener('click', function (e) {
-    if (fastDoing == false) {
+    if (!fastDoing) {
         fastDoing = true
     } else {
         fastDoing = false
@@ -458,7 +239,7 @@ stopButton.addEventListener('click', function (e) {
 })
 
 nullField.addEventListener('click', function (e) {
-    if (alreadyCalculate == false && secondCalculating == false) {
+    if (!alreadyCalculate && !secondCalculating) {
         if (+input.value == input.value && input.value > 1) {
             answer.innerHTML = ''
             textForAnswer.innerHTML = ''
@@ -501,13 +282,13 @@ nullField.addEventListener('click', function (e) {
 })
 
 restartButton.addEventListener('click', function (e) {
-    if (alreadyCalculate == false) {
+    if (!alreadyCalculate) {
         returnStartState()
     }
 })
 
 confirmButton.addEventListener('click', function (e) {
-    if (alreadyCalculate == false && secondCalculating == false) {
+    if (!alreadyCalculate && !secondCalculating) {
         if (+input.value == input.value && input.value > 1) {
             alreadyCalculate = false
             answer.innerHTML = ''
@@ -520,7 +301,11 @@ confirmButton.addEventListener('click', function (e) {
             startFlag = false
             endFlag = false
             draw()
-            field = primMaze(field)
+            if (!pleasureFlag) {
+                field = primMaze(field, size)
+            } else {
+                field = generateMaze(field, size)
+            }
             copyField = field
             normalizeCanvas(field)
             ctx.fillStyle = '#000000'
@@ -534,7 +319,7 @@ confirmButton.addEventListener('click', function (e) {
 })
 
 canvas.addEventListener('click', function (e) {
-    if (alreadyCalculate == false) {
+    if (!alreadyCalculate) {
         const rect = canvas.getBoundingClientRect()
         const x = e.clientX - rect.left
         const y = e.clientY - rect.top
@@ -542,22 +327,19 @@ canvas.addEventListener('click', function (e) {
         for (let i = 0; i < canvasWidth; i += canvasWidth / size) {
             for (let j = 0; j < canvasHeight; j += canvasHeight / size) {
                 if (i < x && j < y && i + canvasWidth / size > x && j + canvasHeight / size > y) {
-                    if (startFlag == true && startX == i && startY == j) {
+                    if (startFlag && startX == i && startY == j) {
                         ctx.fillStyle = 'white'
                         ctx.fillRect(i, j, canvasWidth / size, canvasHeight / size)
                         ctx.strokeRect(i, j, canvasWidth / size, canvasHeight / size)
                         startFlag = false
                         start = undefined
-                    } else if (endFlag == true && endX == i && endY == j) {
+                    } else if (endFlag && endX == i && endY == j) {
                         ctx.fillStyle = 'white'
                         ctx.fillRect(i, j, canvasWidth / size, canvasHeight / size)
                         ctx.strokeRect(i, j, canvasWidth / size, canvasHeight / size)
                         endFlag = false
                         end = undefined
-                    } else if (
-                        startFlag == false &&
-                        field[Math.round(i / (canvasWidth / size))][Math.round(j / (canvasHeight / size))].wall == false
-                    ) {
+                    } else if (!startFlag && !field[Math.round(i / (canvasWidth / size))][Math.round(j / (canvasHeight / size))].wall) {
                         ctx.fillStyle = 'Aquamarine'
                         ctx.fillRect(i, j, canvasWidth / size, canvasHeight / size)
                         startFlag = true
@@ -565,10 +347,7 @@ canvas.addEventListener('click', function (e) {
                         startY = j
                         start = field[Math.round(i / (canvasWidth / size))][Math.round(j / (canvasHeight / size))]
                         field[Math.round(i / (canvasWidth / size))][Math.round(j / (canvasHeight / size))].wall = false
-                    } else if (
-                        endFlag == false &&
-                        field[Math.round(i / (canvasWidth / size))][Math.round(j / (canvasHeight / size))].wall == false
-                    ) {
+                    } else if (!endFlag && !field[Math.round(i / (canvasWidth / size))][Math.round(j / (canvasHeight / size))].wall) {
                         ctx.fillStyle = 'Magenta'
                         ctx.fillRect(i, j, canvasWidth / size, canvasHeight / size)
                         endFlag = true
@@ -576,11 +355,11 @@ canvas.addEventListener('click', function (e) {
                         endY = j
                         end = field[Math.round(i / (canvasWidth / size))][Math.round(j / (canvasHeight / size))]
                         field[Math.round(i / (canvasWidth / size))][Math.round(j / (canvasHeight / size))].wall = false
-                    } else if (field[Math.round(i / (canvasWidth / size))][Math.round(j / (canvasHeight / size))].wall == false) {
+                    } else if (!field[Math.round(i / (canvasWidth / size))][Math.round(j / (canvasHeight / size))].wall) {
                         ctx.fillStyle = 'black'
                         ctx.fillRect(i, j, canvasWidth / size, canvasHeight / size)
                         field[Math.round(i / (canvasWidth / size))][Math.round(j / (canvasHeight / size))].wall = true
-                    } else if (field[Math.round(i / (canvasWidth / size))][Math.round(j / (canvasHeight / size))].wall == true) {
+                    } else if (field[Math.round(i / (canvasWidth / size))][Math.round(j / (canvasHeight / size))].wall) {
                         ctx.fillStyle = 'white'
                         ctx.fillRect(i, j, canvasWidth / size, canvasHeight / size)
                         ctx.strokeRect(i, j, canvasWidth / size, canvasHeight / size)
@@ -593,7 +372,7 @@ canvas.addEventListener('click', function (e) {
 })
 
 calculateButton.addEventListener('click', async function (e) {
-    if (alreadyCalculate == false && startFlag == true && endFlag == true && secondCalculating == false) {
+    if (!alreadyCalculate && startFlag && endFlag && !secondCalculating) {
         let openSet = []
         secondCalculating = true
         alreadyCalculate = true
@@ -606,7 +385,7 @@ calculateButton.addEventListener('click', async function (e) {
             if (result == 1) {
                 let path = reconstructPath(start, end)
                 for (let i = 0; i < path.length; i++) {
-                    if (fastDoing == false) {
+                    if (!fastDoinge) {
                         await new Promise((res, rej) => {
                             setTimeout(() => res(), 25)
                         })
@@ -629,7 +408,7 @@ calculateButton.addEventListener('click', async function (e) {
             } else {
                 for (let i = 0; i < size; i++) {
                     for (let j = 0; j < size; j++) {
-                        if (copyField[i][j].visited == true) {
+                        if (copyField[i][j].visited) {
                             ctx.fillStyle = 'red'
                             ctx.fillRect(
                                 field[i][j].x * (canvasWidth / size),
@@ -641,7 +420,7 @@ calculateButton.addEventListener('click', async function (e) {
                     }
                 }
 
-                if (stopAlgorithm == true) {
+                if (stopAlgorithm) {
                     textForAnswer.innerHTML = 'Вы остановили поиск пути'
                 } else {
                     textForAnswer.innerHTML = 'Путь не найден'
@@ -650,9 +429,9 @@ calculateButton.addEventListener('click', async function (e) {
                 alreadyCalculate = false
             }
         }
-    } else if (startFlag == false || endFlag == false) {
+    } else if (!startFlag || !endFlag) {
         alert('Вы не поставили стартовую или конечную точку')
-    } else if (alreadyCalculate == true || secondCalculating == true) {
+    } else if (alreadyCalculate || secondCalculating) {
         alert('Вы уже вычисляете')
     } else {
         alert('Очистите лабиринт')
