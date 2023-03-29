@@ -2,11 +2,11 @@ import { ctx, withPixel } from './canvas.js'
 import { getRandomArbitrary } from './helpers.js'
 
 export class Ant {
-    constructor(id, div, location, maxX, maxY) {
+    constructor(id, div, location, maxX, maxY, angle) {
         this.node = div
         this.id = id
         this.location = location
-        this.angle = 0
+        this.angle = angle
         this.taboo = []
         this.alfa = 1
         this.beta = 1
@@ -18,7 +18,7 @@ export class Ant {
     drawVisit() {
         ctx.beginPath()
         ctx.arc(this.location.x, this.location.y, 2, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(255, 0, 0, 0.1)`
+        ctx.fillStyle = `rgba(255, 0, 0, 0.2)`
         ctx.fill()
     }
 
@@ -30,8 +30,6 @@ export class Ant {
         const alfa = this.alfa
         const beta = this.beta
         setInterval(() => {
-            if (!this.food) this.drawVisit()
-
             const radian = (this.angle * Math.PI) / 180
             const x = this.location.x
             const y = this.location.y
@@ -149,8 +147,6 @@ export class Ant {
             this.node.style.left = withPixel(parseFloat(toSegment.x))
             // this.node.style.transform = `rotate(${toSegment.angle}deg)`
 
-            console.log(toSegment.pheromones)
-
             if (toSegment.pheromones >= 255) {
                 debugger
                 this.food = true
@@ -158,7 +154,9 @@ export class Ant {
 
             this.angle = this.angle + toSegment.angle
             this.location = toSegment
-        }, 100)
+
+            if (!this.food) this.drawVisit()
+        }, 0)
     }
 
     canMove(vertexes) {

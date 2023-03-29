@@ -22,7 +22,6 @@ export const drawFood = (e, amount, coord) => {
     colony.style.left = withPixel(coord.x - colony.clientWidth / 2)
 
     const datat = ctx.getImageData(coord.x, coord.y, 10, 10).data
-    console.log(datat)
 }
 
 export const drawAnt = (i, fromX, fromY) => {

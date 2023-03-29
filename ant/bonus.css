@@ -27,7 +27,7 @@ button {
   width: 3px;
   height: 3px;
   background-color: red;
-  transition: all .3s ease-out;
+  transition: all .3s linear;
   border-radius: 50%;
   position: absolute;
   z-index: 3;
