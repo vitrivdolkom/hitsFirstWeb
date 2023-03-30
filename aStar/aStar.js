@@ -385,7 +385,7 @@ calculateButton.addEventListener('click', async function (e) {
             if (result == 1) {
                 let path = reconstructPath(start, end)
                 for (let i = 0; i < path.length; i++) {
-                    if (!fastDoinge) {
+                    if (!fastDoing) {
                         await new Promise((res, rej) => {
                             setTimeout(() => res(), 25)
                         })
