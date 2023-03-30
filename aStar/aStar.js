@@ -234,8 +234,10 @@ switcher.addEventListener('click', function (e) {
 })
 
 stopButton.addEventListener('click', function (e) {
-    stopAlgorithm = true
-    alreadyCalculate = false
+    if (alreadyCalculate == true) {
+        stopAlgorithm = true
+        alreadyCalculate = false
+    }
 })
 
 nullField.addEventListener('click', function (e) {
