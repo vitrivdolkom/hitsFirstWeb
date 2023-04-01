@@ -6,10 +6,10 @@ export const getCellIndexes = (x, y, per) => {
     let row = Math.floor(y / per)
     let column = Math.floor(x / per)
 
-    row = row === 0 ? row : row - 1
-    column = column === 0 ? column : column - 1
+    row -= !row ? 0 : 1
+    column -= !column ? 0 : 1
 
-    return { row, column }
+    return { row: row, column: column }
 }
 
 export const getBlendedColors = (R1, G1, B1, R2, G2, B2) => {

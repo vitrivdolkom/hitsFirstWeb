@@ -5,27 +5,37 @@ export class Food {
         this.amount = amount
         this.x = Math.round(x)
         this.y = Math.round(y)
-        this.size = 20
+        this.radius = 10
         this.map = map
         this.isEaten = false
 
-        for (let i = -this.map.pxPerCell; i < this.size; i += this.map.pxPerCell) {
-            for (let j = -this.map.pxPerCell; j < this.size; j += this.map.pxPerCell) {
+        for (let i = -this.radius; i <= this.radius; i += this.map.pxPerCell) {
+            for (let j = -this.radius; j <= this.radius; j += this.map.pxPerCell) {
                 const toX = this.x + i
                 const toY = this.y + j
                 const { row, column } = getCellIndexes(toX, toY, this.map.pxPerCell)
-                this.map.colors[row][column].isFood = true
-                this.map.colors[row][column].food = this.amount * 1000
+
+                this.map.cells[row][column].setIsFood(this)
             }
         }
     }
 
-    draw(ctx) {
-        ctx.beginPath()
-        ctx.save()
-        ctx.fillStyle = `rgb(26, 109, 1)`
-        ctx.fillRect(this.x, this.y, this.size, this.size)
-        ctx.fill()
-        ctx.restore()
+    draw(context) {
+        for (let i = -this.radius; i <= this.radius; i += this.map.pxPerCell) {
+            for (let j = -this.radius; j <= this.radius; j += this.map.pxPerCell) {
+                const toX = this.x + i
+                const toY = this.y + j
+                const { row, column } = getCellIndexes(toX, toY, this.map.pxPerCell)
+
+                this.map.cells[row][column].draw(context)
+            }
+        }
+
+        // context.beginPath()
+        // context.save()
+        // context.fillStyle = `rgb(26, 109, 1)`
+        // context.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
+        // context.fill()
+        // context.restore()
     }
 }

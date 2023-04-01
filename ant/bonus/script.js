@@ -1,6 +1,7 @@
-import { PHERO_EVAPORATION } from './Ant.js'
+import { Cell } from './Cell.js'
 import { Colony } from './Colony.js'
 import { Food } from './Food.js'
+import { getCellIndexes } from './helpers.js'
 
 window.addEventListener('load', function () {
     const canvasWrapper = document.querySelector('.canvasWrapper')
@@ -8,13 +9,16 @@ window.addEventListener('load', function () {
     const locateFood = document.querySelector('input[name=locateFood]')
     const foodAmount = document.querySelector('input[type=range]')
     const executeBtn = document.querySelector('.execute')
-    const ANTS_NUM = 100
+    const ANTS_NUM = 500
 
     // todo canvas
     const canvas = document.querySelector('canvas')
     const ctx = canvas.getContext('2d')
-    canvas.width = canvasWrapper.clientWidth
-    canvas.height = canvasWrapper.clientHeight
+    // canvas.width = canvasWrapper.clientWidth
+    // canvas.height = canvasWrapper.clientHeight
+
+    canvas.width = 1000
+    canvas.height = 500
 
     ctx.fillStyle = `rgb(255, 0, 0)`
 
@@ -23,29 +27,24 @@ window.addEventListener('load', function () {
             this.canvas = canvas
             this.width = this.canvas.width
             this.height = this.canvas.height
-            this.pxPerCell = 2
-            this.colors = new Array(Math.floor(this.height / this.pxPerCell))
-            for (let i = 0; i < this.colors.length; i++) {
-                this.colors[i] = new Array(Math.floor(this.width / this.pxPerCell))
-            }
+            this.pxPerCell = 10
+            this.rows = Math.floor(this.height / this.pxPerCell)
+            this.columns = Math.floor(this.width / this.pxPerCell)
+            this.cells = new Array(this.rows)
 
-            for (let i = 0; i < this.colors.length; i++) {
-                for (let j = 0; j < this.colors[i].length; j++) {
-                    this.colors[i][j] = {
-                        red: 0,
-                        green: 0,
-                        blue: 0,
-                        isWall: false,
-                        isFood: false,
-                        food: 1,
-                        distanceToHome: 100000,
-                        distanceToFood: 100000,
-                        isColony: false,
-                        visit: 1,
-                    }
+            for (let i = 0; i < this.rows; i++) {
+                this.cells[i] = new Array(this.columns)
+
+                for (let j = 0; j < this.columns; j++) {
+                    this.cells[i][j] = new Cell(j * this.pxPerCell, i * this.pxPerCell, i, j, this.pxPerCell)
                 }
             }
-            this.colony = new Colony(colonyX, colonyY, ANTS_NUM, this.canvas, this.colors, this.pxPerCell)
+
+            const { row, column } = getCellIndexes(colonyX, colonyY, this.pxPerCell)
+            colonyX = column * this.pxPerCell + this.pxPerCell / 2
+            colonyY = row * this.pxPerCell + this.pxPerCell / 2
+
+            this.colony = new Colony(colonyX, colonyY, ANTS_NUM, this.canvas, this.cells, this.pxPerCell, this.rows, this.columns)
             this.foods = []
 
             canvas.addEventListener('click', (e) => {
@@ -58,39 +57,38 @@ window.addEventListener('load', function () {
             })
         }
 
+        firstDraw(context) {
+            for (let i = 0; i < this.rows; i++) {
+                for (let j = 0; j < this.columns; j++) {
+                    this.cells[i][j].draw(context)
+                }
+            }
+
+            this.colony.draw(context)
+        }
+
         render(context) {
             for (let i = 0; i < this.foods.length; i++) {
                 this.foods[i].draw(context)
             }
 
-            this.colony.drawAnts(context, this.colors, this.pxPerCell)
-            this.colony.update(this.colors, this.pxPerCell, context)
+            this.colony.drawAnts(context, this.cells)
+            this.colony.update(this.cells, this.pxPerCell, context)
             this.colony.draw(context)
         }
     }
 
-    const map = new Map(canvas, 100, 200)
-    let i = 0
+    const map = new Map(canvas, 500, 200)
+
+    map.firstDraw(ctx)
+
     function animate() {
+        map.render(ctx)
+        requestAnimationFrame(animate)
+
         // setTimeout(() => {
         //     requestAnimationFrame(animate)
-        // }, 1000 / 10)
-
-        // if (!(i % 100)) {
-        //     ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-        //     for (let i = 0; i < map.colors.length; i++) {
-        //         for (let j = 0; j < map.colors[i].length; j++) {
-        //             map.colors[i][j].visit *= PHERO_EVAPORATION
-        //             map.colors[i][j].food *= PHERO_EVAPORATION
-        //         }
-        //     }
-        // }
-
-        map.render(ctx)
-        ++i
-        requestAnimationFrame(animate)
-        // console.log(i)
+        // }, 1000 / 5)
     }
 
     animate()

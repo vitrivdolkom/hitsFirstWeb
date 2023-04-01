@@ -1,61 +1,60 @@
 import { Ant } from './Ant.js'
-import { getCellIndexes, getRandom } from './helpers.js'
+import { getCellIndexes, getNextPoint, getRandom } from './helpers.js'
 
 export class Colony {
-    constructor(x, y, antsNum, canvas, colors, pxPerCell) {
+    constructor(x, y, antsNum, canvas, cells, pxPerCell, maxRow, maxColumn) {
         this.food = 0
         this.x = x
         this.y = y
-        this.radius = 20
+        this.radius = pxPerCell * 2
         this.isLocated = false
         this.antsNum = antsNum
         this.ants = new Array(this.antsNum)
         this.canvas = canvas
-        this.noFood = true
+        this.pxPerCell = pxPerCell
+        this.maxRow = maxRow
+        this.maxColumn = maxColumn
 
         for (let i = 0; i < this.antsNum; i++) {
             const angle = getRandom(0, 360)
-
             const antCoordinates = {
-                x: Math.round(this.x + this.radius * Math.cos((angle * Math.PI) / 180)),
-                y: Math.round(this.y + this.radius * Math.sin((angle * Math.PI) / 180)),
+                x: Math.round(this.x + (this.radius + pxPerCell) * Math.cos((angle * Math.PI) / 180)),
+                y: Math.round(this.y + (this.radius + pxPerCell) * Math.sin((angle * Math.PI) / 180)),
             }
 
-            this.ants[i] = new Ant(this, i, antCoordinates.x, antCoordinates.y, canvas.width, canvas.height, angle)
+            const { row, column } = getCellIndexes(antCoordinates.x, antCoordinates.y, this.pxPerCell)
+            // antCoordinates.x = column * this.pxPerCell + this.pxPerCell / 2
+            // antCoordinates.y = row * this.pxPerCell + this.pxPerCell / 2
+
+            this.ants[i] = new Ant(this, i, antCoordinates.x, antCoordinates.y, row, column, this.maxRow, this.maxColumn, angle)
         }
 
-        const shift = Math.floor(this.radius / 1.5)
-        for (let i = -shift; i <= shift; i++) {
-            for (let j = -shift; j <= shift; j++) {
+        for (let i = -this.radius; i <= this.radius; i++) {
+            for (let j = -this.radius; j <= this.radius; j++) {
                 const shiftX = this.x + i
                 const shiftY = this.y + j
-                const { row, column } = getCellIndexes(shiftX, shiftY, pxPerCell)
-                colors[row][column].isColony = true
-                colors[row][column].visit = 100
+                const { row, column } = getCellIndexes(shiftX, shiftY, this.pxPerCell)
+
+                cells[row][column].setIsHome()
             }
         }
     }
 
-    drawAnts(context, colors, pxPerCell) {
+    drawAnts(context, cells) {
         for (let i = 0; i < this.antsNum; i++) {
-            this.ants[i].draw(context, colors, pxPerCell)
+            this.ants[i].draw(context, cells, this.pxPerCell)
         }
     }
 
     draw(context) {
         context.beginPath()
-        context.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
+        context.arc(this.x - this.pxPerCell, this.y - this.pxPerCell, this.radius, 0, Math.PI * 2)
         context.fill()
     }
 
-    update(colors, pxPerCell, colony) {
+    update(cells, pxPerCell, context) {
         for (let i = 0; i < this.antsNum; i++) {
-            if (this.ants[i].food && this.noFood) {
-                this.ants[i].isHero = true
-                this.noFood = false
-            }
-
-            this.ants[i].update(colors, pxPerCell, colony)
+            this.ants[i].update(cells, pxPerCell, context)
         }
     }
 }
