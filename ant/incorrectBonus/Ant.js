@@ -1,4 +1,4 @@
-import { getRandomArbitrary } from './helpers.js'
+import { getRandom } from './helpers.js'
 
 export class Ant {
     constructor(id, x, y) {
@@ -113,7 +113,7 @@ export class Ant {
             currentSum += probabilities[i + 1]
         }
 
-        const rand = getRandomArbitrary(0, probabilitiesSum)
+        const rand = getRandom(0, probabilitiesSum)
         let toPoint
 
         for (let i = 0; i < probabilitiesSegment.length; i++) {

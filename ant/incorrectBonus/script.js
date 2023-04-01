@@ -1,7 +1,7 @@
 import { Ant } from './Ant.js'
 import { canvas, canvasRect, withPixel } from './canvas.js'
 import { drawAnt, drawColony, drawFood } from './drawing.js'
-import { fillColonyPoints, fillFoodPoints, getRandomArbitrary } from './helpers.js'
+import { fillColonyPoints, fillFoodPoints, getRandom } from './helpers.js'
 import { Point } from './Point.js'
 
 // todo DOM
@@ -68,7 +68,7 @@ executeBtn.addEventListener('click', algorithm)
 
 const chooseCoordinates = (coord) => {
     colony = document.querySelector('.colony')
-    const rand = getRandomArbitrary(0, 1)
+    const rand = getRandom(0, 1)
 
     if (rand <= 0.25) {
         coord.x -= Math.floor(colony.clientWidth / 2)

@@ -1,6 +1,7 @@
-import { drawCell, getBlendedColors, getCellIndexes, getRandomArbitrary } from './helpers.js'
+import { distanceBetweenTwoVertexes, getBlendedColors, getCellIndexes, getNextPoint, getRandom } from './helpers.js'
 
-const PHERO_EVAPORATION = 0.8
+export const PHERO_EVAPORATION = 0.8
+export const Q = 2000
 
 export class Ant {
     constructor(colony, id, x, y, maxX, maxY, angle) {
@@ -15,14 +16,46 @@ export class Ant {
         this.maxX = maxX
         this.maxY = maxY
         this.food = 0
-        this.prevPoint = { x: this.x, y: this.y }
         this.nextPoint = { x: this.x, y: this.y }
-        this.under = { red: 0, green: 0, blue: 0 }
         this.path = []
-        this.isFirst = true
+        this.distance = 0
+        this.distanceToFood = 0
+        this.distanceToHome = 0
+        this.pathFromHome = []
+        this.goHome = false
+        this.isHero = false
     }
 
-    draw(context, view, colors, pxPerCell) {
+    redrawCell(point, colors, pxPerCell, context, fullDelete = false) {
+        const { row, column } = getCellIndexes(point.x, point.y, pxPerCell)
+        const colorCell = colors[row][column]
+        const multi = fullDelete ? 0 : PHERO_EVAPORATION
+
+        colors[row][column].red *= multi
+        colors[row][column].green *= multi
+        colors[row][column].blue *= multi
+
+        const R = colorCell.red
+        const G = colorCell.green
+        const B = colorCell.blue
+
+        colors[row][column].visit *= this.goHome ? 1 : multi
+        colors[row][column].food *= this.goHome ? multi : 1
+
+        context.beginPath()
+        context.save()
+        context.fillStyle = 'black'
+        context.fillRect(column * pxPerCell, row * pxPerCell, pxPerCell, pxPerCell)
+        context.restore()
+
+        context.beginPath()
+        context.save()
+        context.fillStyle = `rgb(${R}, ${G}, ${B})`
+        context.fillRect(column * pxPerCell, row * pxPerCell, pxPerCell, pxPerCell)
+        context.restore()
+    }
+
+    draw(context, colors, pxPerCell) {
         let { row, column } = getCellIndexes(this.x, this.y, pxPerCell)
 
         const cell = colors[row][column]
@@ -31,23 +64,19 @@ export class Ant {
         const G1 = cell.green
         const B1 = cell.blue
 
-        if (this.food) {
-            colors[row][column].foodAmount += this.food
-        }
-
-        const R2 = this.food ? 0 : 200
-        const G2 = this.food ? this.food % 255 : 0
+        const R2 = this.food ? 0 : 155
+        const G2 = this.food ? this.food : 0
         const B2 = 0
 
-        const { R, G, B } = getBlendedColors(R1, G1, B1, R2, G2, B2)
+        // const R = R2
+        // const G = G2
+        // const B = B2
+
+        let { R, G, B } = getBlendedColors(R1, G1, B1, R2, G2, B2)
 
         colors[row][column].red = R
         colors[row][column].green = G
         colors[row][column].blue = B
-        colors[row][column].visit += 1
-
-        this.prevPoint.x = this.x
-        this.prevPoint.y = this.y
 
         context.beginPath()
         context.save()
@@ -55,9 +84,6 @@ export class Ant {
         context.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
         context.fill()
         context.restore()
-
-        this.x = this.nextPoint.x
-        this.y = this.nextPoint.y
 
         context.beginPath()
         context.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
@@ -69,26 +95,28 @@ export class Ant {
         context.fillRect(column * pxPerCell, row * pxPerCell, pxPerCell * 2, pxPerCell * 2)
         context.restore()
 
-        if (this.path.length > 100) {
-            this.path.splice(0, 5)
+        this.x = this.nextPoint.x
+        this.y = this.nextPoint.y
 
-            for (let i = 0; i < 5; i++) {
+        context.beginPath()
+        context.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
+        context.fill()
+
+        const len = this.path.length
+        if (!len || this.goHome) return
+
+        for (let i = 0; i < len; i++) {
+            const point = this.path[i]
+            this.redrawCell(point, colors, pxPerCell, context)
+        }
+
+        if (this.path.length > 10 && !this.goHome) {
+            for (let i = 0; i < len; i++) {
                 const point = this.path[i]
-                const { row, column } = getCellIndexes(point.x, point.y, pxPerCell)
-
-                const R = (colors[row][column].red *= PHERO_EVAPORATION)
-                const G = (colors[row][column].green *= PHERO_EVAPORATION)
-                const B = (colors[row][column].blue *= PHERO_EVAPORATION)
-
-                colors[row][column].visit *= PHERO_EVAPORATION
-                colors[row][column].foodAmount *= PHERO_EVAPORATION
-
-                context.beginPath()
-                context.save()
-                context.fillStyle = `rgb(${R}, ${G}, ${B})`
-                context.fillRect(column * pxPerCell, row * pxPerCell, pxPerCell, pxPerCell)
-                context.restore()
+                this.redrawCell(point, colors, pxPerCell, context, true)
             }
+
+            this.path.splice(0, 10)
         }
     }
 
@@ -96,130 +124,195 @@ export class Ant {
         return x >= 0 && y >= 0 && x < this.maxX && y < this.maxY
     }
 
-    update(view, colors, pxPerCell) {
-        const alfa = this.alfa
-        const beta = this.beta
-        const radian = (this.angle * Math.PI) / 180
-        const x = this.x
-        const y = this.y
+    comeBackHome(colors, pxPerCell) {
+        if (this.pathFromHome.length <= 1) {
+            this.food = 0
+            this.path = []
+            this.distance = 0
+            this.pathFromHome = []
+            this.goHome = false
+            this.isHero = false
+            this.distanceToFood = 0
+            this.distanceToHome = 0
+            return
+        }
+
+        const a = this.pathFromHome.pop()
+        const lastPoint = this.pathFromHome[this.pathFromHome.length - 1]
+        const addDistance = distanceBetweenTwoVertexes(this.x, this.y, lastPoint.x, lastPoint.y)
+        this.distance += addDistance
+
+        const { row, column } = getCellIndexes(lastPoint.x, lastPoint.y, pxPerCell)
+        colors[row][column].distanceToFood = Math.min(this.distance - this.distanceToFood, colors[row][column].distanceToFood)
+
+        this.nextPoint.x = lastPoint.x
+        this.nextPoint.y = lastPoint.y
+    }
+
+    checkCell(row, column, per) {
+        return row >= 0 && column >= 0 && row < this.maxX / per && column < this.maxY / per
+    }
+
+    update(colors, pxPerCell, context) {
+        // if (this.isHero) {
+        //     this.comeBackHome(colors, pxPerCell)
+        //     return
+        // }
+
+        this.pathFromHome.push({ x: this.x, y: this.y })
+
         const distanceToWatch = 5
         const distanceToGo = 5
+        const turnCoordinates = getNextPoint(this.x, this.y, distanceToWatch, this.angle, 180)
+        const angles = [getRandom(30, 60), getRandom(-5, 5), getRandom(-30, -60)]
 
         const coordinates = [
-            {
-                x: Math.round(x + distanceToWatch * Math.cos(radian - Math.PI / 4)),
-                y: Math.round(y + distanceToWatch * Math.sin(radian - Math.PI / 4)),
-            },
-            {
-                x: Math.round(x + distanceToWatch * Math.cos(radian - Math.PI / 12)),
-                y: Math.round(y + distanceToWatch * Math.sin(radian - Math.PI / 12)),
-            },
-            {
-                x: Math.round(x + distanceToWatch * Math.cos(radian + Math.PI / 12)),
-                y: Math.round(y + distanceToWatch * Math.sin(radian + Math.PI / 12)),
-            },
-            {
-                x: Math.round(x + distanceToWatch * Math.cos(radian + Math.PI / 4)),
-                y: Math.round(y + distanceToWatch * Math.sin(radian + Math.PI / 4)),
-            },
+            getNextPoint(this.x, this.y, distanceToWatch, this.angle, angles[0]),
+            getNextPoint(this.x, this.y, distanceToWatch, this.angle, angles[1]),
+            getNextPoint(this.x, this.y, distanceToWatch, this.angle, angles[2]),
         ]
 
-        const segments = new Array(3)
+        const variants = []
+        let fullP = 0
 
-        let sumP = 0
-        for (let i = 0; i < segments.length; i++) {
-            const pixelFrom = {
-                x: Math.min(coordinates[i].x, coordinates[i + 1].x),
-                y: Math.max(coordinates[i].y, coordinates[i + 1].y),
-            }
-            const pixelTo = { x: Math.max(coordinates[i].x, coordinates[i + 1].x), y: Math.min(coordinates[i].y, coordinates[i + 1].y) }
+        // fill variants
+        for (let i = 0; i < coordinates.length; i++) {
+            const coordinate = coordinates[i]
+            const { row, column } = getCellIndexes(coordinate.x, coordinate.y, pxPerCell)
 
-            if (pixelFrom.x === pixelTo.x) {
-                pixelFrom.x = x
-            }
-
-            if (pixelFrom.y === pixelTo.y) {
-                pixelFrom.y = y
-            }
-
-            if (!this.checkStep(pixelFrom.x, pixelFrom.y)) {
-                segments[i] = { visit: 0, pheromones: 0, probabilities: 0, isInvalid: true, angle: 0 }
+            if (!this.checkStep(coordinate.x, coordinate.y, pxPerCell)) {
                 continue
             }
-            const { row, column } = getCellIndexes(pixelFrom.x, pixelFrom.y, pxPerCell)
-            let food = colors[row][column].foodAmount
-            let visit = colors[row][column].visit
 
-            visit = !visit ? 1 : visit
-            food = !food ? 1 : food
+            const cell = colors[row][column]
 
-            segments[i] = { visit: visit, pheromones: food, probabilities: 0, isInvalid: false, angle: 0 }
-            sumP += Math.pow(visit, alfa) * Math.pow(food, beta)
+            let pheromone = this.goHome ? cell.visit : cell.food
+            let distance = this.goHome ? cell.distanceToHome : cell.distanceToFood
+
+            pheromone = pheromone ? pheromone : 0.00000001
+
+            const p = Math.pow(1 / distance, this.alfa) * Math.pow(pheromone, this.beta)
+            const variant = { ...cell, x: coordinate.x, y: coordinate.y, pheromone: pheromone, distance: distance, p: p }
+
+            if (i === 0) variant.angle = angles[0]
+            if (i === 1) variant.angle = angles[1]
+            if (i === 2) variant.angle = angles[2]
+
+            variants.push(variant)
+            fullP += p
         }
 
-        if (!segments[0].isInvalid) segments[0].angle = -30
-        if (!segments[1].isInvalid) segments[1].angle = 0
-        if (!segments[2].isInvalid) segments[2].angle = 30
+        // none variants, add turn 180 degres
+        let idx = -1
+        if (!variants.length) {
+            const { row, column } = getCellIndexes(turnCoordinates.x, turnCoordinates.y, pxPerCell)
+            const cell = colors[row][column]
 
-        for (let i = 0; i < segments.length; ++i) {
-            const p = (Math.pow(segments[i].visit, alfa) * Math.pow(segments[i].pheromones, beta)) / sumP
-            const toSegmentX = x + distanceToGo * Math.cos(radian + (segments[i].angle * Math.PI) / 180)
-            const toSegmentY = y + distanceToGo * Math.sin(radian + (segments[i].angle * Math.PI) / 180)
-            segments[i].probabilities = this.checkStep(toSegmentX, toSegmentY) ? p : 0
+            variants.push({ ...cell, x: turnCoordinates.x, y: turnCoordinates.y, p: 1, angle: 180 })
+            fullP = 1
+            idx = 0
         }
 
-        segments.sort((a, b) => a.probabilities - b.probabilities)
-
-        const probabilitiesSum = segments.reduce((sum, el) => (sum += el.probabilities), 0)
-        const probabilitiesSegment = []
-
-        probabilitiesSegment.push({ from: 0, to: segments[0].probabilities })
-        let currentSum = segments[0].probabilities
-
-        for (let i = 0; i < 2; i++) {
-            probabilitiesSegment.push({ from: currentSum, to: currentSum + segments[i + 1].probabilities })
-            currentSum += segments[i + 1].probabilities
+        // fill probabilities of variants
+        for (let i = 0; i < variants.length; i++) {
+            variants[i].p = variants[i].p / fullP
         }
 
-        const rand = getRandomArbitrary(0, probabilitiesSum)
-        let toSegment = { isFinded: false }
+        // sort probabilities
+        variants.sort((a, b) => a.p - b.p)
 
-        for (let i = 0; i < probabilitiesSegment.length; i++) {
-            const segment = probabilitiesSegment[i]
+        // part on segments for random
+        const probabilities = []
+        let probabilitiesSum = variants[0].p
 
-            if (segment.from <= rand && segment.to > rand) {
-                toSegment.visit = segments[i].visit
-                toSegment.pheromones = segments[i].pheromones
-                toSegment.angle = segments[i].angle
-                toSegment.isFinded = true
+        probabilities.push({ from: 0, to: variants[0].p })
+
+        for (let i = 0; i < variants.length - 1; i++) {
+            const newP = variants[i + 1].p
+            probabilities.push({ from: probabilitiesSum, to: probabilitiesSum + newP })
+            probabilitiesSum += newP
+        }
+
+        // random 0 - 1
+        const rand = Math.random()
+
+        for (let i = 0; i < probabilities.length; i++) {
+            const prob = probabilities[i]
+
+            if (prob.from <= rand && prob.to > rand) {
+                idx = i
                 break
             }
         }
 
-        if (!toSegment.isFinded) {
-            toSegment.x = x + distanceToGo * Math.cos(radian + Math.PI)
-            toSegment.y = y + distanceToGo * Math.sin(radian + Math.PI)
-            toSegment.angle = 180
-        } else {
-            toSegment.x = x + distanceToGo * Math.cos(radian + (toSegment.angle * Math.PI) / 180)
-            toSegment.y = y + distanceToGo * Math.sin(radian + (toSegment.angle * Math.PI) / 180)
+        if (this.goHome) {
+            idx = variants.length - 1
         }
 
-        if (toSegment.pheromones >= 255) {
-            this.food = toSegment.pheromones
+        // update ant
+        const variant = variants[idx]
+
+        // update food
+        if (variant.isFood) {
+            variant.x = turnCoordinates.x
+            variant.y = turnCoordinates.y
+            variant.angle = 180
+            const { row, column } = getCellIndexes(variant.x, variant.y, pxPerCell)
+            this.food = variant.food
+            this.goHome = true
+
+            this.isHero = colors[row][column].foodBlock === 0
+            colors[row][column].foodBlock = 1
         }
 
-        toSegment.angle = getRandomArbitrary(0, toSegment.angle)
+        if (variant.isColony) {
+            this.isHero = false
+            this.colony.food += this.food
+            this.food = 0
+            this.goHome = false
+            variant.x = turnCoordinates.x
+            variant.y = turnCoordinates.y
+            variant.angle = 180
+            this.pathFromHome = []
+            this.distanceToFood = 0
+            this.distanceToHome = 0
+            const len = this.path.length
 
-        this.angle = this.angle + toSegment.angle
+            for (let i = 0; i < len; i++) {
+                const point = this.path[i]
+                this.redrawCell(point, colors, pxPerCell, context)
+            }
+            this.path.splice(0, len)
 
-        // this.x = toSegment.x
-        // this.y = toSegment.y
+            this.distance = 0
+        }
+        this.angle += variant.angle
+        const { row, column } = getCellIndexes(variant.x, variant.y, pxPerCell)
 
-        this.nextPoint.x = toSegment.x
-        this.nextPoint.y = toSegment.y
+        // update distances
+        const addDistance = distanceBetweenTwoVertexes(this.x, this.y, variant.x, variant.y)
+        this.distance += addDistance
+        this.distanceToHome += this.goHome ? 0 : addDistance
+        this.distanceToFood += this.goHome ? 0 : addDistance
 
-        this.path = [...this.path, { x: this.x, y: this.y }]
-        this.isFirst = false
+        const prevDistanceToHome = colors[row][column].distanceToHome
+        const prevDistanceToFood = colors[row][column].distanceToFood
+        colors[row][column].distanceToHome =
+            this.distanceToHome && !this.goHome ? Math.min(prevDistanceToHome, this.distanceToHome) : prevDistanceToHome
+        colors[row][column].distanceToFood =
+            Math.floor(this.distance - this.distanceToFood) !== 0 && this.goHome
+                ? Math.min(prevDistanceToFood, this.distance - this.distanceToFood)
+                : prevDistanceToFood
+
+        if (this.goHome) {
+            colors[row][column].food += this.isHero ? (this.food * 100) / this.distanceToFood : this.food / this.distanceToFood
+        }
+
+        colors[row][column].visit += this.goHome ? 0 : Q / this.distanceToHome
+
+        // update position and path
+        this.nextPoint.x = variant.x
+        this.nextPoint.y = variant.y
+        this.path.push({ x: this.x, y: this.y })
     }
 }

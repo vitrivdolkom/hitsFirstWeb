@@ -1,3 +1,4 @@
+import { PHERO_EVAPORATION } from './Ant.js'
 import { Colony } from './Colony.js'
 import { Food } from './Food.js'
 
@@ -7,7 +8,7 @@ window.addEventListener('load', function () {
     const locateFood = document.querySelector('input[name=locateFood]')
     const foodAmount = document.querySelector('input[type=range]')
     const executeBtn = document.querySelector('.execute')
-    const ANTS_NUM = 1000
+    const ANTS_NUM = 100
 
     // todo canvas
     const canvas = document.querySelector('canvas')
@@ -30,19 +31,28 @@ window.addEventListener('load', function () {
 
             for (let i = 0; i < this.colors.length; i++) {
                 for (let j = 0; j < this.colors[i].length; j++) {
-                    this.colors[i][j] = { red: 0, green: 0, blue: 0, alfa: 1, isWall: false, isFood: false, foodAmount: 0 }
+                    this.colors[i][j] = {
+                        red: 0,
+                        green: 0,
+                        blue: 0,
+                        isWall: false,
+                        isFood: false,
+                        food: 1,
+                        distanceToHome: 100000,
+                        distanceToFood: 100000,
+                        isColony: false,
+                        visit: 1,
+                    }
                 }
             }
-            console.log(this.colors.length)
-            this.colony = new Colony(colonyX, colonyY, ANTS_NUM, this.canvas)
+            this.colony = new Colony(colonyX, colonyY, ANTS_NUM, this.canvas, this.colors, this.pxPerCell)
             this.foods = []
 
             canvas.addEventListener('click', (e) => {
                 const x = e.offsetX
                 const y = e.offsetY
                 const amount = +foodAmount.value
-                const food = new Food(amount, x, y)
-                // food.fillCells(this.colors, this.pxPerCell)
+                const food = new Food(amount, x, y, this)
 
                 this.foods.push(food)
             })
@@ -54,21 +64,33 @@ window.addEventListener('load', function () {
             }
 
             this.colony.drawAnts(context, this.colors, this.pxPerCell)
-            this.colony.update(context, this.colors, this.pxPerCell)
+            this.colony.update(this.colors, this.pxPerCell, context)
             this.colony.draw(context)
         }
     }
 
-    const map = new Map(canvas, 700, 700)
-
+    const map = new Map(canvas, 100, 200)
+    let i = 0
     function animate() {
-        // ctx.clearRect(0, 0, canvas.width, canvas.height)
-        map.render(ctx)
-        requestAnimationFrame(animate)
-
         // setTimeout(() => {
         //     requestAnimationFrame(animate)
-        // }, 1000 / 30)
+        // }, 1000 / 10)
+
+        // if (!(i % 100)) {
+        //     ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+        //     for (let i = 0; i < map.colors.length; i++) {
+        //         for (let j = 0; j < map.colors[i].length; j++) {
+        //             map.colors[i][j].visit *= PHERO_EVAPORATION
+        //             map.colors[i][j].food *= PHERO_EVAPORATION
+        //         }
+        //     }
+        // }
+
+        map.render(ctx)
+        ++i
+        requestAnimationFrame(animate)
+        // console.log(i)
     }
 
     animate()
