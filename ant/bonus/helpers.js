@@ -6,8 +6,8 @@ export const getCellIndexes = (x, y, per) => {
     let row = Math.floor(y / per)
     let column = Math.floor(x / per)
 
-    row -= !row ? 0 : 1
-    column -= !column ? 0 : 1
+    // row -= !row ? 0 : 1
+    // column -= !column ? 0 : 1
 
     return { row: row, column: column }
 }
@@ -42,8 +42,16 @@ export const withPixel = (num) => {
 
 export const getNextPoint = (startX, startY, distance, angle, toAngle) => {
     const endAngle = ((angle + toAngle) * Math.PI) / 180
-    const x = Math.round(startX + distance * Math.cos(endAngle))
-    const y = Math.round(startY + distance * Math.sin(endAngle))
+    const x = startX + distance * Math.cos(endAngle)
+    const y = startY + distance * Math.sin(endAngle)
 
     return { x: x, y: y }
+}
+
+export const inRange = (num, from, to, newFrom, newTo) => {
+    const old_range = to - newFrom
+    const new_range = newTo - newFrom
+    const converted = ((num - from) * new_range) / old_range + newFrom
+
+    return converted
 }

@@ -6,7 +6,7 @@ export class Colony {
         this.food = 0
         this.x = x
         this.y = y
-        this.radius = pxPerCell * 2
+        this.radius = 20
         this.isLocated = false
         this.antsNum = antsNum
         this.ants = new Array(this.antsNum)
@@ -14,6 +14,16 @@ export class Colony {
         this.pxPerCell = pxPerCell
         this.maxRow = maxRow
         this.maxColumn = maxColumn
+
+        for (let i = -this.radius; i < this.radius; i++) {
+            for (let j = -this.radius; j < this.radius; j++) {
+                const shiftX = this.x + i
+                const shiftY = this.y + j
+                const { row, column } = getCellIndexes(shiftX, shiftY, this.pxPerCell)
+
+                cells[row][column].setIsHome(this.antsNum)
+            }
+        }
 
         for (let i = 0; i < this.antsNum; i++) {
             const angle = getRandom(0, 360)
@@ -28,16 +38,6 @@ export class Colony {
 
             this.ants[i] = new Ant(this, i, antCoordinates.x, antCoordinates.y, row, column, this.maxRow, this.maxColumn, angle)
         }
-
-        for (let i = -this.radius; i <= this.radius; i++) {
-            for (let j = -this.radius; j <= this.radius; j++) {
-                const shiftX = this.x + i
-                const shiftY = this.y + j
-                const { row, column } = getCellIndexes(shiftX, shiftY, this.pxPerCell)
-
-                cells[row][column].setIsHome()
-            }
-        }
     }
 
     drawAnts(context, cells) {
@@ -48,8 +48,11 @@ export class Colony {
 
     draw(context) {
         context.beginPath()
-        context.arc(this.x - this.pxPerCell, this.y - this.pxPerCell, this.radius, 0, Math.PI * 2)
+        context.save()
+        context.fillStyle = 'rgb(255, 0, 0)'
+        context.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
         context.fill()
+        context.restore()
     }
 
     update(cells, pxPerCell, context) {

@@ -1,4 +1,4 @@
-import { getCellIndexes, getNextPoint } from './helpers.js'
+import { getCellIndexes, getNextPoint, getRandom } from './helpers.js'
 
 export class Ant {
     constructor(colony, id, x, y, row, column, maxRow, maxColumn, angle) {
@@ -11,12 +11,11 @@ export class Ant {
         this.radius = 2
         this.angle = angle
         this.alfa = 1
-        this.beta = 2
+        this.beta = 1
         this.maxRow = maxRow
         this.maxColumn = maxColumn
         this.food = 0
         this.nextPoint = { row: this.row, column: this.column, x: this.x, y: this.y }
-        this.distance = 0
         this.distanceToFood = 0
         this.distanceToHome = 0
         this.pathFromHome = []
@@ -25,10 +24,12 @@ export class Ant {
     }
 
     draw(context, cells, pxPerCell) {
+        const color = cells[this.row][this.column].color
+
         context.beginPath()
         context.save()
-        context.fillStyle = 'black'
-        context.arc(this.x, this.y, this.radius + 0.1, 0, Math.PI * 2)
+        context.fillStyle = color
+        context.arc(this.x, this.y, this.radius + 0.2, 0, Math.PI * 2)
         context.fill()
         context.restore()
 
@@ -42,11 +43,35 @@ export class Ant {
         context.fill()
     }
 
-    updateDistances() {
-        this.distance += 1
+    comeBackHome(cells, pxPerCell, context) {
+        if (this.pathFromHome.length <= 1) {
+            this.colony.food += this.food
+            this.food = 0
+            this.pathFromHome = []
+            this.goHome = false
+            this.isHero = false
+            this.distanceToFood = 0
+            this.distanceToHome = 0
+            return
+        }
 
+        this.distanceToFood += 1
+
+        const a = this.pathFromHome.pop()
+        cells[a.row][a.column].distanceToFood = Math.min(this.distanceToFood, cells[a.row][a.column].distanceToFood)
+
+        cells[a.row][a.column].update(context)
+        cells[a.row][a.column].visit(this)
+
+        this.nextPoint.x = a.x
+        this.nextPoint.y = a.y
+        this.nextPoint.row = a.row
+        this.nextPoint.column = a.column
+    }
+
+    updateDistances() {
         if (this.goHome) {
-            this.distanceToFood = this.distance - this.distanceToFood
+            this.distanceToFood += 1
         } else {
             this.distanceToHome += 1
         }
@@ -62,19 +87,22 @@ export class Ant {
 
     getNeighbours(distance) {
         const arr = []
-        const toWatch = distance / 2 + 2
+        const toWatch = distance * 2
+        const angles = [getRandom(-10, 10), getRandom(45, 60), getRandom(-45, -60)]
 
-        const direct = getNextPoint(this.x, this.y, toWatch, this.angle, 0)
-        const left = getNextPoint(this.x, this.y, toWatch, this.angle, 45)
-        const right = getNextPoint(this.x, this.y, toWatch, this.angle, -45)
+        const direct = getNextPoint(this.x, this.y, toWatch, this.angle, angles[0])
+        const left = getNextPoint(this.x, this.y, toWatch, this.angle, angles[1])
+        const right = getNextPoint(this.x, this.y, toWatch, this.angle, angles[2])
 
         const directCell = getCellIndexes(direct.x, direct.y, distance)
         const leftCell = getCellIndexes(left.x, left.y, distance)
         const rightCell = getCellIndexes(right.x, right.y, distance)
 
-        directCell.angle = 0
-        leftCell.angle = 45
-        rightCell.angle = -45
+        // if (directCell.row === leftCell.row && directCell.column === leftCell.column) debugger
+
+        directCell.angle = angles[0]
+        leftCell.angle = angles[1]
+        rightCell.angle = angles[2]
 
         if (this.checkCoordinates(direct, distance) && this.checkCell(directCell)) arr.push({ ...directCell, ...direct })
         if (this.checkCoordinates(left, distance) && this.checkCell(leftCell)) arr.push({ ...leftCell, ...left })
@@ -84,7 +112,8 @@ export class Ant {
     }
 
     update(cells, pxPerCell, context) {
-        this.pathFromHome.push({ x: this.x, y: this.y })
+        if (this.isHero) this.comeBackHome(cells, pxPerCell, context)
+        this.pathFromHome.push({ x: this.x, y: this.y, row: this.row, column: this.column })
 
         const neighbours = this.getNeighbours(pxPerCell)
 
@@ -101,10 +130,11 @@ export class Ant {
             const row = coordinate.row
             const column = coordinate.column
 
-            cells[row][column].update()
+            cells[row][column].update(context)
             const cell = cells[row][column]
 
             let pheromone = this.goHome ? cell.homeMarker : cell.foodMarker
+            // let pheromone = this.goHome ? 1 : cell.foodMarker
             let distance = this.goHome ? cell.distanceToHome : cell.distanceToFood
 
             const p = Math.pow(1 / distance, this.alfa) * Math.pow(pheromone, this.beta)
@@ -156,18 +186,16 @@ export class Ant {
             }
         }
 
-        this.updateDistances()
-
         // update ant
         const variant = variants[idx]
 
         // update food
         if (variant.isFood) {
+            this.isHero = cells[variant.row][variant.column].visitFood()
             variant.row = turnCell.row
             variant.column = turnCell.column
             variant.angle = 180
             this.food = variant.foodBlock.amount
-            debugger
             this.goHome = true
         }
 
@@ -181,8 +209,9 @@ export class Ant {
             this.pathFromHome = []
             this.distanceToFood = 0
             this.distanceToHome = 0
-            this.distance = 0
         }
+
+        this.updateDistances()
 
         this.angle += variant.angle
         const row = variant.row
@@ -191,12 +220,8 @@ export class Ant {
 
         const prevDistanceToHome = toCell.distanceToHome
         const prevDistanceToFood = toCell.distanceToFood
-        cells[row][column].distanceToHome =
-            this.distanceToHome && !this.goHome ? Math.min(prevDistanceToHome, this.distanceToHome) : prevDistanceToHome
-        cells[row][column].distanceToFood =
-            this.distance - this.distanceToFood !== 0 && this.goHome
-                ? Math.min(prevDistanceToFood, this.distance - this.distanceToFood)
-                : prevDistanceToFood
+        cells[row][column].distanceToHome = !this.goHome ? Math.min(prevDistanceToHome, this.distanceToHome) : prevDistanceToHome
+        cells[row][column].distanceToFood = this.goHome ? Math.min(prevDistanceToFood, this.distanceToFood) : prevDistanceToFood
 
         cells[row][column].visit(this)
 

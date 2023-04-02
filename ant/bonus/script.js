@@ -9,25 +9,25 @@ window.addEventListener('load', function () {
     const locateFood = document.querySelector('input[name=locateFood]')
     const foodAmount = document.querySelector('input[type=range]')
     const executeBtn = document.querySelector('.execute')
-    const ANTS_NUM = 500
+    const ANTS_NUM = 200
 
     // todo canvas
     const canvas = document.querySelector('canvas')
     const ctx = canvas.getContext('2d')
-    // canvas.width = canvasWrapper.clientWidth
-    // canvas.height = canvasWrapper.clientHeight
+    canvas.width = canvasWrapper.clientWidth
+    canvas.height = canvasWrapper.clientHeight
 
-    canvas.width = 1000
-    canvas.height = 500
+    // canvas.width = 1000
+    // canvas.height = 600
 
-    ctx.fillStyle = `rgb(255, 0, 0)`
+    ctx.fillStyle = `rgb(0, 0, 255)`
 
     class Map {
         constructor(canvas, colonyX, colonyY) {
             this.canvas = canvas
             this.width = this.canvas.width
             this.height = this.canvas.height
-            this.pxPerCell = 10
+            this.pxPerCell = 3
             this.rows = Math.floor(this.height / this.pxPerCell)
             this.columns = Math.floor(this.width / this.pxPerCell)
             this.cells = new Array(this.rows)
@@ -50,10 +50,13 @@ window.addEventListener('load', function () {
             canvas.addEventListener('click', (e) => {
                 const x = e.offsetX
                 const y = e.offsetY
-                const amount = +foodAmount.value
-                const food = new Food(amount, x, y, this)
 
-                this.foods.push(food)
+                if (locateFood.checked) {
+                    const amount = +foodAmount.value
+                    const food = new Food(amount, x, y, this, this.pxPerCell)
+
+                    this.foods.push(food)
+                }
             })
         }
 
@@ -78,17 +81,17 @@ window.addEventListener('load', function () {
         }
     }
 
-    const map = new Map(canvas, 500, 200)
+    const map = new Map(canvas, canvas.width / 2, canvas.height / 2)
 
     map.firstDraw(ctx)
 
     function animate() {
         map.render(ctx)
-        requestAnimationFrame(animate)
+        // requestAnimationFrame(animate)
 
-        // setTimeout(() => {
-        //     requestAnimationFrame(animate)
-        // }, 1000 / 5)
+        setTimeout(() => {
+            requestAnimationFrame(animate)
+        }, 1000 / 60)
     }
 
     animate()
