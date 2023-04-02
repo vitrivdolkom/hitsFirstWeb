@@ -5,6 +5,9 @@ let ctx = canvas.getContext('2d')
 let input = document.querySelector('.kMeans')
 let clear = document.querySelector('.clear')
 let starter = document.querySelector('.start')
+let euclid = document.querySelector('#euclid')
+let manhetten = document.querySelector('#manhetten')
+let chebyshev = document.querySelector('#chebyshev')
 
 ctx.canvas.width = 1000
 ctx.canvas.height = 500
@@ -31,7 +34,13 @@ function getMousePos(canvas, e) {
 function findDistance(a, b) {
     let dx = a.x - b.x
     let dy = a.y - b.y
-    return Math.sqrt(dx * dx + dy * dy)
+    if (euclid.checked) {
+        return dx ** 2 + dy ** 2
+    } else if (manhetten.checked) {
+        return Math.abs(dx) + Math.abs(dy)
+    } else if (chebyshev.checked) {
+        return Math.max(Math.abs(dx), Math.abs(dy))
+    }
 }
 
 function kMeans(points, k, maxIterations) {
@@ -65,26 +74,6 @@ function kMeans(points, k, maxIterations) {
             clusters[closestCentroids].push(points[i])
             points[i].clusterIndex = closestCentroids
         }
-
-        let flag = true
-        for (let i = 0; i < centroids.length; i++) {
-            let oldCentroid = centroids[i]
-            let cluster = clusters[i]
-            if (cluster.length == 0) {
-                continue
-            }
-
-            let xSum = cluster.reduce((sum, point) => sum + point.x, 0) //Сумма элементов всех иксов(игриков)
-            let ySum = cluster.reduce((sum, point) => sum + point.y, 0)
-            let newCentroid = [xSum / cluster.length, ySum / cluster.length]
-            if (findDistance(oldCentroid, newCentroid) > 0) {
-                converged = false
-                centroids[i] = newCentroid
-            }
-        }
-        if (flag) {
-            break
-        }
     }
     for (let i = 0; i < points.length; i++) {
         points[i].visit = false
@@ -100,11 +89,11 @@ clear.addEventListener('click', function (e) {
 })
 
 starter.addEventListener('click', function (e) {
-    if (+input.value == input.value && input.value >= 1) {
+    if (+input.value == input.value && input.value >= 1 && points.length >= input.value) {
         ctx.clearRect(0, 0, canvasWidth, canvasHeight)
         ctx.strokeStyle = 'black'
         ctx.strokeRect(0, 0, canvasWidth, canvasHeight)
-        let centroids = kMeans(points, +input.value, 300)
+        let centroids = kMeans(points, +input.value, 100)
         for (let i = 0; i < points.length; i++) {
             let point = points[i]
             let clusterIndex = point.clusterIndex
@@ -130,6 +119,8 @@ starter.addEventListener('click', function (e) {
         ctx.fillStyle = 'black'
     } else if (+input.value != input.value) {
         alert('Введите корректное число')
+    } else if (points.length < input.value) {
+        alert('Поставьте больше точек или уменьшите кол-во главных')
     }
 })
 
