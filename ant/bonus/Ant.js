@@ -1,4 +1,4 @@
-import { getCellIndexes, getNextPoint, getRandom } from './helpers.js'
+import { getAngle, getCellIndexes, getNextPoint, getRandom } from './helpers.js'
 
 export class Ant {
     constructor(colony, id, x, y, row, column, maxRow, maxColumn, angle) {
@@ -38,9 +38,9 @@ export class Ant {
         this.row = this.nextPoint.row
         this.column = this.nextPoint.column
 
-        context.beginPath()
-        context.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
-        context.fill()
+        // context.beginPath()
+        // context.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
+        // context.fill()
     }
 
     comeBackHome(cells, pxPerCell, context) {
@@ -87,6 +87,36 @@ export class Ant {
 
     getNeighbours(distance) {
         const arr = []
+        const toWatch = distance + 2
+
+        for (let i = -2; i <= 2; i++) {
+            for (let j = -2; j <= 2; j++) {
+                const toRow = this.row + i
+                const toColumn = this.column + j
+                if (!this.checkCell({ row: toRow, column: toColumn }) || (i === 0 && j === 0)) continue
+
+                const neighbour = {
+                    row: toRow,
+                    column: toColumn,
+                    x: getRandom(toColumn * distance, (toColumn + 1) * distance),
+                    y: getRandom(toRow * distance, (toRow + 1) * distance),
+                }
+
+                const angle = getAngle(this.x, this.y, this.angle, neighbour.x, neighbour.y, toWatch)
+
+                if (angle > 70 && angle < 290) continue
+
+                neighbour.angle = angle
+
+                arr.push(neighbour)
+            }
+        }
+
+        return arr
+    }
+
+    getNeighbours2(distance) {
+        const arr = []
         const toWatch = distance * 2
         const angles = [getRandom(-10, 10), getRandom(45, 60), getRandom(-45, -60)]
 
@@ -110,7 +140,6 @@ export class Ant {
 
         return arr
     }
-
     update(cells, pxPerCell, context) {
         if (this.isHero) this.comeBackHome(cells, pxPerCell, context)
         this.pathFromHome.push({ x: this.x, y: this.y, row: this.row, column: this.column })
@@ -134,13 +163,14 @@ export class Ant {
             const cell = cells[row][column]
 
             let pheromone = this.goHome ? cell.homeMarker : cell.foodMarker
-            // let pheromone = this.goHome ? 1 : cell.foodMarker
             let distance = this.goHome ? cell.distanceToHome : cell.distanceToFood
 
-            const p = Math.pow(1 / distance, this.alfa) * Math.pow(pheromone, this.beta)
+            let p = Math.pow(1 / distance, this.alfa) * Math.pow(pheromone, this.beta)
+            if (this.goHome && cell.isFood) p = 0
+            if (!this.goHome && cell.isHome) p = 0
             const variant = { ...cell, pheromone: pheromone, distance: distance, p: p, ...coordinate }
 
-            variants.push(variant)
+            if (p) variants.push(variant)
             fullP += p
         }
 
@@ -192,8 +222,10 @@ export class Ant {
         // update food
         if (variant.isFood) {
             this.isHero = cells[variant.row][variant.column].visitFood()
-            variant.row = turnCell.row
-            variant.column = turnCell.column
+            variant.row = this.row
+            variant.column = this.column
+            variant.x = this.x
+            variant.y = this.y
             variant.angle = 180
             this.food = variant.foodBlock.amount
             this.goHome = true
@@ -203,8 +235,10 @@ export class Ant {
             this.colony.food += this.food
             this.food = 0
             this.goHome = false
-            variant.row = turnCell.row
-            variant.column = turnCell.column
+            variant.row = this.row
+            variant.column = this.column
+            variant.x = this.x
+            variant.y = this.y
             variant.angle = 180
             this.pathFromHome = []
             this.distanceToFood = 0

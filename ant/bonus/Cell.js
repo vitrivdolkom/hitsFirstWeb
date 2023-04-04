@@ -1,6 +1,6 @@
 import { inRange } from './helpers.js   '
 
-export const EVAPORATION_TIME = 1
+export const EVAPORATION_TIME = 5
 export const PHEROMONE_EVAPORATION = 0.9
 
 export class Cell {
@@ -12,8 +12,8 @@ export class Cell {
         this.size = size
         this.foodMarker = 1
         this.homeMarker = 1
-        this.distanceToHome = 100000
-        this.distanceToFood = 100000
+        this.distanceToHome = 1000
+        this.distanceToFood = 1000
         this.empty = true
         this.isHome = false
         this.isFood = false
@@ -25,6 +25,7 @@ export class Cell {
         this.isFood = true
         this.foodBlock = foodBlock
         this.foodMarker = this.foodBlock.amount
+        this.distanceToFood = 0.00000001
     }
 
     visitFood() {
@@ -39,15 +40,17 @@ export class Cell {
     setIsHome(amount) {
         this.isHome = true
         this.homeMarker = amount
+        this.distanceToHome = 0.00000001
     }
 
     draw(context) {
-        if (this.isHome || this.isFood) return
+        let color =
+            this.foodMarker > 100
+                ? `rgba(0, ${inRange(this.foodMarker, 0, 5000, 40, 220)}, 0, 1)`
+                : `rgba(${inRange(Math.min(this.homeMarker, 200), 0, 200, 20, 235)},0, 0, 1)`
 
-        const color =
-            this.foodMarker > 10
-                ? `rgba(0, ${inRange(this.foodMarker, 0, 1500, 0, 255)}, 0, 1)`
-                : `rgba(${inRange(this.homeMarker, 0, 100, 0, 255)},0, 0, 1)`
+        color = this.isHome ? 'rgb(255, 0, 0)' : color
+        color = this.isFood ? `rgb(26, ${inRange(this.foodMarker, 0, 500, 40, 200)}, 1)` : color
 
         this.color = color
 
@@ -62,17 +65,11 @@ export class Cell {
         context.fillStyle = color
         context.fillRect(this.x, this.y, this.size, this.size)
         context.restore()
-
-        // context.beginPath()
-        // context.save()
-        // context.fillStyle = color
-        // context.arc(this.x, this.y, this.size / 3, 0, Math.PI * 2)
-        // context.restore()
     }
 
     visit(ant) {
         if (ant.goHome) {
-            this.foodMarker += ant.isHero ? ant.food : ant.food / 10
+            this.foodMarker += ant.isHero ? ant.food : ant.food / 2
         } else {
             this.homeMarker += 10
         }
@@ -88,14 +85,20 @@ export class Cell {
 
         const now = new Date()
         const lifetime = (now.getTime() - this.start.getTime()) / 1000
-        const evaporate = Math.floor(Math.max(1, lifetime / EVAPORATION_TIME))
+        const evaporate = Math.round(lifetime / EVAPORATION_TIME)
         this.foodMarker *= Math.pow(PHEROMONE_EVAPORATION, evaporate)
-        // this.homeMarker *= Math.pow(PHEROMONE_EVAPORATION, evaporate)
+        this.homeMarker *= Math.pow(PHEROMONE_EVAPORATION, evaporate)
 
         this.foodMarker = Math.max(1, this.foodMarker)
-        // this.homeMarker = Math.max(1, this.homeMarker)
+        this.homeMarker = Math.max(1, this.homeMarker)
 
-        this.start = new Date()
+        if (lifetime > 1) {
+            this.start = new Date()
+        }
+
+        if (this.foodMarker > 5000) this.foodMarker = 5000
+        if (this.homeMarker > 200) this.homeMarker = 200
+
         this.draw(context)
     }
 }

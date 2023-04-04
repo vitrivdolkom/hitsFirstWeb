@@ -5,7 +5,7 @@ export class Food {
         this.amount = amount
         this.x = Math.round(x)
         this.y = Math.round(y)
-        this.radius = pxPerCell * 5
+        this.radius = pxPerCell * 4
         this.map = map
         this.isEaten = false
 
@@ -34,12 +34,5 @@ export class Food {
                 this.map.cells[row][column].draw(context)
             }
         }
-
-        context.beginPath()
-        context.save()
-        context.fillStyle = `rgb(26, 109, 1)`
-        context.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
-        context.fill()
-        context.restore()
     }
 }

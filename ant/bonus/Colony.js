@@ -28,13 +28,11 @@ export class Colony {
         for (let i = 0; i < this.antsNum; i++) {
             const angle = getRandom(0, 360)
             const antCoordinates = {
-                x: Math.round(this.x + (this.radius + pxPerCell) * Math.cos((angle * Math.PI) / 180)),
-                y: Math.round(this.y + (this.radius + pxPerCell) * Math.sin((angle * Math.PI) / 180)),
+                x: Math.round(this.x + (this.radius + 2 * pxPerCell) * Math.cos((angle * Math.PI) / 180)),
+                y: Math.round(this.y + (this.radius + 2 * pxPerCell) * Math.sin((angle * Math.PI) / 180)),
             }
 
             const { row, column } = getCellIndexes(antCoordinates.x, antCoordinates.y, this.pxPerCell)
-            // antCoordinates.x = column * this.pxPerCell + this.pxPerCell / 2
-            // antCoordinates.y = row * this.pxPerCell + this.pxPerCell / 2
 
             this.ants[i] = new Ant(this, i, antCoordinates.x, antCoordinates.y, row, column, this.maxRow, this.maxColumn, angle)
         }
@@ -44,15 +42,6 @@ export class Colony {
         for (let i = 0; i < this.antsNum; i++) {
             this.ants[i].draw(context, cells, this.pxPerCell)
         }
-    }
-
-    draw(context) {
-        context.beginPath()
-        context.save()
-        context.fillStyle = 'rgb(255, 0, 0)'
-        context.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
-        context.fill()
-        context.restore()
     }
 
     update(cells, pxPerCell, context) {

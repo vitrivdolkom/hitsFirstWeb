@@ -9,7 +9,7 @@ window.addEventListener('load', function () {
     const locateFood = document.querySelector('input[name=locateFood]')
     const foodAmount = document.querySelector('input[type=range]')
     const executeBtn = document.querySelector('.execute')
-    const ANTS_NUM = 200
+    const ANTS_NUM = 300
 
     // todo canvas
     const canvas = document.querySelector('canvas')
@@ -20,14 +20,14 @@ window.addEventListener('load', function () {
     // canvas.width = 1000
     // canvas.height = 600
 
-    ctx.fillStyle = `rgb(0, 0, 255)`
+    ctx.fillStyle = `rgb(255, 0, 0)`
 
     class Map {
         constructor(canvas, colonyX, colonyY) {
             this.canvas = canvas
             this.width = this.canvas.width
             this.height = this.canvas.height
-            this.pxPerCell = 3
+            this.pxPerCell = 4
             this.rows = Math.floor(this.height / this.pxPerCell)
             this.columns = Math.floor(this.width / this.pxPerCell)
             this.cells = new Array(this.rows)
@@ -66,8 +66,6 @@ window.addEventListener('load', function () {
                     this.cells[i][j].draw(context)
                 }
             }
-
-            this.colony.draw(context)
         }
 
         render(context) {
@@ -77,7 +75,6 @@ window.addEventListener('load', function () {
 
             this.colony.drawAnts(context, this.cells)
             this.colony.update(this.cells, this.pxPerCell, context)
-            this.colony.draw(context)
         }
     }
 
@@ -85,14 +82,18 @@ window.addEventListener('load', function () {
 
     map.firstDraw(ctx)
 
+    let i = 0
     function animate() {
+        if (!(i % 1000000) && i !== 0) map.firstDraw(ctx)
         map.render(ctx)
-        // requestAnimationFrame(animate)
+        requestAnimationFrame(animate)
 
-        setTimeout(() => {
-            requestAnimationFrame(animate)
-        }, 1000 / 60)
+        // setTimeout(() => {
+        //     requestAnimationFrame(animate)
+        // }, 1000 / 60)
+
+        ++i
     }
 
-    animate()
+    // animate()
 })

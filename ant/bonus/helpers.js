@@ -55,3 +55,28 @@ export const inRange = (num, from, to, newFrom, newTo) => {
 
     return converted
 }
+
+export const getAngle = (x1, y1, angle, x2, y2, distance) => {
+    const startX = x1
+    const startY = y1
+    const endX = getNextPoint(startX, startY, distance, angle, 0).x
+    const endY = getNextPoint(startX, startY, distance, angle, 0).y
+
+    const vectorX = x2 - startX
+    const vectorY = y2 - startY
+
+    const dx = endX - startX
+    const dy = endY - startY
+    const dotProduct = dx * vectorX + dy * vectorY
+    const mag1 = Math.sqrt(dx * dx + dy * dy)
+    const mag2 = Math.sqrt(vectorX * vectorX + vectorY * vectorY)
+    const angleRadians = Math.acos(dotProduct / (mag1 * mag2))
+    const angleDegrees = (angleRadians * 180) / Math.PI
+    let angleResult = angleDegrees
+
+    if (dotProduct < 0) {
+        angleResult = 360 - angleDegrees
+    }
+
+    return angleResult
+}

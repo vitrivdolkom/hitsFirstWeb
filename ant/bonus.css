@@ -12,23 +12,18 @@ button {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+
+.top {
+  height: 30px;
 }
 
 .canvasWrapper {
   flex: 1 1 auto;
-  position: relative;
   width: 100%;
   height: 100%;
-}
-
-/* new try */
-
-.ant {
-  width: 3px;
-  height: 3px;
-  background-color: red;
-  transition: all .3s linear;
-  border-radius: 50%;
-  position: absolute;
-  z-index: 3;
+  overflow-y: hidden;
+  overflow-x: hidden;
 }
