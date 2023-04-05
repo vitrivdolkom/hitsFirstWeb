@@ -1,3 +1,4 @@
+import { FOOD_RADIUS } from './constants.js'
 import { getCellIndexes } from './helpers.js'
 
 export class Food {
@@ -5,7 +6,7 @@ export class Food {
         this.amount = amount
         this.x = Math.round(x)
         this.y = Math.round(y)
-        this.radius = pxPerCell * 4
+        this.radius = FOOD_RADIUS
         this.map = map
         this.isEaten = false
 

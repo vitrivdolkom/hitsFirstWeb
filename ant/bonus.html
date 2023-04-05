@@ -1,36 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Ant Algorithm</title>
+        <link rel="stylesheet" href="./bonus.css" />
+        <link rel="stylesheet" href="../zero.css" />
+        <link rel="stylesheet" href="../mixin.css" />
+    </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ant Algorithm</title>
-  <link rel="stylesheet" href="./bonus.css">
-  <link rel="stylesheet" href="../zero.css">
-</head>
+    <body>
+        <div class="wrapper">
+            <div class="top show">
+                <div class="menuWrapper">
+                    <div class="rangeInput">
+                        <label for="antAmount">Количество муравьев: <span class="numberAnt"></span></label>
+                        <input type="range" min="1" max="500" id="antAmount" />
+                    </div>
 
-<body>
+                    <div class="labelInput">
+                        <label for="colony">Поставить колонию</label>
+                        <input type="radio" id="colony" name="select" checked />
+                    </div>
 
-  <div class="wrapper">
-    <div class="top">
-      <label for="locateColony">Поставить колонию</label>
-      <input type="checkbox" name="locateColony" id="locateColony">
+                    <div class="rangeInput">
+                        <label for="foodAmount">Количество еды: <span class="numberFood"></span></label>
+                        <input type="range" min="150" max="500" id="foodAmount" />
+                    </div>
 
-      <label for="foodAmount">Выберите количество еды</label>
-      <input type="range" min="150" max="500" name="locateColony" id="foodAmount">
+                    <div class="labelInput">
+                        <label for="food">Поставить еду</label>
+                        <input type="radio" id="food" name="select" />
+                    </div>
 
-      <label for="locateFood">Поставить Еду</label>
-      <input type="checkbox" name="locateFood" id="locateFood">
+                    <div class="labelInput">
+                        <label for="wall">Поставить стенку</label>
+                        <input type="radio" name="select" id="wall" />
+                    </div>
 
-      <button class="execute">Запустить</button>
-    </div>
-    <div class="canvasWrapper">
-        <canvas></canvas>
-    </div>
-  </div>
+                    <button class="execute btn">Запустить</button>
+                </div>
+                <div class="openMenu"><i class="arrow"></i></div>
+            </div>
+            <div class="canvasWrapper">
+                <canvas></canvas>
+            </div>
+        </div>
 
-  <script type="module" src="./bonus/script.js"></script>
-</body>
-
+        <script type="module" src="./bonus/script.js"></script>
+    </body>
 </html>

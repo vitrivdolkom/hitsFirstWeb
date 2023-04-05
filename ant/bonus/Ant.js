@@ -1,4 +1,4 @@
-import { getAngle, getCellIndexes, getNextPoint, getRandom } from './helpers.js'
+import { distanceBetweenTwoVertexes, getAngle, getCellIndexes, getNextPoint, getRandom } from './helpers.js'
 
 export class Ant {
     constructor(colony, id, x, y, row, column, maxRow, maxColumn, angle) {
@@ -25,22 +25,19 @@ export class Ant {
 
     draw(context, cells, pxPerCell) {
         const color = cells[this.row][this.column].color
-
         context.beginPath()
         context.save()
         context.fillStyle = color
         context.arc(this.x, this.y, this.radius + 0.2, 0, Math.PI * 2)
         context.fill()
         context.restore()
-
         this.x = this.nextPoint.x
         this.y = this.nextPoint.y
         this.row = this.nextPoint.row
         this.column = this.nextPoint.column
-
-        // context.beginPath()
-        // context.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
-        // context.fill()
+        context.beginPath()
+        context.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
+        context.fill()
     }
 
     comeBackHome(cells, pxPerCell, context) {
@@ -69,11 +66,13 @@ export class Ant {
         this.nextPoint.column = a.column
     }
 
-    updateDistances() {
+    updateDistances(variant) {
+        const addDistance = distanceBetweenTwoVertexes(this.x, this.y, variant.x, variant.y)
+
         if (this.goHome) {
-            this.distanceToFood += 1
+            this.distanceToFood += addDistance
         } else {
-            this.distanceToHome += 1
+            this.distanceToHome += addDistance
         }
     }
 
@@ -115,31 +114,6 @@ export class Ant {
         return arr
     }
 
-    getNeighbours2(distance) {
-        const arr = []
-        const toWatch = distance * 2
-        const angles = [getRandom(-10, 10), getRandom(45, 60), getRandom(-45, -60)]
-
-        const direct = getNextPoint(this.x, this.y, toWatch, this.angle, angles[0])
-        const left = getNextPoint(this.x, this.y, toWatch, this.angle, angles[1])
-        const right = getNextPoint(this.x, this.y, toWatch, this.angle, angles[2])
-
-        const directCell = getCellIndexes(direct.x, direct.y, distance)
-        const leftCell = getCellIndexes(left.x, left.y, distance)
-        const rightCell = getCellIndexes(right.x, right.y, distance)
-
-        // if (directCell.row === leftCell.row && directCell.column === leftCell.column) debugger
-
-        directCell.angle = angles[0]
-        leftCell.angle = angles[1]
-        rightCell.angle = angles[2]
-
-        if (this.checkCoordinates(direct, distance) && this.checkCell(directCell)) arr.push({ ...directCell, ...direct })
-        if (this.checkCoordinates(left, distance) && this.checkCell(leftCell)) arr.push({ ...leftCell, ...left })
-        if (this.checkCoordinates(right, distance) && this.checkCell(rightCell)) arr.push({ ...rightCell, ...right })
-
-        return arr
-    }
     update(cells, pxPerCell, context) {
         if (this.isHero) this.comeBackHome(cells, pxPerCell, context)
         this.pathFromHome.push({ x: this.x, y: this.y, row: this.row, column: this.column })
@@ -245,7 +219,7 @@ export class Ant {
             this.distanceToHome = 0
         }
 
-        this.updateDistances()
+        this.updateDistances(variant)
 
         this.angle += variant.angle
         const row = variant.row
@@ -254,8 +228,10 @@ export class Ant {
 
         const prevDistanceToHome = toCell.distanceToHome
         const prevDistanceToFood = toCell.distanceToFood
-        cells[row][column].distanceToHome = !this.goHome ? Math.min(prevDistanceToHome, this.distanceToHome) : prevDistanceToHome
-        cells[row][column].distanceToFood = this.goHome ? Math.min(prevDistanceToFood, this.distanceToFood) : prevDistanceToFood
+        cells[row][column].distanceToHome =
+            !this.goHome && this.distanceToHome ? Math.min(prevDistanceToHome, this.distanceToHome) : prevDistanceToHome
+        cells[row][column].distanceToFood =
+            this.goHome && this.distanceToFood ? Math.min(prevDistanceToFood, this.distanceToFood) : prevDistanceToFood
 
         cells[row][column].visit(this)
 

@@ -1,99 +1,99 @@
-import { Cell } from './Cell.js'
-import { Colony } from './Colony.js'
-import { Food } from './Food.js'
-import { getCellIndexes } from './helpers.js'
+import { COLONY_RADIUS, FOOD_RADIUS } from './constants.js'
+import { WorldMap } from './Map.js'
 
 window.addEventListener('load', function () {
     const canvasWrapper = document.querySelector('.canvasWrapper')
-    const locateColonyInput = document.querySelector('input[name=locateColony]')
-    const locateFood = document.querySelector('input[name=locateFood]')
-    const foodAmount = document.querySelector('input[type=range]')
+    const locateColonyInput = document.querySelector('#colony')
+    const locateFood = document.querySelector('#food')
     const executeBtn = document.querySelector('.execute')
-    const ANTS_NUM = 300
+
+    const foodAmountInput = document.querySelector('#foodAmount')
+    const foodAmountSpan = document.querySelector('.numberFood')
+
+    const antAmountInput = document.querySelector('#antAmount')
+    const antAmountSpan = document.querySelector('.numberAnt')
+
+    const menu = document.querySelector('.top')
+    const openMenu = document.querySelector('.openMenu')
+
+    foodAmountSpan.textContent = +foodAmountInput.value
+    antAmountSpan.textContent = +antAmountInput.value
 
     // todo canvas
     const canvas = document.querySelector('canvas')
     const ctx = canvas.getContext('2d')
     canvas.width = canvasWrapper.clientWidth
     canvas.height = canvasWrapper.clientHeight
-
-    // canvas.width = 1000
-    // canvas.height = 600
-
     ctx.fillStyle = `rgb(255, 0, 0)`
 
-    class Map {
-        constructor(canvas, colonyX, colonyY) {
-            this.canvas = canvas
-            this.width = this.canvas.width
-            this.height = this.canvas.height
-            this.pxPerCell = 4
-            this.rows = Math.floor(this.height / this.pxPerCell)
-            this.columns = Math.floor(this.width / this.pxPerCell)
-            this.cells = new Array(this.rows)
+    // todo variables
+    let colonyCoordinates = { x: canvas.width / 2, y: canvas.height / 2, isSelected: false }
+    let foodCoordinates = []
 
-            for (let i = 0; i < this.rows; i++) {
-                this.cells[i] = new Array(this.columns)
+    let map = new WorldMap(canvas, colonyCoordinates.x, colonyCoordinates.y, locateFood, foodCoordinates, +antAmountInput.value)
 
-                for (let j = 0; j < this.columns; j++) {
-                    this.cells[i][j] = new Cell(j * this.pxPerCell, i * this.pxPerCell, i, j, this.pxPerCell)
-                }
-            }
+    // todo event listeners
+    foodAmountInput.addEventListener('input', function (e) {
+        foodAmountSpan.textContent = +e.target.value
+    })
 
-            const { row, column } = getCellIndexes(colonyX, colonyY, this.pxPerCell)
-            colonyX = column * this.pxPerCell + this.pxPerCell / 2
-            colonyY = row * this.pxPerCell + this.pxPerCell / 2
+    antAmountInput.addEventListener('input', function (e) {
+        antAmountSpan.textContent = +e.target.value
+        map.antsNum = +e.target.value
+    })
 
-            this.colony = new Colony(colonyX, colonyY, ANTS_NUM, this.canvas, this.cells, this.pxPerCell, this.rows, this.columns)
-            this.foods = []
+    openMenu.addEventListener('click', function (e) {
+        menu.classList.toggle('show')
+        openMenu.childNodes[0].classList.toggle('up')
+    })
 
-            canvas.addEventListener('click', (e) => {
-                const x = e.offsetX
-                const y = e.offsetY
+    canvas.addEventListener('click', (e) => {
+        const x = e.offsetX
+        const y = e.offsetY
 
-                if (locateFood.checked) {
-                    const amount = +foodAmount.value
-                    const food = new Food(amount, x, y, this, this.pxPerCell)
+        if (locateFood.checked) {
+            foodCoordinates.push({ x: x, y: y, amount: +foodAmountSpan.textContent })
+            ctx.save()
+            ctx.fillStyle = 'green'
+            ctx.fillRect(x - FOOD_RADIUS, y - FOOD_RADIUS, FOOD_RADIUS * 2, FOOD_RADIUS * 2)
+            ctx.restore()
 
-                    this.foods.push(food)
-                }
-            })
+            return
         }
 
-        firstDraw(context) {
-            for (let i = 0; i < this.rows; i++) {
-                for (let j = 0; j < this.columns; j++) {
-                    this.cells[i][j].draw(context)
-                }
-            }
-        }
-
-        render(context) {
-            for (let i = 0; i < this.foods.length; i++) {
-                this.foods[i].draw(context)
+        if (locateColonyInput.checked) {
+            if (colonyCoordinates.isSelected) {
+                alert('No')
+                return
             }
 
-            this.colony.drawAnts(context, this.cells)
-            this.colony.update(this.cells, this.pxPerCell, context)
+            colonyCoordinates.x = x
+            colonyCoordinates.y = y
+            colonyCoordinates.isSelected = true
+
+            ctx.fillRect(x - COLONY_RADIUS, y - COLONY_RADIUS, COLONY_RADIUS * 2, COLONY_RADIUS * 2)
+
+            map.updateColony(colonyCoordinates)
+            return
         }
-    }
+    })
 
-    const map = new Map(canvas, canvas.width / 2, canvas.height / 2)
+    executeBtn.addEventListener('click', function (e) {
+        map.first()
+        let i = 0
+        function animate() {
+            if (!(i % 2000000)) map.firstDraw(ctx)
+            map.render(ctx)
+            requestAnimationFrame(animate)
 
-    map.firstDraw(ctx)
+            // setTimeout(() => {
+            //     requestAnimationFrame(animate)
+            // }, 1000 / 60)
 
-    let i = 0
-    function animate() {
-        if (!(i % 1000000) && i !== 0) map.firstDraw(ctx)
-        map.render(ctx)
-        requestAnimationFrame(animate)
+            ++i
+        }
 
-        // setTimeout(() => {
-        //     requestAnimationFrame(animate)
-        // }, 1000 / 60)
-
-        ++i
-    }
-
-    // animate()
+        // executeBtn.disabled = true
+        animate()
+    })
 })
