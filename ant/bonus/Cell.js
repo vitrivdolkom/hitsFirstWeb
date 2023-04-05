@@ -24,7 +24,7 @@ export class Cell {
     setIsFood(foodBlock) {
         this.isFood = true
         this.foodBlock = foodBlock
-        this.foodMarker = this.foodBlock.amount
+        this.foodMarker = this.foodBlock.amount * 200
         this.distanceToFood = 0.00000001
     }
 
@@ -50,7 +50,7 @@ export class Cell {
                 : `rgba(${inRange(Math.min(this.homeMarker, 200), 0, 200, 20, 235)},0, 0, 1)`
 
         color = this.isHome ? 'rgb(255, 0, 0)' : color
-        color = this.isFood ? `rgb(26, ${inRange(this.foodMarker, 0, 500, 40, 200)}, 1)` : color
+        color = this.isFood ? `rgb(26, ${inRange(this.foodMarker / 200, 0, 500, 40, 200)}, 1)` : color
 
         this.color = color
 
@@ -92,11 +92,13 @@ export class Cell {
         this.foodMarker = Math.max(1, this.foodMarker)
         this.homeMarker = Math.max(1, this.homeMarker)
 
-        if (lifetime > 1) {
+        if (lifetime > 5 && this.foodMarker > 4000) {
+            this.start = new Date()
+        } else if (lifetime > 2) {
             this.start = new Date()
         }
 
-        if (this.foodMarker > 5000) this.foodMarker = 5000
+        if (this.foodMarker > 5000) this.foodMarker = 4500
         if (this.homeMarker > 200) this.homeMarker = 200
 
         this.draw(context)

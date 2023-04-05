@@ -24,20 +24,20 @@ export class Ant {
     }
 
     draw(context, cells, pxPerCell) {
-        const color = cells[this.row][this.column].color
-        context.beginPath()
-        context.save()
-        context.fillStyle = color
-        context.arc(this.x, this.y, this.radius + 0.2, 0, Math.PI * 2)
-        context.fill()
-        context.restore()
+        // const color = cells[this.row][this.column].color
+        // context.beginPath()
+        // context.save()
+        // context.fillStyle = color
+        // context.arc(this.x, this.y, this.radius + 0.2, 0, Math.PI * 2)
+        // context.fill()
+        // context.restore()
         this.x = this.nextPoint.x
         this.y = this.nextPoint.y
         this.row = this.nextPoint.row
         this.column = this.nextPoint.column
-        context.beginPath()
-        context.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
-        context.fill()
+        // context.beginPath()
+        // context.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
+        // context.fill()
     }
 
     comeBackHome(cells, pxPerCell, context) {
@@ -52,10 +52,10 @@ export class Ant {
             return
         }
 
-        this.distanceToFood += 1
-
         const a = this.pathFromHome.pop()
-        cells[a.row][a.column].distanceToFood = Math.min(this.distanceToFood, cells[a.row][a.column].distanceToFood)
+        cells[a.row][a.column].distanceToFood = this.distanceToFood
+            ? Math.min(this.distanceToFood, cells[a.row][a.column].distanceToFood)
+            : cells[a.row][a.column].distanceToFood
 
         cells[a.row][a.column].update(context)
         cells[a.row][a.column].visit(this)
@@ -64,6 +64,10 @@ export class Ant {
         this.nextPoint.y = a.y
         this.nextPoint.row = a.row
         this.nextPoint.column = a.column
+
+        const addDistance = distanceBetweenTwoVertexes(this.x, this.y, this.nextPoint.x, this.nextPoint.y)
+
+        this.distanceToFood += addDistance
     }
 
     updateDistances(variant) {
@@ -205,19 +209,19 @@ export class Ant {
             this.goHome = true
         }
 
-        if (variant.isHome) {
-            this.colony.food += this.food
-            this.food = 0
-            this.goHome = false
-            variant.row = this.row
-            variant.column = this.column
-            variant.x = this.x
-            variant.y = this.y
-            variant.angle = 180
-            this.pathFromHome = []
-            this.distanceToFood = 0
-            this.distanceToHome = 0
-        }
+        // if (variant.isHome) {
+        //     this.colony.food += this.food
+        //     this.food = 0
+        //     this.goHome = false
+        //     variant.row = this.row
+        //     variant.column = this.column
+        //     variant.x = this.x
+        //     variant.y = this.y
+        //     variant.angle = 180
+        //     this.pathFromHome = []
+        //     this.distanceToFood = 0
+        //     this.distanceToHome = 0
+        // }
 
         this.updateDistances(variant)
 

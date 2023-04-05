@@ -11,8 +11,12 @@
   color: white;
 }
 
-.btn:hover {
+.btn:hover:not(:disabled) {
   background: #0016D9;
+}
+
+.btn:disabled {
+  opacity: 0.6;
 }
 
 

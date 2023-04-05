@@ -79,6 +79,7 @@ window.addEventListener('load', function () {
     })
 
     executeBtn.addEventListener('click', function (e) {
+        executeBtn.disabled = true
         map.first()
         let i = 0
         function animate() {
@@ -93,7 +94,6 @@ window.addEventListener('load', function () {
             ++i
         }
 
-        // executeBtn.disabled = true
         animate()
     })
 })

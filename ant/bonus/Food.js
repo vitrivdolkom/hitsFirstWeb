@@ -26,8 +26,8 @@ export class Food {
     }
 
     draw(context) {
-        for (let i = -this.radius; i <= this.radius; i += this.map.pxPerCell) {
-            for (let j = -this.radius; j <= this.radius; j += this.map.pxPerCell) {
+        for (let i = -this.radius; i <= this.radius; i++) {
+            for (let j = -this.radius; j <= this.radius; j++) {
                 const toX = this.x + i
                 const toY = this.y + j
                 const { row, column } = getCellIndexes(toX, toY, this.map.pxPerCell)
