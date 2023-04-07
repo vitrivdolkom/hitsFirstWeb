@@ -123,6 +123,7 @@ async function aStar(field, start, end) {
             })
         } else if (fastDoing) {
             await new Promise((res, rej) => {
+                g
                 setTimeout(() => res(), 0)
             })
         }
