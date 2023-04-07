@@ -90,6 +90,7 @@ clear.addEventListener('click', function (e) {
 
 starter.addEventListener('click', function (e) {
     if (+input.value == input.value && input.value >= 1 && points.length >= input.value) {
+        //ТУТ НАДО ФИКСИТЬ
         ctx.clearRect(0, 0, canvasWidth, canvasHeight)
         ctx.strokeStyle = 'black'
         ctx.strokeRect(0, 0, canvasWidth, canvasHeight)
