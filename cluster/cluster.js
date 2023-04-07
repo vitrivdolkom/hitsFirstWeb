@@ -9,9 +9,9 @@ let euclid = document.querySelector('#euclid')
 let manhetten = document.querySelector('#manhetten')
 let chebyshev = document.querySelector('#chebyshev')
 
-ctx.canvas.width = 1000
+ctx.canvas.width = 800
 ctx.canvas.height = 500
-let canvasWidth = 1000
+let canvasWidth = 800
 let canvasHeight = 500
 let drawFlag = false
 let prevMouse = { x: 0, y: 0, visit: false }
@@ -90,7 +90,6 @@ clear.addEventListener('click', function (e) {
 
 starter.addEventListener('click', function (e) {
     if (+input.value == input.value && input.value >= 1 && points.length >= input.value) {
-        //ТУТ НАДО ФИКСИТЬ
         ctx.clearRect(0, 0, canvasWidth, canvasHeight)
         ctx.strokeStyle = 'black'
         ctx.strokeRect(0, 0, canvasWidth, canvasHeight)
@@ -132,6 +131,7 @@ canvas.addEventListener('mousedown', function (e) {
     ctx.arc(curClick.x, curClick.y, 10, 0, 2 * Math.PI)
     ctx.fill()
     ctx.moveTo(curClick.x, curClick.y)
+    points.push(curClick)
     prevMouse.x = curClick.x
     prevMouse.y = curClick.y
 })
