@@ -57,26 +57,18 @@ export const inRange = (num, from, to, newFrom, newTo) => {
 }
 
 export const getAngle = (x1, y1, angle, x2, y2, distance) => {
-    const startX = x1
-    const startY = y1
-    const endX = getNextPoint(startX, startY, distance, angle, 0).x
-    const endY = getNextPoint(startX, startY, distance, angle, 0).y
+    const endX = getNextPoint(x1, y1, distance, angle, 0).x
+    const endY = getNextPoint(x1, y1, distance, angle, 0).y
 
-    const vectorX = x2 - startX
-    const vectorY = y2 - startY
+    const v1 = { x: endX - x1, y: endY - y1 }
+    const v2 = { x: x2 - x1, y: y2 - y1 }
+    const dotProduct = v1.x * v2.x + v1.y * v2.y
+    const magnitudeV1 = Math.sqrt(v1.x * v1.x + v1.y * v1.y)
+    const magnitudeV2 = Math.sqrt(v2.x * v2.x + v2.y * v2.y)
+    const cosTheta = dotProduct / (magnitudeV1 * magnitudeV2)
+    const theta = Math.acos(cosTheta)
+    const crossProduct = v1.x * v2.y - v1.y * v2.x
+    const resultAngle = (theta * 180) / Math.PI
 
-    const dx = endX - startX
-    const dy = endY - startY
-    const dotProduct = dx * vectorX + dy * vectorY
-    const mag1 = Math.sqrt(dx * dx + dy * dy)
-    const mag2 = Math.sqrt(vectorX * vectorX + vectorY * vectorY)
-    const angleRadians = Math.acos(dotProduct / (mag1 * mag2))
-    const angleDegrees = (angleRadians * 180) / Math.PI
-    let angleResult = angleDegrees
-
-    if (dotProduct < 0) {
-        angleResult = 360 - angleDegrees
-    }
-
-    return angleResult
+    return crossProduct < 0 ? -resultAngle : resultAngle
 }

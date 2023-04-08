@@ -67,10 +67,6 @@ export class WorldMap {
     }
 
     render(context) {
-        for (let i = 0; i < this.foods.length; i++) {
-            this.foods[i].draw(context)
-        }
-
         this.colony.drawAnts(context, this.cells)
         this.colony.update(this.cells, this.pxPerCell, context)
     }

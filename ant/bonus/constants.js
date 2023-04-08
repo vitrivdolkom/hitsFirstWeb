@@ -1,2 +1,2 @@
-export const COLONY_RADIUS = 20
-export const FOOD_RADIUS = 10
+export const COLONY_RADIUS = 40
+export const FOOD_RADIUS = 40

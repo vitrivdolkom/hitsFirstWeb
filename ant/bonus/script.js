@@ -83,13 +83,9 @@ window.addEventListener('load', function () {
         map.first()
         let i = 0
         function animate() {
-            if (!(i % 2000000)) map.firstDraw(ctx)
+            if (!(i % 800)) map.firstDraw(ctx)
             map.render(ctx)
             requestAnimationFrame(animate)
-
-            // setTimeout(() => {
-            //     requestAnimationFrame(animate)
-            // }, 1000 / 60)
 
             ++i
         }
