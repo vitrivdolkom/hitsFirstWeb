@@ -1,4 +1,5 @@
 import { DecisionTree } from './DecisionTree.js'
+import { drawTree } from './drawTree.js'
 
 const inputFile = document.querySelector("input[name='readCsv']")
 const createTreeBtn = document.querySelector('.createTree')
@@ -8,6 +9,7 @@ inputFile.addEventListener('change', handleFile)
 createTreeBtn.addEventListener('click', createTree)
 
 const tree = new DecisionTree()
+let smartTree
 let fullData
 
 function handleFile(e) {
@@ -54,5 +56,6 @@ function setTable(text) {
 function createTree() {
     if (!tree.target) return
 
-    tree.createTree(fullData)
+    smartTree = tree.createTree(fullData)
+    drawTree(smartTree)
 }

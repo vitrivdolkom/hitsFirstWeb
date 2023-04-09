@@ -1,3 +1,5 @@
+import { Tree } from './Tree.js'
+
 export class DecisionTree {
     constructor() {
         this.target = ''
@@ -128,6 +130,7 @@ export class DecisionTree {
                 }
             })
 
+            this.tree.addBranch(columnName, variant, `${this.target} - ${best}`)
             console.log(columnName, variant, `${best} - ${this.target}`)
         })
     }
@@ -174,6 +177,7 @@ export class DecisionTree {
                     newS.best = best
                     q.push(newS)
 
+                    this.tree.addBranch(bestColumnName, variant, best)
                     console.log(variant, best)
                 }
             }
@@ -196,5 +200,7 @@ export class DecisionTree {
 
             this.createTree(currentS, q[i].best)
         }
+
+        return this.tree
     }
 }
