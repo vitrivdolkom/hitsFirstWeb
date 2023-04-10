@@ -1,0 +1,70 @@
+.rect {
+  width: 100px;
+  text-align: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  padding: 6px 10px;
+  color: white;
+  font-weight: 700;
+  border-radius: 2rem;
+}
+
+.node {
+  border: 1px rgba(0, 0, 0, 0.1) solid;
+  border-radius: 1rem;
+  margin-left: 30px;
+  padding: 10px;
+  margin-top: 9px;
+  display: flex;
+  align-items: center;
+}
+
+.rootNode {
+  border: none;
+  margin-left: 0;
+}
+
+.variantAndQuestion {
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.variant {
+  background-color: antiquewhite;
+  color: black;
+  margin-right: 20px;
+  border-radius: 2rem;
+  color: black;
+  font-weight: 700;
+}
+
+.question {
+  background-color: rgba(0, 0, 255, 0.616);
+
+}
+
+.root {
+  background-color: rgb(0, 0, 134);
+}
+
+.leaf {
+  background-color: darkseagreen;
+}
+
+.selected {
+  border-style: solid;
+  border-width: 2.5px;
+  border-color: red;
+}
+
+/* todo zero */
+
+ul,
+li {
+  margin: 0;
+  padding: 0;
+  text-indent: 0;
+  list-style-type: none;
+}

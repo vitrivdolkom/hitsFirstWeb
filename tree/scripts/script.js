@@ -1,16 +1,23 @@
 import { DecisionTree } from './DecisionTree.js'
 import { drawTree } from './drawTree.js'
+import { getLeafName, getVariantName } from './helpers.js'
 
 const inputFile = document.querySelector("input[name='readCsv']")
 const createTreeBtn = document.querySelector('.createTree')
+const newRow = document.querySelector('.newRow')
+const confirmRow = document.querySelector('.confirmRow')
 const fileRegex = new RegExp('(.*?).(csv)$', 'i')
 
 inputFile.addEventListener('change', handleFile)
 createTreeBtn.addEventListener('click', createTree)
+confirmRow.addEventListener('click', confirmRowHandle)
 
+newRow.value = '456,SUNNY,HOT,HIGH,WEAK'
+inputFile.value = ''
 const tree = new DecisionTree()
 let smartTree
 let fullData
+let exampleRow
 
 function handleFile(e) {
     const file = e.target.files[0]
@@ -45,6 +52,7 @@ function setTable(text) {
             obj.set(headers[j], values[j])
         }
 
+        if (exampleRow === undefined) exampleRow = new Map(obj)
         data.push(obj)
     }
 
@@ -58,4 +66,52 @@ function createTree() {
 
     smartTree = tree.createTree(fullData)
     drawTree(smartTree)
+}
+
+async function confirmRowHandle() {
+    const divs = document.querySelectorAll('.rect')
+
+    divs.forEach((rect) => {
+        rect.classList.remove('selected')
+    })
+
+    if (smartTree === undefined) {
+        return
+    }
+
+    const rowText = newRow.value
+    const columns = rowText.split(',')
+    const row = new Map()
+
+    let i = 0
+
+    exampleRow.forEach((value, column) => {
+        row.set(column, columns[i])
+        i++
+    })
+
+    let node = smartTree.it
+
+    while (node.children.length) {
+        const toQuestion = document.querySelector(`div[data-question=${node.question}]`)
+        toQuestion.classList.add('selected')
+        if (node.variant !== undefined) {
+            const toVariant = document.querySelector(`div[data-variant=${getVariantName(node)}]`)
+            toVariant.classList.add('selected')
+        }
+
+        for (let i = 0; i < node.children.length; i++) {
+            const child = node.children[i]
+
+            if (child.variant === row.get(node.question)) {
+                node = child
+                break
+            }
+        }
+    }
+
+    const lastVariant = document.querySelector(`div[data-variant=${getVariantName(node)}]`)
+    lastVariant.classList.add('selected')
+    const toTarget = document.querySelector(`div[data-question=${getLeafName(node)}]`)
+    toTarget.classList.add('selected')
 }

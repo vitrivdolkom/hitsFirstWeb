@@ -130,8 +130,7 @@ export class DecisionTree {
                 }
             })
 
-            this.tree.addBranch(columnName, variant, `${this.target} - ${best}`)
-            console.log(columnName, variant, `${best} - ${this.target}`)
+            this.tree.addBranch(columnName, variant, `${best}`)
         })
     }
 
@@ -153,7 +152,6 @@ export class DecisionTree {
 
         const toColumn = columns.get(bestColumnName)
         this.tree.addNode(bestColumnName)
-        console.log(bestColumnName)
 
         const q = []
         const columnsToDelete = [bestColumnName]
@@ -178,7 +176,6 @@ export class DecisionTree {
                     q.push(newS)
 
                     this.tree.addBranch(bestColumnName, variant, best)
-                    console.log(variant, best)
                 }
             }
         })

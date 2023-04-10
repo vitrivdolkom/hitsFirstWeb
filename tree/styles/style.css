@@ -1,0 +1,77 @@
+@import "./custom.css";
+
+
+/* todo big */
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.wrapper {
+  min-height: 100vh;
+  width: 100%;
+}
+
+.box {
+  width: 95%;
+  min-height: 100vh;
+  margin: 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mybox {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+/*  */
+
+.left {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.left::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 1px;
+  transform: translate(0, -50%);
+  background-color: rgba(0, 0, 255, 0.4);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  /* flex: 1 1 300px; */
+  transition: all .4s ease-in;
+}
+
+.right {
+  padding: 20px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.right::before {
+  content: '';
+  position: absolute;
+  top: 0px;
+  left: 0;
+  height: 100vh;
+  width: 1px;
+  transform: translate(0, -50%);
+  background-color: rgba(0, 0, 255, 0.4);
+}
