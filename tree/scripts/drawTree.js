@@ -58,6 +58,7 @@ const createTreeElement = (node, container) => {
 
 export const drawTree = (tree) => {
     const container = document.querySelector('.content')
+    container.textContent = ''
 
     const treeElement = createTreeElement(tree.it, container)
     container.insertBefore(treeElement, container.firstChild)
