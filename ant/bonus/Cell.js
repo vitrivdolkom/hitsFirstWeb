@@ -1,7 +1,7 @@
 import { inRange } from './helpers.js   '
 
-export const EVAPORATION_TIME = 5
-export const PHEROMONE_EVAPORATION = 0.99
+export const EVAPORATION_TIME = 0.1
+export const PHEROMONE_EVAPORATION = 0.95
 
 export class Cell {
     constructor(x, y, row, column, size) {
@@ -46,7 +46,6 @@ export class Cell {
         context.fillStyle = 'black'
         context.fillRect(this.x, this.y, this.size, this.size)
         context.restore()
-
         context.beginPath()
         context.save()
         context.fillStyle = color

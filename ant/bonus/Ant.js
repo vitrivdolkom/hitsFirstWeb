@@ -73,6 +73,8 @@ export class Ant {
                     distanceBetweenTwoVertexes(this.x, this.y, neighbour.x, neighbour.y)
                 )
 
+                if (Math.abs(angle) > 90) continue
+
                 neighbour.angle = angle ? angle : 0.1
 
                 arr.push(neighbour)
@@ -83,8 +85,8 @@ export class Ant {
     }
 
     update(cells, pxPerCell, context) {
-        if (this.goHome) this.food = Math.max(1, this.food * 0.998)
-        else this.home = Math.max(1, this.home * 0.998)
+        if (this.goHome) this.food = Math.max(1, this.food * 0.99)
+        else this.home = Math.max(1, this.home * 0.99)
 
         const neighbours = this.getNeighbours(pxPerCell)
 
@@ -104,13 +106,7 @@ export class Ant {
 
             let p = Math.pow(pheromone, this.beta) * Math.pow(1 / Math.abs(coordinate.angle), this.alfa)
 
-            if (pheromone === 1) {
-                p = Math.pow(pheromone, this.beta) * Math.pow(1 / Math.abs(coordinate.angle), this.alfa + 2)
-            } else {
-                p = Math.pow(pheromone, this.beta) * Math.pow(1 / Math.abs(coordinate.angle), this.alfa + 1)
-            }
-
-            const variant = { ...cell, pheromone: pheromone, p: p, ...coordinate }
+            const variant = { ...cell, p: p, ...coordinate }
             variants.push(variant)
 
             fullP += p
@@ -124,33 +120,25 @@ export class Ant {
         // sort probabilities
         variants.sort((a, b) => a.p - b.p)
 
-        // part on segments for random
-        const probabilities = []
-        let probabilitiesSum = variants[0].p
-
-        probabilities.push({ from: 0, to: variants[0].p })
-
-        for (let i = 0; i < variants.length - 1; i++) {
-            const newP = variants[i + 1].p
-            probabilities.push({ from: probabilitiesSum, to: probabilitiesSum + newP })
-            probabilitiesSum += newP
-        }
-
-        // random 0 - 1
-        let idx = -1
         const rand = Math.random()
 
-        for (let i = 0; i < probabilities.length; i++) {
-            const prob = probabilities[i]
-
-            if (prob.from <= rand && prob.to > rand) {
-                idx = i
-                break
-            }
+        if (rand > 0.95) {
+            const distance = 2 * pxPerCell
+            const direct = getNextPoint(this.x, this.y, distance, this.angle, 0)
+            const cell = getCellIndexes(direct.x, direct.y, pxPerCell)
+            const variant = { row: cell.row, column: cell.column, x: direct.x, y: direct.y, angle: 0 }
+            variants.push(variant)
         }
 
-        // update ant
-        const variant = variants[idx]
+        const variant = variants.length ? variants[variants.length - 1] : {}
+
+        if (!this.checkCell(variant)) {
+            variant.row = this.row
+            variant.column = this.column
+            variant.x = this.x
+            variant.y = this.y
+            variant.angle = 180
+        }
 
         // update food
         if (variant.isFood) {

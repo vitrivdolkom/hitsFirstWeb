@@ -67,7 +67,7 @@ export class WorldMap {
     }
 
     render(context) {
-        this.colony.drawAnts(context, this.cells)
         this.colony.update(this.cells, this.pxPerCell, context)
+        this.colony.drawAnts(context, this.cells)
     }
 }

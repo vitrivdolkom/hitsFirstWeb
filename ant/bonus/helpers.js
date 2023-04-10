@@ -6,9 +6,6 @@ export const getCellIndexes = (x, y, per) => {
     let row = Math.floor(y / per)
     let column = Math.floor(x / per)
 
-    // row -= !row ? 0 : 1
-    // column -= !column ? 0 : 1
-
     return { row: row, column: column }
 }
 
