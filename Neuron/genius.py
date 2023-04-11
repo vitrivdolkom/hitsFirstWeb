@@ -1,0 +1,22 @@
+from flask import Flask, render_template, url_for, request
+from ast import literal_eval
+from GeniusSolver import *
+
+app = Flask(__name__)
+
+@app.route('/solver', methods = ['POST'])
+def GetSolve():
+    img = request.form['data']
+    #dots = literal_eval(img)
+
+
+    return {'ans': solver(img)}
+
+@app.route('/')
+def main():
+    return render_template('index.html')
+
+
+
+if __name__ == "__main__":
+    app.run(debug=True)

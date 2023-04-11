@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Нейронная сеть</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+</head>
+<body>
+
+
+<canvas id="myCanvas" width="500" height="500">
+</canvas>
+
+<div id="userplace">
+   <h1><p id="solvefield">Ответ нейросети:</p></h1>
+    <h1><p id="solvenum" style="text-align: center">-</p></h1>
+</div>
+
+
+<button onmousedown="clearall()" id="ClearButton" class="btn btn-primary">Clear</button>
+<button onmousedown="GetAnswer()" id="Solve" class="btn btn-primary">Solve</button>
+<script>
+    var canv = document.getElementById("myCanvas");
+    var ctx = canv.getContext("2d");
+    var isMouseDown = false;
+    var cords = [];
+    var ansplace = document.getElementById("solvenum");
+    document.onmousedown = function() {
+      isMouseDown = true;
+    }
+    document.onmouseup = function() {
+      isMouseDown = false;
+      ctx.beginPath();
+    }
+
+    ctx.lineWidth = 46;
+    canv.addEventListener('mousemove', function(e){
+        if (isMouseDown){
+            cords.push([e.clientX - canv.offsetLeft, e.clientY-canv.offsetTop]);
+
+            ctx.lineTo(e.clientX - canv.offsetLeft, e.clientY-canv.offsetTop);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(e.clientX - canv.offsetLeft, e.clientY-canv.offsetTop, 23, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - canv.offsetLeft, e.clientY-canv.offsetTop);
+        }
+
+
+    });
+
+    function clearall()
+    {
+        var canvas=document.getElementById("myCanvas");
+        var context=canvas.getContext("2d");
+        context.clearRect(0,0,canvas.width,canvas.height);
+        cords = [];
+        ansplace.innerHTML = "-";
+        ctx.beginPath();
+    }
+
+    function GetAnswer(){
+        const dataURL = canv.toDataURL('image/png');
+        $.post("/solver", {
+            data: JSON.stringify(dataURL)
+        }, function(data, status, xhr) {
+                ansplace.innerHTML = data['ans'];
+            });
+
+
+    }
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,24 @@
+#myCanvas {
+        border: 1px solid #000000;
+        top: 20%;
+        left: 33%;
+        position: absolute;
+    }
+
+#ClearButton{
+    top: 4%;
+    left: 7%;
+    position: absolute;
+}
+
+#Solve{
+    top: 4%;
+    left: 13%;
+    position: absolute;
+}
+
+#userplace{
+    top: 20%;
+    left: 77%;
+    position: absolute;
+}
