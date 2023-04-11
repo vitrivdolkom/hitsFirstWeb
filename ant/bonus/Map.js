@@ -1,14 +1,15 @@
-import { Cell } from './Cell.js'
+import { checkCell, distanceBetweenTwoVertexes, getCellIndexes } from './helpers.js'
+import { PX_PER_CELL } from './constants.js'
 import { Colony } from './Colony.js'
+import { Cell } from './Cell.js'
 import { Food } from './Food.js'
-import { getCellIndexes } from './helpers.js'
 
 export class WorldMap {
-    constructor(canvas, colonyX, colonyY, locateFoodInput, foodCoordinates, antsNum) {
+    constructor(canvas, ctx, colonyX, colonyY, locateFoodInput, setWall, antsNum) {
         this.canvas = canvas
         this.width = this.canvas.width
         this.height = this.canvas.height
-        this.pxPerCell = 4
+        this.pxPerCell = PX_PER_CELL
         this.rows = Math.floor(this.height / this.pxPerCell)
         this.columns = Math.floor(this.width / this.pxPerCell)
         this.cells = new Array(this.rows)
@@ -30,11 +31,6 @@ export class WorldMap {
 
         this.foods = []
 
-        foodCoordinates.forEach((food) => {
-            const newFood = new Food(food.amount, food.x, food.y, this, this.pxPerCell)
-            this.foods.push(newFood)
-        })
-
         canvas.addEventListener('click', (e) => {
             const x = e.offsetX
             const y = e.offsetY
@@ -44,7 +40,54 @@ export class WorldMap {
                 const food = new Food(amount, x, y, this, this.pxPerCell)
 
                 this.foods.push(food)
+
+                return
             }
+        })
+
+        this.mouse = { x: 0, y: 0, pressed: false }
+
+        // todo draw wall
+        canvas.addEventListener('mousedown', (e) => {
+            this.mouse.x = e.offsetX
+            this.mouse.y = e.offsetY
+            this.mouse.pressed = true
+        })
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!this.mouse.pressed || !setWall.checked) return
+
+            const currentX = e.offsetX
+            const currentY = e.offsetY
+
+            if (distanceBetweenTwoVertexes(this.mouse.x, this.mouse.y, currentX, currentY) > PX_PER_CELL / 2) {
+                const cell = getCellIndexes(this.mouse.x, this.mouse.y, PX_PER_CELL)
+
+                for (let i = -2; i < 3; i++) {
+                    for (let j = -2; j < 3; j++) {
+                        const toRow = cell.row + i
+                        const toColumn = cell.column + j
+
+                        if (checkCell({ row: toRow, column: toColumn }, this.rows, this.columns)) this.cells[toRow][toColumn].setIsWall()
+                    }
+                }
+
+                ctx.save()
+                ctx.fillStyle = 'grey'
+                ctx.fillRect(this.mouse.x - PX_PER_CELL * 2, this.mouse.y - PX_PER_CELL * 2, PX_PER_CELL * 5, PX_PER_CELL * 5)
+                ctx.restore()
+            }
+
+            this.mouse.x = currentX
+            this.mouse.y = currentY
+        })
+
+        canvas.addEventListener('mouseup', () => {
+            this.mouse.pressed = false
+        })
+
+        canvas.addEventListener('mouseleave', () => {
+            this.mouse.pressed = false
         })
     }
 
@@ -59,6 +102,8 @@ export class WorldMap {
     }
 
     firstDraw(context) {
+        context.clearRect(0, 0, this.canvas.width, this.canvas.height)
+
         for (let i = 0; i < this.rows; i++) {
             for (let j = 0; j < this.columns; j++) {
                 this.cells[i][j].draw(context)

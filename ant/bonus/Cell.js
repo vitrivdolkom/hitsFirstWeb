@@ -15,6 +15,7 @@ export class Cell {
         this.empty = true
         this.isHome = false
         this.isFood = false
+        this.isWall = false
         this.color = 'black'
         this.start = null
     }
@@ -23,6 +24,10 @@ export class Cell {
         this.isFood = true
         this.foodBlock = foodBlock
         this.foodMarker = this.foodBlock.amount * 200
+    }
+
+    setIsWall() {
+        this.isWall = true
     }
 
     setIsHome(amount) {
@@ -38,6 +43,7 @@ export class Cell {
 
         color = this.isHome ? 'rgb(255, 0, 0)' : color
         color = this.isFood ? `rgb(26, ${inRange(this.foodMarker / 200, 0, 500, 40, 200)}, 1)` : color
+        color = this.isWall ? 'grey' : color
 
         this.color = color
 

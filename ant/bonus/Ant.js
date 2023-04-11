@@ -1,4 +1,4 @@
-import { distanceBetweenTwoVertexes, getAngle, getCellIndexes, getNextPoint, getRandom } from './helpers.js'
+import { checkCell, distanceBetweenTwoVertexes, getAngle, getCellIndexes, getNextPoint, getRandom } from './helpers.js'
 
 export class Ant {
     constructor(colony, id, x, y, row, column, maxRow, maxColumn, angle) {
@@ -17,7 +17,6 @@ export class Ant {
         this.food = 0
         this.home = 10000
         this.nextPoint = { row: this.row, column: this.column, x: this.x, y: this.y }
-        this.prev = { row: this.row, column: this.column }
         this.goHome = false
     }
 
@@ -38,24 +37,19 @@ export class Ant {
         context.fill()
     }
 
-    checkCell(cell) {
-        return (
-            cell.row >= 0 &&
-            cell.column >= 0 &&
-            cell.row < this.maxRow &&
-            cell.column < this.maxColumn &&
-            !(cell.row === this.prev.row && cell.column === this.prev.column)
-        )
-    }
-
-    getNeighbours(distance) {
+    getNeighbours(cells, distance) {
         const arr = []
 
         for (let i = -2; i <= 2; i++) {
             for (let j = -2; j <= 2; j++) {
                 const toRow = this.row + i
                 const toColumn = this.column + j
-                if (!this.checkCell({ row: toRow, column: toColumn }) || (i === 0 && j === 0)) continue
+                if (
+                    !checkCell({ row: toRow, column: toColumn }, this.maxRow, this.maxColumn) ||
+                    (i === 0 && j === 0) ||
+                    cells[toRow][toColumn].isWall
+                )
+                    continue
 
                 const neighbour = {
                     row: toRow,
@@ -88,7 +82,7 @@ export class Ant {
         if (this.goHome) this.food = Math.max(1, this.food * 0.99)
         else this.home = Math.max(1, this.home * 0.99)
 
-        const neighbours = this.getNeighbours(pxPerCell)
+        const neighbours = this.getNeighbours(cells, pxPerCell)
 
         const variants = []
         let fullP = 0
@@ -132,7 +126,7 @@ export class Ant {
 
         const variant = variants.length ? variants[variants.length - 1] : {}
 
-        if (!this.checkCell(variant)) {
+        if (!checkCell(variant, this.maxRow, this.maxColumn)) {
             variant.row = this.row
             variant.column = this.column
             variant.x = this.x
@@ -171,8 +165,6 @@ export class Ant {
 
         // update next point
 
-        this.prev.column = this.column
-        this.prev.row = this.row
         this.nextPoint.row = variant.row
         this.nextPoint.column = variant.column
         this.nextPoint.x = variant.x

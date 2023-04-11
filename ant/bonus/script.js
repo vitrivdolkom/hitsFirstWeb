@@ -1,10 +1,13 @@
-import { COLONY_RADIUS, FOOD_RADIUS } from './constants.js'
+import { COLONY_RADIUS, FOOD_RADIUS, PX_PER_CELL } from './constants.js'
+import { distanceBetweenTwoVertexes } from './helpers.js'
 import { WorldMap } from './Map.js'
 
 window.addEventListener('load', function () {
+    // todo DOM variables
     const canvasWrapper = document.querySelector('.canvasWrapper')
     const locateColonyInput = document.querySelector('#colony')
     const locateFood = document.querySelector('#food')
+    const setWall = this.document.querySelector('#setWall')
     const executeBtn = document.querySelector('.execute')
 
     const foodAmountInput = document.querySelector('#foodAmount')
@@ -30,7 +33,8 @@ window.addEventListener('load', function () {
     let colonyCoordinates = { x: canvas.width / 2, y: canvas.height / 2, isSelected: false }
     let foodCoordinates = []
 
-    let map = new WorldMap(canvas, colonyCoordinates.x, colonyCoordinates.y, locateFood, foodCoordinates, +antAmountInput.value)
+    // todo Map
+    let map = new WorldMap(canvas, ctx, colonyCoordinates.x, colonyCoordinates.y, locateFood, setWall, +antAmountInput.value)
 
     // todo event listeners
     foodAmountInput.addEventListener('input', function (e) {

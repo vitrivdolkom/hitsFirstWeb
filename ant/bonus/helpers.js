@@ -2,6 +2,10 @@ export const getRandom = (min, max) => {
     return Math.random() * (max - min) + min
 }
 
+export const checkCell = (cell, maxRow, maxColumn) => {
+    return cell.row >= 0 && cell.column >= 0 && cell.row < maxRow && cell.column < maxColumn
+}
+
 export const getCellIndexes = (x, y, per) => {
     let row = Math.floor(y / per)
     let column = Math.floor(x / per)
