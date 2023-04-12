@@ -11,7 +11,7 @@ export class Ant {
         this.radius = 2
         this.angle = angle
         this.alfa = 1
-        this.beta = 1
+        this.beta = 2
         this.maxRow = maxRow
         this.maxColumn = maxColumn
         this.food = 0
@@ -67,7 +67,7 @@ export class Ant {
                     distanceBetweenTwoVertexes(this.x, this.y, neighbour.x, neighbour.y)
                 )
 
-                if (Math.abs(angle) > 90) continue
+                if (Math.abs(angle) > 105) continue
 
                 neighbour.angle = angle ? angle : 0.1
 
@@ -116,7 +116,7 @@ export class Ant {
 
         const rand = Math.random()
 
-        if (rand > 0.95) {
+        if (rand > 0.96) {
             const distance = 2 * pxPerCell
             const direct = getNextPoint(this.x, this.y, distance, this.angle, 0)
             const cell = getCellIndexes(direct.x, direct.y, pxPerCell)

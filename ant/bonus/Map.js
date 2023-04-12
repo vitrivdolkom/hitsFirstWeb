@@ -63,8 +63,8 @@ export class WorldMap {
             if (distanceBetweenTwoVertexes(this.mouse.x, this.mouse.y, currentX, currentY) > PX_PER_CELL / 2) {
                 const cell = getCellIndexes(this.mouse.x, this.mouse.y, PX_PER_CELL)
 
-                for (let i = -2; i < 3; i++) {
-                    for (let j = -2; j < 3; j++) {
+                for (let i = -4; i < 5; i++) {
+                    for (let j = -4; j < 5; j++) {
                         const toRow = cell.row + i
                         const toColumn = cell.column + j
 
@@ -74,7 +74,7 @@ export class WorldMap {
 
                 ctx.save()
                 ctx.fillStyle = 'grey'
-                ctx.fillRect(this.mouse.x - PX_PER_CELL * 2, this.mouse.y - PX_PER_CELL * 2, PX_PER_CELL * 5, PX_PER_CELL * 5)
+                ctx.fillRect(this.mouse.x - PX_PER_CELL * 4, this.mouse.y - PX_PER_CELL * 4, PX_PER_CELL * 10, PX_PER_CELL * 10)
                 ctx.restore()
             }
 

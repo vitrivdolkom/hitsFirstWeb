@@ -1,7 +1,7 @@
 import { inRange } from './helpers.js   '
 
 export const EVAPORATION_TIME = 0.1
-export const PHEROMONE_EVAPORATION = 0.95
+export const PHEROMONE_EVAPORATION = 0.94
 
 export class Cell {
     constructor(x, y, row, column, size) {
@@ -30,7 +30,7 @@ export class Cell {
         this.isWall = true
     }
 
-    setIsHome(amount) {
+    setIsHome() {
         this.isHome = true
         this.homeMarker = 200000000000
     }
