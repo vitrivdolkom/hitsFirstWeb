@@ -10,6 +10,7 @@ body {
   flex-direction: column;
   overflow-y: auto;
   overflow-x: auto;
+  background-color: black;
 }
 
 .canvasWrapper {

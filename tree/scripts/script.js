@@ -4,6 +4,7 @@ import { getLeafName, getVariantName } from './helpers.js'
 import { prune } from './prune.js'
 
 const inputFile = document.querySelector("input[name='readCsv']")
+const fileLabel = document.querySelector('label[for=readCsv]')
 const createTreeBtn = document.querySelector('.createTree')
 const newRow = document.querySelector('.newRow')
 const confirmRow = document.querySelector('.confirmRow')
@@ -22,6 +23,7 @@ let exampleRow
 
 function handleFile(e) {
     const file = e.target.files[0]
+    fileLabel.textContent = file.name
 
     if (file && fileRegex.test(file.name)) {
         const reader = new FileReader()
@@ -66,7 +68,7 @@ function createTree() {
     if (!tree.target) return
 
     smartTree = tree.createTree(fullData)
-    prune(smartTree)
+    // prune(smartTree)
     drawTree(smartTree)
 }
 
