@@ -5,7 +5,7 @@ import { Cell } from './Cell.js'
 import { Food } from './Food.js'
 
 export class WorldMap {
-    constructor(canvas, ctx, colonyX, colonyY, locateFoodInput, setWall, antsNum) {
+    constructor(canvas, ctx, colonyX, colonyY, locateFoodInput, setWall, deleteWall, antsNum) {
         this.canvas = canvas
         this.width = this.canvas.width
         this.height = this.canvas.height
@@ -55,10 +55,11 @@ export class WorldMap {
         })
 
         canvas.addEventListener('mousemove', (e) => {
-            if (!this.mouse.pressed || !setWall.checked) return
+            if (!this.mouse.pressed || (!setWall.checked && !deleteWall.checked)) return
 
             const currentX = e.offsetX
             const currentY = e.offsetY
+            let toDelete = false
 
             if (distanceBetweenTwoVertexes(this.mouse.x, this.mouse.y, currentX, currentY) > PX_PER_CELL / 2) {
                 const cell = getCellIndexes(this.mouse.x, this.mouse.y, PX_PER_CELL)
@@ -68,12 +69,15 @@ export class WorldMap {
                         const toRow = cell.row + i
                         const toColumn = cell.column + j
 
-                        if (checkCell({ row: toRow, column: toColumn }, this.rows, this.columns)) this.cells[toRow][toColumn].setIsWall()
+                        if (!checkCell({ row: toRow, column: toColumn }, this.rows, this.columns)) continue
+
+                        if (deleteWall.checked) this.cells[toRow][toColumn].isWall = false
+                        else this.cells[toRow][toColumn].setIsWall()
                     }
                 }
 
                 ctx.save()
-                ctx.fillStyle = 'grey'
+                ctx.fillStyle = deleteWall.checked ? 'black' : 'grey'
                 ctx.fillRect(this.mouse.x - PX_PER_CELL * 4, this.mouse.y - PX_PER_CELL * 4, PX_PER_CELL * 10, PX_PER_CELL * 10)
                 ctx.restore()
             }

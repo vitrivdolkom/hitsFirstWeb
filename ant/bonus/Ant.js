@@ -46,8 +46,8 @@ export class Ant {
                 const toColumn = this.column + j
                 if (
                     !checkCell({ row: toRow, column: toColumn }, this.maxRow, this.maxColumn) ||
-                    (i === 0 && j === 0) ||
-                    cells[toRow][toColumn].isWall
+                    cells[toRow][toColumn].isWall ||
+                    (Math.abs(i) < 2 && Math.abs(j) < 2)
                 )
                     continue
 
@@ -58,16 +58,11 @@ export class Ant {
                     y: getRandom(toRow * distance, (toRow + 1) * distance),
                 }
 
-                const angle = getAngle(
-                    this.x,
-                    this.y,
-                    this.angle,
-                    neighbour.x,
-                    neighbour.y,
-                    distanceBetweenTwoVertexes(this.x, this.y, neighbour.x, neighbour.y)
-                )
+                const toDistance = distanceBetweenTwoVertexes(this.x, this.y, neighbour.x, neighbour.y)
 
-                if (Math.abs(angle) > 105) continue
+                const angle = getAngle(this.x, this.y, this.angle, neighbour.x, neighbour.y, toDistance)
+
+                if (Math.abs(angle) > 90) continue
 
                 neighbour.angle = angle ? angle : 0.1
 
@@ -136,6 +131,7 @@ export class Ant {
 
         // update food
         if (variant.isFood) {
+            cells[variant.row][variant.column].visitFood(context)
             variant.row = this.row
             variant.column = this.column
             variant.x = this.x
@@ -145,6 +141,7 @@ export class Ant {
             this.goHome = true
         }
 
+        // update home
         if (variant.isHome) {
             this.colony.food += this.food
             this.food = 0
@@ -157,13 +154,11 @@ export class Ant {
             variant.angle = 180
         }
 
+        // update next point
         this.angle += variant.angle
         const row = variant.row
         const column = variant.column
-
         cells[row][column].visit(this)
-
-        // update next point
 
         this.nextPoint.row = variant.row
         this.nextPoint.column = variant.column

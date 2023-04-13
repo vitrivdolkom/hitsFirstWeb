@@ -67,6 +67,11 @@ export class Cell {
         }
     }
 
+    visitFood(context) {
+        if (!this.foodBlock.hp) this.foodBlock.end(context)
+        this.foodBlock.minus()
+    }
+
     update(context) {
         if (this.isHome || this.isFood) return
 
@@ -90,5 +95,16 @@ export class Cell {
         }
 
         this.draw(context)
+    }
+
+    setIsNormalCell() {
+        this.foodMarker = 1
+        this.homeMarker = 1
+        this.empty = true
+        this.isHome = false
+        this.isFood = false
+        this.isWall = false
+        this.color = 'black'
+        this.start = null
     }
 }
