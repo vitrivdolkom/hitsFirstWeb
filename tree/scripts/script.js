@@ -1,6 +1,7 @@
 import { DecisionTree } from './DecisionTree.js'
 import { drawTree } from './drawTree.js'
 import { getLeafName, getVariantName } from './helpers.js'
+import { prune } from './prune.js'
 
 const inputFile = document.querySelector("input[name='readCsv']")
 const createTreeBtn = document.querySelector('.createTree')
@@ -65,6 +66,7 @@ function createTree() {
     if (!tree.target) return
 
     smartTree = tree.createTree(fullData)
+    prune(smartTree)
     drawTree(smartTree)
 }
 
@@ -95,7 +97,8 @@ async function confirmRowHandle() {
     while (node.children.length) {
         const toQuestion = document.querySelector(`div[data-question=${node.question}]`)
         toQuestion.classList.add('selected')
-        if (node.variant !== undefined) {
+
+        if (node.variant) {
             const toVariant = document.querySelector(`div[data-variant=${getVariantName(node)}]`)
             toVariant.classList.add('selected')
         }

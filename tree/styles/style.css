@@ -40,21 +40,9 @@ body {
   padding: 20px;
 }
 
-/* .left::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 100vh;
-  width: 1px;
-  transform: translate(0, -50%);
-  background-color: rgba(0, 0, 255, 0.4);
-} */
-
 .content {
   display: flex;
   flex-direction: column;
-  /* flex: 1 1 300px; */
   transition: all .4s ease-in;
 }
 
@@ -64,15 +52,3 @@ body {
   display: flex;
   flex-direction: column;
 }
-
-/* 
-.right::before {
-  content: '';
-  position: absolute;
-  top: 0px;
-  left: 0;
-  height: 100vh;
-  width: 1px;
-  transform: translate(0, -50%);
-  background-color: rgba(0, 0, 255, 0.4);
-} */

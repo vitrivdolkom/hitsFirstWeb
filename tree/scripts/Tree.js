@@ -3,6 +3,7 @@ import { TreeNode } from './TreeNode.js'
 export class Tree {
     constructor() {
         this.it = null
+        this.leafs = []
     }
 
     addNode(question) {
@@ -13,14 +14,14 @@ export class Tree {
         }
     }
 
-    addBranch(from, answer, question) {
+    addBranch(from, answer, question, isLeaf = false, columns, targetVariants, s) {
         const node = this.dfs(this.it, from)
         const newNode = new TreeNode(question)
 
-        newNode.parent = from
-        newNode.variant = answer
+        newNode.set(from, answer, columns, targetVariants, s)
 
         node.children.push(newNode)
+        if (isLeaf) this.leafs.push(newNode)
     }
 
     dfs(node, question) {

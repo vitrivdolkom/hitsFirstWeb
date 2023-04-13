@@ -86,6 +86,7 @@ export class DecisionTree {
             })
 
             const IG = fullEntropy - entropy
+
             if (bestIG < IG) {
                 bestIG = IG
                 bestColumn = columnName
@@ -106,7 +107,7 @@ export class DecisionTree {
         return bestColumnName
     }
 
-    determineLeaf(s, columns, columnName) {
+    determineLeaf(s, columns, columnName, targetVariants) {
         const toColumn = columns.get(columnName)
 
         toColumn.forEach((indexes, variant) => {
@@ -130,7 +131,7 @@ export class DecisionTree {
                 }
             })
 
-            this.tree.addBranch(columnName, variant, `${best}`)
+            this.tree.addBranch(columnName, variant, `${best}`, true, columns, targetVariants, s)
         })
     }
 
@@ -175,13 +176,13 @@ export class DecisionTree {
                     newS.best = best
                     q.push(newS)
 
-                    this.tree.addBranch(bestColumnName, variant, best)
+                    this.tree.addBranch(bestColumnName, variant, best, false, columns, targetVariants, s)
                 }
             }
         })
 
         if (!q.length) {
-            this.determineLeaf(s)
+            this.determineLeaf(s, columns, bestColumnName, targetVariants)
         }
 
         for (let i = 0; i < q.length; i++) {
