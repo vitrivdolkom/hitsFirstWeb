@@ -5,21 +5,29 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Дерево решений</title>
+        <link rel="stylesheet" href="../zero.css" />
+        <link rel="stylesheet" href="../mixin.css" />
         <link rel="stylesheet" href="./styles/style.css" />
     </head>
     <body>
         <div class="wrapper">
+            <button class="btnBack">
+                <div class="arrow-left"></div>
+                <a href="/">Вернуться</a>
+            </button>
             <div class="box">
                 <div class="mybox">
-                    <div class="left">
-                        <input type="file" name="readCsv" accept=".csv" />
-                        <button class="createTree">Построить дерево</button>
+                    <div class="left block">
+                        <!-- <label for="">Файл с данными для обучения</label> -->
+                        <input type="file" name="readCsv" id="readCsv" accept=".csv" class="csvFile" />
+                        <label for="readCsv"><strong>Выберете файл...</strong></label>
+                        <button class="createTree btn">Построить дерево</button>
                     </div>
-                    <div class="content">Здесь будет дерево...</div>
-                    <div class="right">
-                        <div>Введите csv текст</div>
-                        <input type="text" class="newRow" />
-                        <button class="confirmRow">Подтвердить</button>
+                    <div class="content block">Здесь будет дерево...</div>
+                    <div class="right block">
+                        <label for="enterNewRow">Введите csv текст:</label>
+                        <input type="text" class="newRow inp" id="enterNewRow" />
+                        <button class="confirmRow btn">Подтвердить</button>
                     </div>
                 </div>
             </div>

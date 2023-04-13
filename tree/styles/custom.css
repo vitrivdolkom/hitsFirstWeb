@@ -21,8 +21,11 @@
 }
 
 .rootNode {
+  align-self: start;
   border: none;
   margin-left: 0;
+  padding: 0;
+  margin-top: 0;
 }
 
 .variantAndQuestion {
@@ -60,12 +63,74 @@
   padding: 4px 8px;
 }
 
-/* todo zero */
+/* todo design */
 
-ul,
-li {
-  margin: 0;
-  padding: 0;
-  text-indent: 0;
-  list-style-type: none;
+.createTree {
+  width: 240px;
+  padding: 14px 40px;
+  background-color: #419152;
+  margin-top: 30px;
+  font-size: 16px;
+}
+
+.createTree:hover:not(:disabled) {
+  background-color: #53b166;
+}
+
+label {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.confirmRow {
+  width: 240px;
+  padding: 14px 40px;
+  font-size: 16px;
+  margin-top: 30px;
+}
+
+/* todo input file */
+
+.csvFile {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.csvFile+label {
+  width: 160px;
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+  background-color: #df474b;
+  display: inline-block;
+  text-align: center;
+  padding: 10px;
+  border: 2px red solid;
+  transition: all .3s linear;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.csvFile:focus+label,
+.csvFile+label:hover {
+  background-color: #b3383c;
+
+}
+
+.csvFile+label {
+  cursor: pointer;
+}
+
+.csvFile:focus+label {
+  outline: 1px dotted #000;
+  outline: -webkit-focus-ring-color auto 5px;
+}
+
+.csvFile+label * {
+  pointer-events: none;
 }
