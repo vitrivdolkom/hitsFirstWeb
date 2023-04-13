@@ -42,7 +42,7 @@ export class Cell {
                 : `rgba(${inRange(this.homeMarker, 1, 40000, 10, 200)},0, 0, 1)`
 
         color = this.isHome ? 'rgb(255, 0, 0)' : color
-        color = this.isFood ? `rgb(26, ${inRange(this.foodMarker / 200, 0, 500, 40, 200)}, 1)` : color
+        color = this.isFood ? `rgb(0, ${inRange(this.foodBlock.hp, 0, 1000, 10, 255)}, 0)` : color
         color = this.isWall ? 'grey' : color
 
         this.color = color
