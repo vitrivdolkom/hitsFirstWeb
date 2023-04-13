@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Дерево решений</title>
+        <link rel="stylesheet" href="./styles/style.css" />
+    </head>
+    <body>
+        <div class="wrapper">
+            <div class="box">
+                <div class="mybox">
+                    <div class="left">
+                        <input type="file" name="readCsv" accept=".csv" />
+                        <button class="createTree">Построить дерево</button>
+                    </div>
+                    <div class="content">Здесь будет дерево...</div>
+                    <div class="right">
+                        <div>Введите csv текст</div>
+                        <input type="text" class="newRow" />
+                        <button class="confirmRow">Подтвердить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="module" src="./scripts/script.js"></script>
+    </body>
+</html>
