@@ -9,11 +9,28 @@
     </head>
 
     <body>
-        <canvas></canvas>
+        <p>Алгоритм kMeans</p>
+        <canvas class="kM"></canvas>
+        <p>Алгоритм DBSCAN</p>
+        <canvas class="DB"></canvas>
         <div>Введите количество главных точек</div>
-        <input class="kMeans" />
+        <div class="slidecontainer">
+            <p>Количество центроидов:</p>
+            <div id="kMeansDemo"></div>
+            <input type="range" min="1" max="25" value="5" class="slider" id="kMeans" />
+        </div>
         <button class="start">Начать вычисления</button>
         <button class="clear">Очистить поле</button>
+        <div class="slidecontainer">
+            <p>Радиус поиска точек:</p>
+            <div id="demo"></div>
+            <input type="range" min="30" max="100" value="50" class="slider" id="myRange" />
+        </div>
+        <div class="slidecontainer">
+            <p>Количество соседей:</p>
+            <div id="anotherDemo"></div>
+            <input type="range" min="2" max="10" value="5" class="slider" id="myAnotherRange" />
+        </div>
         <fieldset>
             <legend>Выберите метрику:</legend>
 
@@ -33,5 +50,6 @@
             </div>
         </fieldset>
         <script type="module" src="./cluster.js"></script>
+        <script type="module" src="./DBSCAN.js"></script>
     </body>
 </html>
