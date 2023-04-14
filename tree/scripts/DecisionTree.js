@@ -107,7 +107,7 @@ export class DecisionTree {
         return bestColumnName
     }
 
-    determineLeaf(s, columns, columnName, targetVariants) {
+    determineLeaf(s, columns, columnName) {
         const toColumn = columns.get(columnName)
 
         toColumn.forEach((indexes, variant) => {
@@ -131,14 +131,14 @@ export class DecisionTree {
                 }
             })
 
-            this.tree.addBranch(columnName, variant, `${best}`, true, columns, targetVariants, s)
+            this.tree.addBranch(columnName, variant, `${best}`, true, columns, s)
         })
     }
 
-    createTree(s, bestColumn = '') {
+    createTree(s, bestColumn, depth, maxDepth) {
         let [targetVariants, columns] = this.setColumns(s)
 
-        if (s[0].size === 3) {
+        if (s[0].size === 3 || depth > maxDepth) {
             this.determineLeaf(s, columns, bestColumn)
             return
         }
@@ -152,7 +152,7 @@ export class DecisionTree {
         }
 
         const toColumn = columns.get(bestColumnName)
-        this.tree.addNode(bestColumnName)
+        if (!this.tree.it) this.tree.addNode(bestColumnName)
 
         const q = []
         const columnsToDelete = [bestColumnName]
@@ -165,11 +165,19 @@ export class DecisionTree {
                     columnsToDelete.forEach((columnName) => {
                         s[index].delete(columnName)
                     })
+                })
 
+                // if (s[indexes[0]].size > 3) {
+                //     indexes.forEach((index) => {
+                //         s[index].delete(bestColumnName)
+                //     })
+                // }
+
+                indexes.forEach((index) => {
                     newS.s.push(s[index])
                 })
 
-                if (s[0].size > 2) {
+                if (newS.s[0].size > 2) {
                     const best = this.createNode(newS.s)
 
                     columnsToDelete.push(best)
@@ -178,11 +186,14 @@ export class DecisionTree {
 
                     this.tree.addBranch(bestColumnName, variant, best, false, columns, targetVariants, s)
                 }
+                // } else {
+                //     this.determineLeaf(s, columns, bestColumnName)
+                // }
             }
         })
 
         if (!q.length) {
-            this.determineLeaf(s, columns, bestColumnName, targetVariants)
+            this.determineLeaf(s, columns, bestColumnName)
         }
 
         for (let i = 0; i < q.length; i++) {
@@ -196,7 +207,7 @@ export class DecisionTree {
                     })
             })
 
-            this.createTree(currentS, q[i].best)
+            this.createTree(currentS, q[i].best, depth + 1, maxDepth)
         }
 
         return this.tree

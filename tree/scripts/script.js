@@ -8,15 +8,21 @@ const fileLabel = document.querySelector('label[for=readCsv]')
 const createTreeBtn = document.querySelector('.createTree')
 const newRow = document.querySelector('.newRow')
 const confirmRow = document.querySelector('.confirmRow')
+const maxDepth = document.querySelector('#maxDepth')
+const maxDepthSpan = document.querySelector('.depthNum')
+
 const fileRegex = new RegExp('(.*?).(csv)$', 'i')
 
 inputFile.addEventListener('change', handleFile)
 createTreeBtn.addEventListener('click', createTree)
 confirmRow.addEventListener('click', confirmRowHandle)
+maxDepth.addEventListener('input', (e) => (maxDepthSpan.textContent = e.target.value))
 
+maxDepth.value = 1
+maxDepthSpan.textContent = maxDepth.value
 newRow.value = '456,SUNNY,HOT,HIGH,WEAK'
 inputFile.value = ''
-const tree = new DecisionTree()
+let tree = new DecisionTree()
 let smartTree
 let fullData
 let exampleRow
@@ -67,7 +73,19 @@ function setTable(text) {
 function createTree() {
     if (!tree.target) return
 
-    smartTree = tree.createTree(fullData)
+    const target = tree.target
+    const id = tree.id
+
+    tree = new DecisionTree()
+
+    tree.target = target
+    tree.id = id
+
+    const container = document.querySelector('.content')
+    container.innerHTML = 'Здесь будет дерево...'
+
+    smartTree = tree.createTree(fullData, '', 1, +maxDepthSpan.textContent)
+    console.log(smartTree)
     // prune(smartTree)
     drawTree(smartTree)
 }
@@ -112,6 +130,8 @@ async function confirmRowHandle() {
                 node = child
                 break
             }
+
+            if (i === node.children.length - 1) return
         }
     }
 
