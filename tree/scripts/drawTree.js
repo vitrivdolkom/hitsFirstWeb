@@ -43,7 +43,7 @@ const createTreeElement = (node, container) => {
         questionText.setAttribute('data-question', node.question)
 
         node.children.forEach((child) => {
-            ul.appendChild(createTreeElement(child))
+            ul.appendChild(createTreeElement(child, container))
         })
 
         if (isRoot) container.appendChild(ul)

@@ -1,6 +1,6 @@
 import { DecisionTree } from './DecisionTree.js'
 import { drawTree } from './drawTree.js'
-import { getLeafName, getVariantName } from './helpers.js'
+import { getLeafName, getVariantName, mapArrayDeepCopy } from './helpers.js'
 import { prune } from './prune.js'
 
 const inputFile = document.querySelector("input[name='readCsv']")
@@ -20,7 +20,7 @@ maxDepth.addEventListener('input', (e) => (maxDepthSpan.textContent = e.target.v
 
 maxDepth.value = 1
 maxDepthSpan.textContent = maxDepth.value
-newRow.value = '456,SUNNY,HOT,HIGH,WEAK'
+newRow.value = ''
 inputFile.value = ''
 let tree = new DecisionTree()
 let smartTree
@@ -84,8 +84,7 @@ function createTree() {
     const container = document.querySelector('.content')
     container.innerHTML = 'Здесь будет дерево...'
 
-    smartTree = tree.createTree(fullData, '', 1, +maxDepthSpan.textContent)
-    console.log(smartTree)
+    smartTree = tree.createTree(mapArrayDeepCopy(fullData), '', 1, +maxDepthSpan.textContent)
     // prune(smartTree)
     drawTree(smartTree)
 }
@@ -131,7 +130,10 @@ async function confirmRowHandle() {
                 break
             }
 
-            if (i === node.children.length - 1) return
+            if (i === node.children.length - 1) {
+                alert('no')
+                return
+            }
         }
     }
 

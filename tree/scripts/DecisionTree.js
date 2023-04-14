@@ -9,6 +9,7 @@ export class DecisionTree {
         this.isRoot = false
         this.id = ''
         this.tree = new Tree()
+        this.used = []
     }
 
     setColumns(s) {
@@ -136,10 +137,27 @@ export class DecisionTree {
     }
 
     createTree(s, bestColumn, depth, maxDepth) {
+        const copyS = [...s]
+        let variantToLeaf = []
         let [targetVariants, columns] = this.setColumns(s)
 
         if (s[0].size === 3 || depth > maxDepth) {
+            // const toColumn = columns.get(bestColumn)
+
+            // toColumn.forEach((indexes, variant) => {
+            //     if (variant !== 'IG') {
+            //         const newS = []
+
+            //         // indexes.forEach((index) => {
+            //         //     // s[index].set(best)
+            //         // })
+
+            //         this.determineLeaf(s, columns, bestColumn)
+            //     }
+            // })
+
             this.determineLeaf(s, columns, bestColumn)
+
             return
         }
 
@@ -155,7 +173,7 @@ export class DecisionTree {
         if (!this.tree.it) this.tree.addNode(bestColumnName)
 
         const q = []
-        const columnsToDelete = [bestColumnName]
+        const columnsToDelete = [...this.used, bestColumnName]
 
         toColumn.forEach((indexes, variant) => {
             if (variant !== 'IG') {
@@ -167,12 +185,6 @@ export class DecisionTree {
                     })
                 })
 
-                // if (s[indexes[0]].size > 3) {
-                //     indexes.forEach((index) => {
-                //         s[index].delete(bestColumnName)
-                //     })
-                // }
-
                 indexes.forEach((index) => {
                     newS.s.push(s[index])
                 })
@@ -181,19 +193,35 @@ export class DecisionTree {
                     const best = this.createNode(newS.s)
 
                     columnsToDelete.push(best)
+                    this.used.push(best)
                     newS.best = best
                     q.push(newS)
 
                     this.tree.addBranch(bestColumnName, variant, best, false, columns, targetVariants, s)
+                } else {
+                    variantToLeaf.push([indexes, variant])
                 }
-                // } else {
-                //     this.determineLeaf(s, columns, bestColumnName)
-                // }
             }
         })
 
         if (!q.length) {
             this.determineLeaf(s, columns, bestColumnName)
+        } else {
+            variantToLeaf.forEach((varToLeaf) => {
+                const variant = varToLeaf[1]
+                const indexes = varToLeaf[0]
+
+                const currentS = []
+
+                indexes.forEach((index) => {
+                    currentS.push(new Map(copyS[index]))
+                    currentS[currentS.length - 1].set(bestColumnName, variant)
+                })
+
+                let [targetVariants, columns] = this.setColumns(currentS)
+
+                this.determineLeaf(currentS, columns, bestColumnName)
+            })
         }
 
         for (let i = 0; i < q.length; i++) {
