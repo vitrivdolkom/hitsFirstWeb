@@ -14,11 +14,11 @@ export class Tree {
         }
     }
 
-    addBranch(from, answer, question, isLeaf = false, columns, targetVariants, s) {
+    addBranch(from, answer, question, isLeaf = false, columns, s) {
         const node = this.dfs(this.it, from)
         const newNode = new TreeNode(question)
 
-        newNode.set(from, answer, columns, targetVariants, s)
+        newNode.set(from, answer, columns, s)
 
         node.children.push(newNode)
         if (isLeaf) this.leafs.push(newNode)

@@ -1,6 +1,6 @@
 import { DecisionTree } from './DecisionTree.js'
 import { drawTree } from './drawTree.js'
-import { getLeafName, getVariantName } from './helpers.js'
+import { getLeafName, getVariantName, mapArrayDeepCopy } from './helpers.js'
 import { prune } from './prune.js'
 
 const inputFile = document.querySelector("input[name='readCsv']")
@@ -8,15 +8,21 @@ const fileLabel = document.querySelector('label[for=readCsv]')
 const createTreeBtn = document.querySelector('.createTree')
 const newRow = document.querySelector('.newRow')
 const confirmRow = document.querySelector('.confirmRow')
+const maxDepth = document.querySelector('#maxDepth')
+const maxDepthSpan = document.querySelector('.depthNum')
+
 const fileRegex = new RegExp('(.*?).(csv)$', 'i')
 
 inputFile.addEventListener('change', handleFile)
 createTreeBtn.addEventListener('click', createTree)
 confirmRow.addEventListener('click', confirmRowHandle)
+maxDepth.addEventListener('input', (e) => (maxDepthSpan.textContent = e.target.value))
 
-newRow.value = '456,SUNNY,HOT,HIGH,WEAK'
+maxDepth.value = 1
+maxDepthSpan.textContent = maxDepth.value
+newRow.value = ''
 inputFile.value = ''
-const tree = new DecisionTree()
+let tree = new DecisionTree()
 let smartTree
 let fullData
 let exampleRow
@@ -67,8 +73,18 @@ function setTable(text) {
 function createTree() {
     if (!tree.target) return
 
-    smartTree = tree.createTree(fullData)
-    // prune(smartTree)
+    const target = tree.target
+    const id = tree.id
+
+    tree = new DecisionTree()
+
+    tree.target = target
+    tree.id = id
+
+    const container = document.querySelector('.content')
+    container.innerHTML = 'Здесь будет дерево...'
+
+    smartTree = tree.createTree(mapArrayDeepCopy(fullData), '', 1, +maxDepthSpan.textContent)
     drawTree(smartTree)
 }
 
@@ -111,6 +127,11 @@ async function confirmRowHandle() {
             if (child.variant === row.get(node.question)) {
                 node = child
                 break
+            }
+
+            if (i === node.children.length - 1) {
+                alert('no')
+                return
             }
         }
     }

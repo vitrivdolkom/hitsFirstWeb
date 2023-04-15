@@ -134,3 +134,18 @@ label {
 .csvFile+label * {
   pointer-events: none;
 }
+
+/* todo input range depth */
+
+.labelInput {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 30px;
+}
+
+#maxDepth::-moz-range-track {
+  background: black;
+  height: 4px;
+  border-radius: 30px;
+}

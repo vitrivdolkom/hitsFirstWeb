@@ -9,6 +9,7 @@ export class DecisionTree {
         this.isRoot = false
         this.id = ''
         this.tree = new Tree()
+        this.used = []
     }
 
     setColumns(s) {
@@ -107,7 +108,7 @@ export class DecisionTree {
         return bestColumnName
     }
 
-    determineLeaf(s, columns, columnName, targetVariants) {
+    determineLeaf(s, columns, columnName) {
         const toColumn = columns.get(columnName)
 
         toColumn.forEach((indexes, variant) => {
@@ -131,15 +132,18 @@ export class DecisionTree {
                 }
             })
 
-            this.tree.addBranch(columnName, variant, `${best}`, true, columns, targetVariants, s)
+            this.tree.addBranch(columnName, variant, `${best}`, true, columns, s)
         })
     }
 
-    createTree(s, bestColumn = '') {
+    createTree(s, bestColumn, depth, maxDepth) {
+        const copyS = [...s]
+        let variantToLeaf = []
         let [targetVariants, columns] = this.setColumns(s)
 
-        if (s[0].size === 3) {
+        if (s[0].size === 3 || depth > maxDepth) {
             this.determineLeaf(s, columns, bestColumn)
+
             return
         }
 
@@ -152,10 +156,10 @@ export class DecisionTree {
         }
 
         const toColumn = columns.get(bestColumnName)
-        this.tree.addNode(bestColumnName)
+        if (!this.tree.it) this.tree.addNode(bestColumnName)
 
         const q = []
-        const columnsToDelete = [bestColumnName]
+        const columnsToDelete = [...this.used, bestColumnName]
 
         toColumn.forEach((indexes, variant) => {
             if (variant !== 'IG') {
@@ -165,24 +169,45 @@ export class DecisionTree {
                     columnsToDelete.forEach((columnName) => {
                         s[index].delete(columnName)
                     })
+                })
 
+                indexes.forEach((index) => {
                     newS.s.push(s[index])
                 })
 
-                if (s[0].size > 2) {
+                if (newS.s[0].size > 2) {
                     const best = this.createNode(newS.s)
 
                     columnsToDelete.push(best)
+                    this.used.push(best)
                     newS.best = best
                     q.push(newS)
 
                     this.tree.addBranch(bestColumnName, variant, best, false, columns, targetVariants, s)
+                } else {
+                    variantToLeaf.push([indexes, variant])
                 }
             }
         })
 
         if (!q.length) {
-            this.determineLeaf(s, columns, bestColumnName, targetVariants)
+            this.determineLeaf(s, columns, bestColumnName)
+        } else {
+            variantToLeaf.forEach((varToLeaf) => {
+                const variant = varToLeaf[1]
+                const indexes = varToLeaf[0]
+
+                const currentS = []
+
+                indexes.forEach((index) => {
+                    currentS.push(new Map(copyS[index]))
+                    currentS[currentS.length - 1].set(bestColumnName, variant)
+                })
+
+                let [targetVariants, columns] = this.setColumns(currentS)
+
+                this.determineLeaf(currentS, columns, bestColumnName)
+            })
         }
 
         for (let i = 0; i < q.length; i++) {
@@ -196,7 +221,7 @@ export class DecisionTree {
                     })
             })
 
-            this.createTree(currentS, q[i].best)
+            this.createTree(currentS, q[i].best, depth + 1, maxDepth)
         }
 
         return this.tree

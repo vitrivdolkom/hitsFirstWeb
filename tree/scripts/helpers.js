@@ -5,3 +5,12 @@ export const getLeafName = (node) => {
 export const getVariantName = (node) => {
     return `${node.parent}_${node.variant}`
 }
+
+export const mapArrayDeepCopy = (arr) => {
+    const result = []
+    arr.forEach((element) => {
+        result.push(new Map(element))
+    })
+
+    return result
+}
