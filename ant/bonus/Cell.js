@@ -42,7 +42,7 @@ export class Cell {
                 : `rgba(${inRange(this.homeMarker, 1, 40000, 10, 200)},0, 0, 1)`
 
         color = this.isHome ? 'rgb(255, 0, 0)' : color
-        color = this.isFood ? `rgb(26, ${inRange(this.foodMarker / 200, 0, 500, 40, 200)}, 1)` : color
+        color = this.isFood ? `rgb(0, ${inRange(this.foodBlock.hp, 0, 1000, 10, 255)}, 0)` : color
         color = this.isWall ? 'grey' : color
 
         this.color = color
@@ -65,6 +65,11 @@ export class Cell {
         } else {
             this.homeMarker += ant.home
         }
+    }
+
+    visitFood(context) {
+        if (!this.foodBlock.hp) this.foodBlock.end(context)
+        this.foodBlock.minus()
     }
 
     update(context) {
@@ -90,5 +95,16 @@ export class Cell {
         }
 
         this.draw(context)
+    }
+
+    setIsNormalCell() {
+        this.foodMarker = 1
+        this.homeMarker = 1
+        this.empty = true
+        this.isHome = false
+        this.isFood = false
+        this.isWall = false
+        this.color = 'black'
+        this.start = null
     }
 }

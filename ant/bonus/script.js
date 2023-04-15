@@ -8,6 +8,7 @@ window.addEventListener('load', function () {
     const locateColonyInput = document.querySelector('#colony')
     const locateFood = document.querySelector('#food')
     const setWall = this.document.querySelector('#setWall')
+    const deleteWall = this.document.querySelector('#deleteWall')
     const executeBtn = document.querySelector('.execute')
 
     const foodAmountInput = document.querySelector('#foodAmount')
@@ -31,10 +32,9 @@ window.addEventListener('load', function () {
 
     // todo variables
     let colonyCoordinates = { x: canvas.width / 2, y: canvas.height / 2, isSelected: false }
-    let foodCoordinates = []
 
     // todo Map
-    let map = new WorldMap(canvas, ctx, colonyCoordinates.x, colonyCoordinates.y, locateFood, setWall, +antAmountInput.value)
+    let map = new WorldMap(canvas, ctx, colonyCoordinates.x, colonyCoordinates.y, locateFood, setWall, deleteWall, +antAmountInput.value)
 
     // todo event listeners
     foodAmountInput.addEventListener('input', function (e) {
@@ -56,7 +56,6 @@ window.addEventListener('load', function () {
         const y = e.offsetY
 
         if (locateFood.checked) {
-            foodCoordinates.push({ x: x, y: y, amount: +foodAmountSpan.textContent })
             ctx.save()
             ctx.fillStyle = 'green'
             ctx.fillRect(x - FOOD_RADIUS, y - FOOD_RADIUS, FOOD_RADIUS * 2, FOOD_RADIUS * 2)
