@@ -1,0 +1,29 @@
+#ClearButton {
+  background-color: #df474b;
+  margin-bottom: 30px;
+  width: 240px;
+  padding: 14px 40px;
+  font-size: 16px;
+}
+
+
+#SolveButton {
+  width: 240px;
+  padding: 14px 40px;
+  font-size: 16px;
+}
+
+#bestroot {
+  display: none;
+}
+
+.textToShow {
+  font-size: 22px;
+  font-weight: 300;
+}
+
+.numberToShow {
+  font-size: 20px;
+  font-style: italic;
+  font-weight: 700;
+}
