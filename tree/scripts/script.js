@@ -85,7 +85,6 @@ function createTree() {
     container.innerHTML = 'Здесь будет дерево...'
 
     smartTree = tree.createTree(mapArrayDeepCopy(fullData), '', 1, +maxDepthSpan.textContent)
-    // prune(smartTree)
     drawTree(smartTree)
 }
 

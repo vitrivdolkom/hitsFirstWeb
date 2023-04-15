@@ -142,20 +142,6 @@ export class DecisionTree {
         let [targetVariants, columns] = this.setColumns(s)
 
         if (s[0].size === 3 || depth > maxDepth) {
-            // const toColumn = columns.get(bestColumn)
-
-            // toColumn.forEach((indexes, variant) => {
-            //     if (variant !== 'IG') {
-            //         const newS = []
-
-            //         // indexes.forEach((index) => {
-            //         //     // s[index].set(best)
-            //         // })
-
-            //         this.determineLeaf(s, columns, bestColumn)
-            //     }
-            // })
-
             this.determineLeaf(s, columns, bestColumn)
 
             return
