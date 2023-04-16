@@ -1,4 +1,8 @@
-#ClearButton {
+canvas {
+  border: 1px solid #000000;
+}
+
+#clearButton {
   background-color: #df474b;
   margin-bottom: 30px;
   width: 240px;
@@ -7,14 +11,10 @@
 }
 
 
-#SolveButton {
+#solveButton {
   width: 240px;
   padding: 14px 40px;
   font-size: 16px;
-}
-
-#bestroot {
-  display: none;
 }
 
 .textToShow {
