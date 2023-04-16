@@ -1,0 +1,27 @@
+#ClearButton{
+    top:7%;
+    left:6%;
+    position: absolute;
+}
+#SolveButton{
+    top:7%;
+    left:13%;
+    position: absolute;
+}
+#cities{
+    top:7%;
+    left:77%;
+    position:absolute;
+}
+#bestroot{
+    top:35%;
+    left:78%;
+    position:absolute;
+}
+#bestdistance{
+    top:60%;
+    left:76%;
+    position:absolute;
+
+
+}
