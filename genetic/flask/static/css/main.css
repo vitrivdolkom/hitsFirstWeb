@@ -10,6 +10,9 @@ canvas {
   font-size: 16px;
 }
 
+#clearButton:hover {
+  background-color: #b3383c;
+}
 
 #solveButton {
   width: 240px;
