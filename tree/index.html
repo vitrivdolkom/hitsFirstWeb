@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Дерево решений</title>
+        <link rel="stylesheet" href="../zero.css" />
+        <link rel="stylesheet" href="../mixin.css" />
+        <link rel="stylesheet" href="./styles/style.css" />
+    </head>
+    <body>
+        <div class="wrapper">
+            <a class="btnBack" href="/">
+                <div class="arrow-left"></div>
+                <span>Вернуться</span>
+            </a>
+            <div class="box">
+                <div class="mybox">
+                    <div class="left block">
+                        <input type="file" name="readCsv" id="readCsv" accept=".csv" class="csvFile" />
+                        <label for="readCsv"><strong>Выберете файл...</strong></label>
+
+                        <div class="labelInput">
+                            <label for="maxDepth">Максимальная глубина дерева:<span class="depthNum"></span></label>
+                            <input type="range" id="maxDepth" min="1" max="20" />
+                        </div>
+                        <button class="createTree btn">Построить дерево</button>
+                    </div>
+                    <div class="content block">Здесь будет дерево...</div>
+                    <div class="right block">
+                        <label for="enterNewRow">Введите csv текст:</label>
+                        <input type="text" class="newRow inp" id="enterNewRow" />
+                        <button class="confirmRow btn">Подтвердить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="module" src="./scripts/script.js"></script>
+    </body>
+</html>

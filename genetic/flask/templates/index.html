@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Генетический алгоритм</title>
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/zero.css') }}" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/mixin.css') }}" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    </head>
+    <body>
+        <div class="wrapper">
+            <a class="btnBack" href="/">
+                <div class="arrow-left"></div>
+                <span>Вернуться</span>
+            </a>
+            <div class="box">
+                <div class="mybox">
+                    <div class="left block">
+                        <button id="clearButton" class="btn">Clear</button>
+                        <button id="solveButton" class="btn">Solve</button>
+                    </div>
+                    <div class="content block">
+                        <canvas></canvas>
+                    </div>
+                    <div class="right block">
+                        <div>
+                            <div class="textToShow">Выбрано городов: <span class="numberToShow" id="number">0</span></div>
+                        </div>
+                        <div>
+                            <div class="textToShow">Лучшее расстояние: <span class="numberToShow" id="dist">0</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="{{url_for('static', filename='js/script.js')}}"></script>
+    </body>
+</html>

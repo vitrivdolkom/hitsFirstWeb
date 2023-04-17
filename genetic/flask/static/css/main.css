@@ -1,0 +1,30 @@
+canvas {
+  border: 1px solid #000000;
+}
+
+#clearButton {
+  background-color: #df474b;
+  margin-bottom: 30px;
+  width: 240px;
+  padding: 14px 40px;
+  font-size: 16px;
+}
+
+
+#solveButton {
+  width: 240px;
+  padding: 14px 40px;
+  font-size: 16px;
+}
+
+.textToShow {
+  font-size: 22px;
+  font-weight: 300;
+  text-align: center;
+}
+
+.numberToShow {
+  font-size: 20px;
+  font-style: italic;
+  font-weight: 700;
+}
