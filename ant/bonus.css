@@ -1,5 +1,5 @@
 body {
-  background-color: #000000;
+  background-color: black;
   color: white;
 }
 
@@ -24,12 +24,22 @@ body {
 
 /* menu */
 
+label {
+  white-space: nowrap;
+}
+
+.rangeInput,
+.labelInput {
+  padding: 10px;
+}
+
 .top {
   position: fixed;
-  top: -60px;
+  top: 0;
+  transform: translate(0, -100%);
   left: 0;
   right: 0;
-  height: 60px;
+  /* height: 60px; */
   background-color: #16182D;
   color: #fff;
   transition: all .3s ease-in-out;
@@ -38,14 +48,15 @@ body {
 .menuWrapper {
   margin: 0 auto;
   height: 100%;
-  width: 80%;
+  padding: 0 10px;
+  /* width: 80%; */
   display: flex;
   align-items: center;
   justify-content: space-around;
 }
 
 .top.show {
-  top: 0;
+  transform: translate(0, 0);
 }
 
 .rangeInput {
@@ -93,4 +104,11 @@ body {
 
 input[type="radio"] {
   margin-left: 20px;
+}
+
+
+@media screen and (max-width: 1550px) {
+  .menuWrapper {
+    flex-wrap: wrap;
+  }
 }
