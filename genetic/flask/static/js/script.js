@@ -1,8 +1,8 @@
 const canv = document.querySelector('canvas')
-const canvasWidth = document.querySelector('.wrapper').clientWidth > 1520 ? 500 : 300
+const canvasSize = document.querySelector('.wrapper').clientWidth > 1520 ? 500 : 300
 
-canv.width = canvasWidth
-canv.height = canvasWidth
+canv.width = canvasSize
+canv.height = canvasSize
 const ctx = canv.getContext('2d')
 
 let cords = []

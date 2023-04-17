@@ -6,11 +6,19 @@ import { reconstructPath } from './additionalFunctions.js'
 
 const canvas = document.querySelector('canvas')
 const ctx = canvas.getContext('2d')
-ctx.canvas.width = 1000
-ctx.canvas.height = 1000
+
+const wrapperSize = document.querySelector('.wrapper').clientWidth
+let canvasSize = wrapperSize > 1840 ? 800 : 500
+if (wrapperSize < 1000) {
+    canvasSize = 400
+} else if (wrapperSize < 600) {
+    canvasSize = 200
+}
+
+ctx.canvas.width = canvasSize
+ctx.canvas.height = canvasSize
+
 let size, start, end, field, copyField
-let canvasWidth = 1000
-let canvasHeight = 1000
 let startFlag = false
 let endFlag = false
 let alreadyCalculate = false
@@ -42,17 +50,16 @@ function returnStartState() {
         startFlag = false
         endFlag = false
         answer.innerHTML = ''
-        textForAnswer.innerHTML = ''
         for (let i = 0; i < size; i++) {
             for (let j = 0; j < size; j++) {
                 field[i][j].visited = false
                 if (copyField[i][j].wall) {
                     ctx.fillStyle = 'black'
                     ctx.fillRect(
-                        field[i][j].x * (canvasWidth / size),
-                        field[i][j].y * (canvasWidth / size),
-                        canvasWidth / size,
-                        canvasHeight / size
+                        field[i][j].x * (canvasSize / size),
+                        field[i][j].y * (canvasSize / size),
+                        canvasSize / size,
+                        canvasSize / size
                     )
                 }
             }
@@ -129,10 +136,10 @@ async function aStar(field, start, end) {
         ctx.beginPath()
         ctx.fillStyle = 'yellow'
         ctx.fillRect(
-            currentNode.x * (canvasWidth / size),
-            currentNode.y * (canvasWidth / size),
-            Math.floor(canvasWidth / size),
-            Math.floor(canvasHeight / size)
+            currentNode.x * (canvasSize / size),
+            currentNode.y * (canvasSize / size),
+            Math.floor(canvasSize / size),
+            Math.floor(canvasSize / size)
         )
 
         if (currentNode == end) {
@@ -166,9 +173,9 @@ async function aStar(field, start, end) {
 }
 
 function draw() {
-    ctx.clearRect(0, 0, canvasWidth, canvasHeight)
-    for (let i = 0; i < canvasWidth; i += canvasWidth / size) {
-        for (let j = 0; j < canvasHeight; j += canvasHeight / size) {
+    ctx.clearRect(0, 0, canvasSize, canvasSize)
+    for (let i = 0; i < canvasSize; i += canvasSize / size) {
+        for (let j = 0; j < canvasSize; j += canvasSize / size) {
             ctx.beginPath()
             ctx.strokeStyle = 'black'
             if (size < 100) {
@@ -178,7 +185,7 @@ function draw() {
             } else {
                 ctx.lineWidth = '0.1'
             }
-            ctx.strokeRect(i, j, canvasWidth / size, canvasHeight / size)
+            ctx.strokeRect(i, j, canvasSize / size, canvasSize / size)
         }
     }
 }
@@ -189,32 +196,29 @@ function normalizeCanvas(field) {
             field[i][j].visited = false
             if (copyField[i][j].wall) {
                 ctx.fillStyle = 'black'
-                ctx.fillRect(
-                    field[i][j].x * (canvasWidth / size),
-                    field[i][j].y * (canvasWidth / size),
-                    canvasWidth / size,
-                    canvasHeight / size
-                )
+                ctx.fillRect(field[i][j].x * (canvasSize / size), field[i][j].y * (canvasSize / size), canvasSize / size, canvasSize / size)
             }
         }
     }
 }
 
-let input = document.querySelector('.matrixSize')
-let confirmButton = document.querySelector('.confirmSize')
-let calculateButton = document.querySelector('.calculate')
-let restartButton = document.querySelector('.restart')
-let answer = document.querySelector('.lengthOfPath')
-let textForAnswer = document.querySelector('.length')
-let nullField = document.querySelector('.field')
-let stopButton = document.querySelector('.stop')
-let switcher = document.querySelector('.switcher')
-let pleasure = document.querySelector('.pleasure')
+const input = document.querySelector('.matrixSize')
+const confirmButton = document.querySelector('.confirmSize')
+const calculateButton = document.querySelector('.calculate')
+const restartButton = document.querySelector('.restart')
+const answer = document.querySelector('.lengthOfPath')
+const nullField = document.querySelector('.field')
+const stopButton = document.querySelector('.stop')
+const switcher = document.querySelector('.switcher')
+const pleasure = document.querySelector('.pleasure')
 
-let startX
-let startY
-let endX
-let endY
+pleasure.checked = false
+switcher.checked = false
+
+let startX = 0
+let startY = 0
+let endX = 0
+let endY = 0
 
 pleasure.addEventListener('click', function (e) {
     if (!pleasureFlag) {
@@ -244,7 +248,6 @@ nullField.addEventListener('click', function (e) {
     if (!alreadyCalculate && !secondCalculating) {
         if (+input.value == input.value && input.value > 1) {
             answer.innerHTML = ''
-            textForAnswer.innerHTML = ''
             size = +input.value
             field = new Array(size)
             field = createMatrix(field, size)
@@ -261,16 +264,16 @@ nullField.addEventListener('click', function (e) {
                     field[i][j].wall = false
                     ctx.fillStyle = 'white'
                     ctx.fillRect(
-                        field[i][j].x * (canvasWidth / size),
-                        field[i][j].y * (canvasWidth / size),
-                        canvasWidth / size,
-                        canvasHeight / size
+                        field[i][j].x * (canvasSize / size),
+                        field[i][j].y * (canvasSize / size),
+                        canvasSize / size,
+                        canvasSize / size
                     )
                     ctx.strokeRect(
-                        field[i][j].x * (canvasWidth / size),
-                        field[i][j].y * (canvasWidth / size),
-                        canvasWidth / size,
-                        canvasHeight / size
+                        field[i][j].x * (canvasSize / size),
+                        field[i][j].y * (canvasSize / size),
+                        canvasSize / size,
+                        canvasSize / size
                     )
                 }
             }
@@ -294,7 +297,6 @@ confirmButton.addEventListener('click', function (e) {
         if (+input.value == input.value && input.value > 1) {
             alreadyCalculate = false
             answer.innerHTML = ''
-            textForAnswer.innerHTML = ''
             size = +input.value
             field = new Array(size)
             field = createMatrix(field, size)
@@ -326,46 +328,46 @@ canvas.addEventListener('click', function (e) {
         const x = e.clientX - rect.left
         const y = e.clientY - rect.top
 
-        for (let i = 0; i < canvasWidth; i += canvasWidth / size) {
-            for (let j = 0; j < canvasHeight; j += canvasHeight / size) {
-                if (i < x && j < y && i + canvasWidth / size > x && j + canvasHeight / size > y) {
+        for (let i = 0; i < canvasSize; i += canvasSize / size) {
+            for (let j = 0; j < canvasSize; j += canvasSize / size) {
+                if (i < x && j < y && i + canvasSize / size > x && j + canvasSize / size > y) {
                     if (startFlag && startX == i && startY == j) {
                         ctx.fillStyle = 'white'
-                        ctx.fillRect(i, j, canvasWidth / size, canvasHeight / size)
-                        ctx.strokeRect(i, j, canvasWidth / size, canvasHeight / size)
+                        ctx.fillRect(i, j, canvasSize / size, canvasSize / size)
+                        ctx.strokeRect(i, j, canvasSize / size, canvasSize / size)
                         startFlag = false
                         start = undefined
                     } else if (endFlag && endX == i && endY == j) {
                         ctx.fillStyle = 'white'
-                        ctx.fillRect(i, j, canvasWidth / size, canvasHeight / size)
-                        ctx.strokeRect(i, j, canvasWidth / size, canvasHeight / size)
+                        ctx.fillRect(i, j, canvasSize / size, canvasSize / size)
+                        ctx.strokeRect(i, j, canvasSize / size, canvasSize / size)
                         endFlag = false
                         end = undefined
-                    } else if (!startFlag && !field[Math.round(i / (canvasWidth / size))][Math.round(j / (canvasHeight / size))].wall) {
+                    } else if (!startFlag && !field[Math.round(i / (canvasSize / size))][Math.round(j / (canvasSize / size))].wall) {
                         ctx.fillStyle = 'Aquamarine'
-                        ctx.fillRect(i, j, canvasWidth / size, canvasHeight / size)
+                        ctx.fillRect(i, j, canvasSize / size, canvasSize / size)
                         startFlag = true
                         startX = i
                         startY = j
-                        start = field[Math.round(i / (canvasWidth / size))][Math.round(j / (canvasHeight / size))]
-                        field[Math.round(i / (canvasWidth / size))][Math.round(j / (canvasHeight / size))].wall = false
-                    } else if (!endFlag && !field[Math.round(i / (canvasWidth / size))][Math.round(j / (canvasHeight / size))].wall) {
+                        start = field[Math.round(i / (canvasSize / size))][Math.round(j / (canvasSize / size))]
+                        field[Math.round(i / (canvasSize / size))][Math.round(j / (canvasSize / size))].wall = false
+                    } else if (!endFlag && !field[Math.round(i / (canvasSize / size))][Math.round(j / (canvasSize / size))].wall) {
                         ctx.fillStyle = 'Magenta'
-                        ctx.fillRect(i, j, canvasWidth / size, canvasHeight / size)
+                        ctx.fillRect(i, j, canvasSize / size, canvasSize / size)
                         endFlag = true
                         endX = i
                         endY = j
-                        end = field[Math.round(i / (canvasWidth / size))][Math.round(j / (canvasHeight / size))]
-                        field[Math.round(i / (canvasWidth / size))][Math.round(j / (canvasHeight / size))].wall = false
-                    } else if (!field[Math.round(i / (canvasWidth / size))][Math.round(j / (canvasHeight / size))].wall) {
+                        end = field[Math.round(i / (canvasSize / size))][Math.round(j / (canvasSize / size))]
+                        field[Math.round(i / (canvasSize / size))][Math.round(j / (canvasSize / size))].wall = false
+                    } else if (!field[Math.round(i / (canvasSize / size))][Math.round(j / (canvasSize / size))].wall) {
                         ctx.fillStyle = 'black'
-                        ctx.fillRect(i, j, canvasWidth / size, canvasHeight / size)
-                        field[Math.round(i / (canvasWidth / size))][Math.round(j / (canvasHeight / size))].wall = true
-                    } else if (field[Math.round(i / (canvasWidth / size))][Math.round(j / (canvasHeight / size))].wall) {
+                        ctx.fillRect(i, j, canvasSize / size, canvasSize / size)
+                        field[Math.round(i / (canvasSize / size))][Math.round(j / (canvasSize / size))].wall = true
+                    } else if (field[Math.round(i / (canvasSize / size))][Math.round(j / (canvasSize / size))].wall) {
                         ctx.fillStyle = 'white'
-                        ctx.fillRect(i, j, canvasWidth / size, canvasHeight / size)
-                        ctx.strokeRect(i, j, canvasWidth / size, canvasHeight / size)
-                        field[Math.round(i / (canvasWidth / size))][Math.round(j / (canvasHeight / size))].wall = false
+                        ctx.fillRect(i, j, canvasSize / size, canvasSize / size)
+                        ctx.strokeRect(i, j, canvasSize / size, canvasSize / size)
+                        field[Math.round(i / (canvasSize / size))][Math.round(j / (canvasSize / size))].wall = false
                     }
                 }
             }
@@ -398,13 +400,12 @@ calculateButton.addEventListener('click', async function (e) {
                     }
                     ctx.fillStyle = 'green'
                     ctx.fillRect(
-                        Math.round(path[i].x * (canvasWidth / size)),
-                        Math.round(path[i].y * (canvasWidth / size)),
-                        canvasWidth / size,
-                        canvasHeight / size
+                        Math.round(path[i].x * (canvasSize / size)),
+                        Math.round(path[i].y * (canvasSize / size)),
+                        canvasSize / size,
+                        canvasSize / size
                     )
-                    textForAnswer.innerHTML = 'Длина вашего пути равна:'
-                    answer.innerHTML = path.length
+                    answer.textContent = path.length
                     alreadyCalculate = false
                 }
             } else {
@@ -413,20 +414,16 @@ calculateButton.addEventListener('click', async function (e) {
                         if (copyField[i][j].visited) {
                             ctx.fillStyle = 'red'
                             ctx.fillRect(
-                                field[i][j].x * (canvasWidth / size),
-                                field[i][j].y * (canvasWidth / size),
-                                Math.floor(canvasWidth / size),
-                                Math.floor(canvasWidth / size)
+                                field[i][j].x * (canvasSize / size),
+                                field[i][j].y * (canvasSize / size),
+                                Math.floor(canvasSize / size),
+                                Math.floor(canvasSize / size)
                             )
                         }
                     }
                 }
 
-                if (stopAlgorithm) {
-                    textForAnswer.innerHTML = 'Вы остановили поиск пути'
-                } else {
-                    textForAnswer.innerHTML = 'Путь не найден'
-                }
+                answer.textContent = ' пути нет'
                 stopAlgorithm = false
                 alreadyCalculate = false
             }

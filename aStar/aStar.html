@@ -5,34 +5,51 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>aStar</title>
+        <link rel="stylesheet" href="../zero.css" />
+        <link rel="stylesheet" href="../mixin.css" />
         <link rel="stylesheet" href="./style.css" />
     </head>
 
     <body>
-        <div class="nameOfAlgorithm">A*</div>
-        <div>Введите размер матрицы</div>
-        <input class="matrixSize" />
-        <button class="confirmSize">Построить лабиринт</button>
-        <button class="field">Построить пустую карту</button>
-        <canvas></canvas>
-        <div>Быстрый поиск</div>
-        <label class="switch">
-            <input class="switcher" type="checkbox" />
-            <span class="slider round"></span>
-        </label>
-        <div>Наслаждение для глаз</div>
-        <label class="switch">
-            <input class="pleasure" type="checkbox" />
-            <span class="slider round"></span>
-        </label>
-        <button class="calculate">Начать вычисления</button>
-        <button class="restart">Очистить лабиринт</button>
-        <button class="stop">Остановить поиск пути</button>
-        <div class="textOfLength">
-            <div class="length"></div>
-            <div class="lengthOfPath"></div>
+        <div class="wrapper">
+            <a class="btnBack" href="/">
+                <div class="arrow-left"></div>
+                <span>Вернуться</span>
+            </a>
+            <div class="box">
+                <div class="mybox">
+                    <div class="left block customBlock">
+                        <div>Введите размер матрицы</div>
+                        <input class="matrixSize inp" />
+                        <button class="confirmSize btn customBtn">Построить лабиринт</button>
+                        <button class="calculate btn customBtn ok">Начать вычисления</button>
+                        <button class="restart btn customBtn error">Очистить лабиринт</button>
+                    </div>
+                    <div class="content block"><canvas></canvas></div>
+                    <div class="right block customBlock">
+                        <div>Быстрый поиск</div>
+                        <label class="switch">
+                            <input class="switcher" type="checkbox" />
+                            <span class="slider round"></span>
+                        </label>
+                        <div>Наслаждение для глаз</div>
+                        <label class="switch">
+                            <input class="pleasure" type="checkbox" />
+                            <span class="slider round"></span>
+                        </label>
+
+                        <button class="field btn">Построить пустую карту</button>
+                        <button class="stop btn warning">Остановить поиск пути</button>
+
+                        <div class="textOfLength">
+                            <div class="length">Длина пути:</div>
+                            <div class="lengthOfPath"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <script type="module" src="./aStar.js" />
+        <script type="module" src="./scripts/aStar.js" />
     </body>
 </html>

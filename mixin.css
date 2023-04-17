@@ -28,6 +28,7 @@ body {
   justify-content: space-around;
   align-items: center;
   flex-wrap: wrap;
+  padding: 20px;
 }
 
 /*  */
@@ -95,6 +96,30 @@ body {
 
 .btn:disabled {
   opacity: 0.6;
+}
+
+.ok {
+  background-color: #419152;
+}
+
+.ok:hover:not(:disabled) {
+  background-color: #53b166;
+}
+
+.error {
+  background-color: #df474b;
+}
+
+.error:hover:not(:disabled) {
+  background-color: #b3383c;
+}
+
+.warning {
+  background-color: orange;
+}
+
+.warning:hover:not(:disabled) {
+  background-color: rgb(214, 139, 0);
 }
 
 /* todo input */
@@ -212,7 +237,6 @@ input[type="range"]::-webkit-slider-thumb {
 @media screen and (max-width: 1200px) {
   .mybox {
     flex-direction: column;
-    padding: 20px;
   }
 
   .btn {
