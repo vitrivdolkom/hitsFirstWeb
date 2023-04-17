@@ -1,6 +1,8 @@
 const canv = document.querySelector('canvas')
-canv.width = 500
-canv.height = 500
+const canvasWidth = document.querySelector('.wrapper').clientWidth > 1520 ? 500 : 300
+
+canv.width = canvasWidth
+canv.height = canvasWidth
 const ctx = canv.getContext('2d')
 
 let cords = []
@@ -46,7 +48,7 @@ function clearall() {
 }
 
 function solveExchange() {
-    distfield.innerHTML = 'Сервер думает...'
+    distfield.innerHTML = '...'
     for (let ind = 0; ind < cords.length; ++ind) {
         for (let inj = 0; inj < cords.length; ++inj) {
             ctx.strokeStyle = 'white'
@@ -61,7 +63,7 @@ function solveExchange() {
             ctx.stroke()
         }
     }
-    distfield.innerHTML = 'Идут подсчёты...'
+    distfield.innerHTML = '...'
     $.post(
         '/GetDots',
         {
