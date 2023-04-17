@@ -3,6 +3,7 @@ import { generateMaze } from './maze.js'
 import { deleteElement } from './additionalFunctions.js'
 import { createMatrix } from './additionalFunctions.js'
 import { reconstructPath } from './additionalFunctions.js'
+import { openModal } from '../../scripts/modal.js'
 
 const canvas = document.querySelector('canvas')
 const ctx = canvas.getContext('2d')
@@ -222,7 +223,7 @@ let endY = 0
 
 pleasure.addEventListener('click', function (e) {
     if (!pleasureFlag) {
-        alert('Ставьте размер матрицы не менее 300')
+        openModal('Ставьте размер матрицы не менее 300')
         pleasureFlag = true
     } else {
         pleasureFlag = false
@@ -279,9 +280,9 @@ nullField.addEventListener('click', function (e) {
             }
             normalizeCanvas(field)
         } else if (input.value <= 1) {
-            alert('Введите число, большее 1')
+            openModal('Введите число, большее 1')
         } else {
-            alert('Введите корректное число')
+            openModal('Введите корректное число')
         }
     }
 })
@@ -315,9 +316,9 @@ confirmButton.addEventListener('click', function (e) {
             ctx.fillStyle = '#000000'
             ctx.fill()
         } else if (input.value <= 1) {
-            alert('Введите число, большее 1')
+            openModal('Введите число, большее 1')
         } else {
-            alert('Введите корректное число')
+            openModal('Введите корректное число')
         }
     }
 })
@@ -382,7 +383,7 @@ calculateButton.addEventListener('click', async function (e) {
         alreadyCalculate = true
         openSet.push(start)
         if (start == undefined || end == undefined) {
-            alert('Вы не поставили точку старта или точку конца')
+            openModal('Вы не поставили точку старта или точку конца')
         } else {
             const result = await aStar(field, start, end)
 
@@ -429,10 +430,10 @@ calculateButton.addEventListener('click', async function (e) {
             }
         }
     } else if (!startFlag || !endFlag) {
-        alert('Вы не поставили стартовую или конечную точку')
+        openModal('Вы не поставили стартовую или конечную точку')
     } else if (alreadyCalculate || secondCalculating) {
-        alert('Вы уже вычисляете')
+        openModal('Вы уже вычисляете')
     } else {
-        alert('Очистите лабиринт')
+        openModal('Очистите лабиринт')
     }
 })

@@ -1,3 +1,4 @@
+import { openModal } from '../../scripts/modal.js'
 import { COLONY_RADIUS, FOOD_RADIUS, PX_PER_CELL } from './constants.js'
 import { distanceBetweenTwoVertexes } from './helpers.js'
 import { WorldMap } from './Map.js'
@@ -66,7 +67,7 @@ window.addEventListener('load', function () {
 
         if (locateColonyInput.checked) {
             if (colonyCoordinates.isSelected) {
-                alert('No')
+                openModal('Может быть только 1 колония')
                 return
             }
 

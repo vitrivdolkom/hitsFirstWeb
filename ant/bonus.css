@@ -39,7 +39,6 @@ label {
   transform: translate(0, -100%);
   left: 0;
   right: 0;
-  /* height: 60px; */
   background-color: #16182D;
   color: #fff;
   transition: all .3s ease-in-out;

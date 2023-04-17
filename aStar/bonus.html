@@ -5,12 +5,21 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>aStar</title>
-        <link rel="stylesheet" href="../zero.css" />
-        <link rel="stylesheet" href="../mixin.css" />
+        <link rel="stylesheet" href="../styles/zero.css" />
+        <link rel="stylesheet" href="../styles/mixin.css" />
         <link rel="stylesheet" href="./style.css" />
+        <link rel="stylesheet" href="../styles/modal.css" />
     </head>
 
     <body>
+        <div class="modal">
+            <div class="modalWindow">
+                <button class="closeModal">&#10006;</button>
+                <div class="modalText"></div>
+                <button class="btn okModal">OK</button>
+            </div>
+        </div>
+
         <div class="wrapper">
             <a class="btnBack" href="/">
                 <div class="arrow-left"></div>
@@ -51,5 +60,6 @@
         </div>
 
         <script type="module" src="./scripts/aStar.js" />
+        <script type="module" src="../scripts/modal.js" />
     </body>
 </html>

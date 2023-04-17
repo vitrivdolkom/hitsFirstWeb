@@ -1,3 +1,4 @@
+import { openModal } from '../../scripts/modal.js'
 import { DecisionTree } from './DecisionTree.js'
 import { drawTree } from './drawTree.js'
 import { getLeafName, getVariantName, mapArrayDeepCopy } from './helpers.js'
@@ -39,7 +40,7 @@ function handleFile(e) {
         reader.readAsText(file)
     } else {
         e.target.vaule = ''
-        alert('Error')
+        openModal('Ошибка чтения файла')
     }
 }
 
@@ -130,7 +131,7 @@ async function confirmRowHandle() {
             }
 
             if (i === node.children.length - 1) {
-                alert('no')
+                openModal('Невалидный csv текст')
                 return
             }
         }
