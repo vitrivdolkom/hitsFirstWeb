@@ -52,7 +52,7 @@ class NeuroNumbers:
         self.biases_inptohid += np.sum(DeltaHidden, axis=0) * LearnRate
         self.biases_hidtoout += np.sum(DeltaOutput, axis=0) * LearnRate
 
-network = NeuroNumbers(784, 100, 10)
+network = NeuroNumbers(784, 170, 10)
 
 NamesToTrain = np.eye(10)[y_train]
 NamesToTest = np.eye(10)[y_test]
@@ -63,34 +63,28 @@ NamesToTest = np.eye(10)[y_test]
 x_train = x_train / 255
 x_test = x_test / 255
 
-network.weights_inptohid = np.load('firstlayer.npy')
-network.weights_hidtoout = np.load('secondlayer.npy')
+#network.weights_inptohid = np.load('A.npy')
+#network.weights_hidtoout = np.load('B.npy')
 
 
+for epoch in range(8):
+    print(f'Идёт обучение... Эпоха: {epoch}')
+    for pic, res in zip(x_train, NamesToTrain):
+        rot = random_rotation(pic)
+        network.forw(rot.flatten())
+        network.back(rot.flatten().reshape(1, -1), res.reshape(1, -1), 0.01)
 
+np.save('A.npy', network.weights_inptohid)
+np.save('B.npy', network.weights_hidtoout)
 
-def solver(picture):
-    head, enc = picture.split(',', 1)
-    bindata = base64.b64decode(enc)
-    image = Image.open(io.BytesIO(bindata))
-    #image.show()
-    rgb_image = Image.new("RGB", image.size, "WHITE")
-    rgb_image.paste(image, (0, 0), image)
+network.weights_inptohid = np.load('A.npy')
+network.weights_hidtoout = np.load('B.npy')
 
-    rgb_image = rgb_image.resize((28, 28), Image.ANTIALIAS)
+okay = 0
+total = 0
 
-    gray_image = rgb_image.convert('L')  # Преобразование изображения в оттенки серого
-    #gray_image.show()  # Проверьте результат после преобразования
-    #gray_image.show()
-    image_array = np.array(gray_image).astype(np.float32)
-    #print(image_array)
-    image_array = 255 - image_array
-    image_array = image_array / 255
-
-
-
-    possible = network.forw(image_array.flatten())
-    #print(possible)
-
-    #return 'Connected'
-    return int(np.argmax(possible))
+for pic, res in zip(x_test, NamesToTest):
+    possible = network.forw(pic.flatten())
+    okay += np.argmax(possible) == np.argmax(res)
+    total += 1
+print(f'Точность: {(okay/total) * 100} %')

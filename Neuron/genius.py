@@ -1,6 +1,6 @@
 from flask import Flask, render_template, url_for, request
 from ast import literal_eval
-from GeniusSolver import *
+from SecondGeniusSolver import *
 
 app = Flask(__name__)
 

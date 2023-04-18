@@ -66,23 +66,36 @@ x_test = x_test / 255
 network.weights_inptohid = np.load('F.npy')
 network.weights_hidtoout = np.load('S.npy')
 
-for epoch in range(4):
-    print(f'Идёт обучение... Эпоха: {epoch}')
-    for pic, res in zip(x_train, NamesToTrain):
-        network.forw(pic.flatten())
-        network.back(pic.flatten().reshape(1, -1), res.reshape(1, -1), 0.02)
+def solver(picture):
+    head, enc = picture.split(',', 1)
+    bindata = base64.b64decode(enc)
+    image = Image.open(io.BytesIO(bindata))
+    #image.show()
+    rgb_image = Image.new("RGB", image.size, "WHITE")
+    rgb_image.paste(image, (0, 0), image)
 
-np.save('F.npy', network.weights_inptohid)
-np.save('S.npy', network.weights_hidtoout)
+    rgb_image = rgb_image.resize((28, 28), Image.LANCZOS)
 
-network.weights_inptohid = np.load('F.npy')
-network.weights_hidtoout = np.load('S.npy')
+    gray_image = rgb_image.convert('L')  # Преобразование изображения в оттенки серого
+    #gray_image.show()  # Проверьте результат после преобразования
+    #gray_image.show()
 
-okay = 0
-total = 0
+    '''gray_image = rgb_image.convert('L')
+    binary_image = ImageOps.autocontrast(gray_image, cutoff=5)
+    gray_image = binary_image.convert('L')
+    #gray_image.show()'''
 
-for pic, res in zip(x_test, NamesToTest):
-    possible = network.forw(pic.flatten())
-    okay += np.argmax(possible) == np.argmax(res)
-    total += 1
-print(f'Точность: {(okay/total) * 100} %')
+    image_array = np.array(gray_image).astype(np.float32)
+    #print(image_array)
+    image_array = 255 - image_array
+    image_array = image_array / 255
+
+
+
+    possible = network.forw(random_rotation(image_array).flatten())
+    #print(possible)
+    #print(possible)
+    #return 'Connected'
+
+    print(possible)
+    return int(np.argmax(possible))

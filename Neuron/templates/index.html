@@ -8,7 +8,7 @@
 <body>
 
 
-<canvas id="myCanvas" width="500" height="500">
+<canvas id="myCanvas" width="50" height="50">
 </canvas>
 
 <div id="userplace">
@@ -33,7 +33,7 @@
       ctx.beginPath();
     }
 
-    ctx.lineWidth = 46;
+    ctx.lineWidth = 4;
     canv.addEventListener('mousemove', function(e){
         if (isMouseDown){
             cords.push([e.clientX - canv.offsetLeft, e.clientY-canv.offsetTop]);
@@ -42,7 +42,7 @@
             ctx.stroke();
 
             ctx.beginPath();
-            ctx.arc(e.clientX - canv.offsetLeft, e.clientY-canv.offsetTop, 23, 0, Math.PI * 2);
+            ctx.arc(e.clientX - canv.offsetLeft, e.clientY-canv.offsetTop, 2, 0, Math.PI * 2);
             ctx.fill();
 
             ctx.beginPath();
