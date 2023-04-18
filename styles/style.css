@@ -60,11 +60,11 @@ header {
 /* todo card */
 
 .content {
-  margin: 100px auto 0;
   width: 100%;
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
 }
 
 .algorithmCard {
@@ -79,4 +79,8 @@ header {
   color: var(--orange);
   font-size: 20px;
   text-align: center;
+}
+
+.openModal {
+  color: white;
 }

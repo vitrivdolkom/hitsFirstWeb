@@ -5,41 +5,43 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Web first course</title>
+        <link rel="stylesheet" href="./styles/mixin.css" />
         <link rel="stylesheet" href="./styles/zero.css" />
-        <link rel="stylesheet" href="./style.css" />
+        <link rel="stylesheet" href="./styles/modal.css" />
+        <link rel="stylesheet" href="./styles/style.css" />
     </head>
 
     <body>
-        <div class="wrapper">
-            <div class="box">
-                <header>
-                    <div class="headerContent">
-                        <div class="pageTitle">Визуализация работы алгоритмов на веб-приложении</div>
-                    </div>
-                </header>
-                <div class="content">
-                    <div class="algorithmCard" id="ant">
-                        <a data-page-href href="/ant/bonus.html">Муравьиный алгоритм</a>
-                    </div>
-                    <div class="algorithmCard" id="aStar">
-                        <a data-page-href href="/aStar/bonus.html">Astar</a>
-                    </div>
-                    <div class="algorithmCard" id="genetic">
-                        <a data-page-href href="/tree/bonus.html">Дерево решений</a>
-                    </div>
-                    <div class="algorithmCard" id="neiro">
-                        <a data-page-href href="http://127.0.0.1:8000/">Генетический алгоритм</a>
-                    </div>
-                    <div class="algorithmCard" id="tree">
-                        <a data-page-href href="/ant/index.html">Муравьиный алгоритм</a>
-                    </div>
-                    <div class="algorithmCard" id="genetic">
-                        <a data-page-href href="/ant/index.html">Муравьиный алгоритм</a>
-                    </div>
-                </div>
+        <div class="modal">
+            <div class="modalWindow">
+                <button class="closeModal">&#10006;</button>
+                <div class="modalText"></div>
+                <button class="btn okModal">OK</button>
             </div>
         </div>
 
-        <script type="module" src="./script.js"></script>
+        <div class="content">
+            <div class="algorithmCard" id="aStar">
+                <a data-page-href href="/aStar/bonus.html">A*</a>
+            </div>
+            <div class="algorithmCard" id="ant">
+                <a data-page-href href="/ant/bonus.html">Муравьиный алгоритм</a>
+                <div class="openModal">Узнать больше</div>
+            </div>
+            <div class="algorithmCard" id="genetic">
+                <a data-page-href href="/tree/bonus.html">Дерево решений</a>
+            </div>
+            <div class="algorithmCard" id="neiro">
+                <a data-page-href href="http://127.0.0.1:5000/">Генетический алгоритм</a>
+            </div>
+            <div class="algorithmCard" id="tree">
+                <a data-page-href href="/ant/index.html">Кластеризация</a>
+            </div>
+            <div class="algorithmCard" id="genetic">
+                <a data-page-href href="http://127.0.0.1:8000/">Нейронная сеть</a>
+            </div>
+        </div>
+
+        <script type="module" src="./scripts/script.js"></script>
     </body>
 </html>

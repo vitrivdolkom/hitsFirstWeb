@@ -6,8 +6,6 @@ const modalText = document.querySelector('.modalText')
 const closeModal = (e) => {
     const target = e.target
 
-    console.log(e.code, target)
-
     if (target === modalElem || target === modalOk || target === modalClose || e.code === 'Escape') {
         modalElem.style.opacity = 0
 

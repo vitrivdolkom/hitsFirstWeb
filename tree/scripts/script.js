@@ -2,7 +2,6 @@ import { openModal } from '../../scripts/modal.js'
 import { DecisionTree } from './DecisionTree.js'
 import { drawTree } from './drawTree.js'
 import { getLeafName, getVariantName, mapArrayDeepCopy } from './helpers.js'
-import { prune } from './prune.js'
 
 const inputFile = document.querySelector("input[name='readCsv']")
 const fileLabel = document.querySelector('label[for=readCsv]')
@@ -136,6 +135,9 @@ async function confirmRowHandle() {
             }
         }
     }
+
+    const isCorrect = node.question === columns[columns.length - 1]
+    openModal(`Дерево приняло ${isCorrect ? 'верное' : 'неверное'} решение`)
 
     const lastVariant = document.querySelector(`div[data-variant=${getVariantName(node)}]`)
     lastVariant.classList.add('selectedNode')
