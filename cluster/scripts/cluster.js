@@ -5,59 +5,59 @@ import { getMousePos } from './additionalFunctions.js'
 import { deleteRepeats } from './additionalFunctions.js'
 import { hierarchicalClustering } from './hierarchical.js'
 
-let canvas = document.querySelector('canvas')
-let ctx = canvas.getContext('2d')
-let input = document.querySelector('.kMeans')
-let clear = document.querySelector('.clear')
-let starter = document.querySelector('.start')
-let canvas1 = document.querySelector('.DB')
-let ctx1 = canvas1.getContext('2d')
-let canvas2 = document.querySelector('.HIER')
-let ctx2 = canvas2.getContext('2d')
+const canvas = document.querySelector('canvas')
+const ctx = canvas.getContext('2d')
+const input = document.querySelector('.kMeans')
+const clear = document.querySelector('.clear')
+const starter = document.querySelector('.start')
+const canvas1 = document.querySelector('.DB')
+const ctx1 = canvas1.getContext('2d')
+const canvas2 = document.querySelector('.HIER')
+const ctx2 = canvas2.getContext('2d')
 
-var radius = document.getElementById('myRange')
-var output = document.getElementById('demo')
+const radius = document.getElementById('myRange')
+const output = document.getElementById('demo')
 output.innerHTML = radius.value
 
 radius.oninput = function () {
     output.innerHTML = this.value
 }
 
-var amountOfNeigbours = document.getElementById('myAnotherRange')
-var anotherOutput = document.getElementById('anotherDemo')
+const amountOfNeigbours = document.getElementById('myAnotherRange')
+const anotherOutput = document.getElementById('anotherDemo')
 anotherOutput.innerHTML = amountOfNeigbours.value
 
 amountOfNeigbours.oninput = function () {
     anotherOutput.innerHTML = this.value
 }
 
-var amountOfCentroids = document.getElementById('kMeans')
-var kMeansOutput = document.getElementById('kMeansDemo')
+const amountOfCentroids = document.getElementById('kMeans')
+const kMeansOutput = document.getElementById('kMeansDemo')
 kMeansOutput.innerHTML = amountOfCentroids.value
 
 amountOfCentroids.oninput = function () {
     kMeansOutput.innerHTML = this.value
 }
 
-ctx.canvas.width = 400
-ctx.canvas.height = 300
-let canvasWidth = 400
-let canvasHeight = 300
+const canvasWidth = 390
+const canvasHeight = 300
+ctx.canvas.width = canvasWidth
+ctx.canvas.height = canvasHeight
 let drawFlag = false
-let prevMouse = { x: 0, y: 0, visit: false }
-let points = []
+const prevMouse = { x: 0, y: 0, visit: false }
+const points = []
 let clickFlag = false
 
-ctx1.canvas.width = 400
-ctx1.canvas.height = 300
+ctx1.canvas.width = canvasWidth
+ctx1.canvas.height = canvasHeight
 ctx1.beginPath()
 ctx1.lineWidth = 1
 ctx1.lineCap = 'round'
 ctx1.strokeStyle = '#000000'
 ctx1.strokeRect(0, 0, canvasWidth, canvasHeight)
 
-ctx2.canvas.width = 400
-ctx2.canvas.height = 300
+ctx2.canvas.width = canvasWidth
+ctx2.canvas.height = canvasHeight
 ctx2.beginPath()
 ctx2.lineWidth = 1
 ctx2.lineCap = 'round'
@@ -85,7 +85,6 @@ clear.addEventListener('click', function (e) {
 })
 
 starter.addEventListener('click', function (e) {
-    debugger
     if (clickFlag == true) {
         deleteRepeats(points)
         clickFlag = false

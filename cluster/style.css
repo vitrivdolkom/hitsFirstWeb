@@ -1,4 +1,74 @@
 fieldset {
-    border: 1px solid black;
-    width: 200px;
+  border: 1px solid black;
+  width: 200px;
+}
+
+canvas {
+  background-color: white;
+}
+
+.content {
+  flex-direction: row;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 5px;
+  max-width: 900px;
+}
+
+input[type="range"]::-moz-range-track {
+  background: black;
+}
+
+.algo {
+  margin-top: 20px;
+}
+
+.algo:last-child {
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 10px;
+}
+
+.algo p {
+  font-weight: 700;
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.left .btn {
+  margin-top: 30px;
+}
+
+.left,
+.right {
+  font-size: 18px;
+}
+
+.slidecontainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+input[type="range"] {
+  margin-top: 10px;
+}
+
+.fieldset div {
+  margin-top: 10px;
+}
+
+.btn {
+  width: 240px;
+  height: 40px;
+  font-size: 15px;
+}
+
+@media screen and (max-width: 1900px) {
+  .mybox {
+    flex-direction: column;
+  }
 }
