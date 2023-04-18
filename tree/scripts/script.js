@@ -115,11 +115,11 @@ async function confirmRowHandle() {
 
     while (node.children.length) {
         const toQuestion = document.querySelector(`div[data-question=${node.question}]`)
-        toQuestion.classList.add('selected')
+        toQuestion.classList.add('selectedNode')
 
         if (node.variant) {
             const toVariant = document.querySelector(`div[data-variant=${getVariantName(node)}]`)
-            toVariant.classList.add('selected')
+            toVariant.classList.add('selectedNode')
         }
 
         for (let i = 0; i < node.children.length; i++) {
@@ -138,7 +138,7 @@ async function confirmRowHandle() {
     }
 
     const lastVariant = document.querySelector(`div[data-variant=${getVariantName(node)}]`)
-    lastVariant.classList.add('selected')
+    lastVariant.classList.add('selectedNode')
     const toTarget = document.querySelector(`div[data-question=${getLeafName(node)}]`)
-    toTarget.classList.add('selected')
+    toTarget.classList.add('selectedNode')
 }

@@ -99,8 +99,9 @@ button {
   height: 50px;
 }
 
-@media screen and (max-width: 1400px) {
+@media screen and (max-width: 1520px) {
   .mybox {
+    padding-top: 45px;
     flex-direction: column;
   }
 

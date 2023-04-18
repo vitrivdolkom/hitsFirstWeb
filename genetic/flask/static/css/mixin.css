@@ -156,6 +156,7 @@ body {
   .mybox {
     flex-direction: column;
     padding: 20px;
+    padding-top: 45px;
   }
 
   .btn {

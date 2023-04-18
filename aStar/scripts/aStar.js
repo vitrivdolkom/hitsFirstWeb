@@ -9,7 +9,7 @@ const canvas = document.querySelector('canvas')
 const ctx = canvas.getContext('2d')
 
 const wrapperSize = document.querySelector('.wrapper').clientWidth
-let canvasSize = wrapperSize > 1840 ? 800 : 500
+let canvasSize = wrapperSize > 1840 ? 700 : 500
 if (wrapperSize < 1000) {
     canvasSize = 400
 } else if (wrapperSize < 600) {
