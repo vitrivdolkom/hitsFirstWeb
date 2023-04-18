@@ -1,0 +1,23 @@
+network.weights_inptohid = np.load('firstlayer.npy')
+network.weights_hidtoout = np.load('secondlayer.npy')
+
+for epoch in range(2):
+    print(f'Идёт обучение... Эпоха: {epoch}')
+    for pic, res in zip(x_train, NamesToTrain):
+        network.forw(pic.flatten())
+        network.back(pic.flatten().reshape(1, -1), res.reshape(1, -1), 0.007)
+
+np.save('firstlayer.npy', network.weights_inptohid)
+np.save('secondlayer.npy', network.weights_hidtoout)
+
+network.weights_inptohid = np.load('firstlayer.npy')
+network.weights_hidtoout = np.load('secondlayer.npy')
+
+okay = 0
+total = 0
+
+for pic, res in zip(x_test, NamesToTest):
+    possible = network.forw(pic.flatten())
+    okay += np.argmax(possible) == np.argmax(res)
+    total += 1
+print(f'Точность: {(okay/total) * 100} %')
