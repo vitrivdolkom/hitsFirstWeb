@@ -35,7 +35,6 @@ function getNeighbors(points, point, epsilon) {
 }
 
 export function DBSCAN(points, epsilon, minPts) {
-    debugger
     let allPoints = []
     for (let i = 0; i < points.length; i++) {
         points[i].noise = false

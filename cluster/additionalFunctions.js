@@ -27,7 +27,7 @@ export function deleteRepeats(array) {
         for (let j = i + 1; j < array.length; j++) {
             if (
                 (array[i].x == array[j].x && array[i].y == array[j].y) ||
-                (Math.abs(array[i].x - array[j].x) <= 5 && Math.abs(array[i].y - array[j].y) <= 5)
+                (Math.abs(array[i].x - array[j].x) <= 10 && Math.abs(array[i].y - array[j].y) <= 10)
             ) {
                 array.splice(j, 1)
             }

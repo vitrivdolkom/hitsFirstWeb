@@ -1,9 +1,9 @@
 import { colors } from './colors.js'
 import { kMeans } from './kMeans.js'
 import { DBSCAN } from './DBSCAN.js'
-import { findDistance } from './additionalFunctions.js'
 import { getMousePos } from './additionalFunctions.js'
 import { deleteRepeats } from './additionalFunctions.js'
+import { hierarchicalClustering } from './hierarchical.js'
 
 let canvas = document.querySelector('canvas')
 let ctx = canvas.getContext('2d')
@@ -12,6 +12,8 @@ let clear = document.querySelector('.clear')
 let starter = document.querySelector('.start')
 let canvas1 = document.querySelector('.DB')
 let ctx1 = canvas1.getContext('2d')
+let canvas2 = document.querySelector('.HIER')
+let ctx2 = canvas2.getContext('2d')
 
 var radius = document.getElementById('myRange')
 var output = document.getElementById('demo')
@@ -54,6 +56,14 @@ ctx1.lineCap = 'round'
 ctx1.strokeStyle = '#000000'
 ctx1.strokeRect(0, 0, canvasWidth, canvasHeight)
 
+ctx2.canvas.width = 400
+ctx2.canvas.height = 300
+ctx2.beginPath()
+ctx2.lineWidth = 1
+ctx2.lineCap = 'round'
+ctx2.strokeStyle = '#000000'
+ctx2.strokeRect(0, 0, canvasWidth, canvasHeight)
+
 ctx.beginPath()
 ctx.lineWidth = 1
 ctx.lineCap = 'round'
@@ -67,11 +77,15 @@ clear.addEventListener('click', function (e) {
     ctx1.clearRect(0, 0, canvasWidth, canvasHeight)
     ctx1.strokeStyle = 'black'
     ctx1.strokeRect(0, 0, canvasWidth, canvasHeight)
+    ctx2.clearRect(0, 0, canvasWidth, canvasHeight)
+    ctx2.strokeStyle = 'black'
+    ctx2.strokeRect(0, 0, canvasWidth, canvasHeight)
     points = []
     clickFlag = false
 })
 
 starter.addEventListener('click', function (e) {
+    debugger
     if (clickFlag == true) {
         deleteRepeats(points)
         clickFlag = false
@@ -83,9 +97,24 @@ starter.addEventListener('click', function (e) {
         ctx1.clearRect(0, 0, canvasWidth, canvasHeight)
         ctx1.strokeStyle = 'black'
         ctx1.strokeRect(0, 0, canvasWidth, canvasHeight)
+        ctx2.clearRect(0, 0, canvasWidth, canvasHeight)
+        ctx2.strokeStyle = 'black'
+        ctx2.strokeRect(0, 0, canvasWidth, canvasHeight)
         let kMeansCentroids = kMeans(points, +amountOfCentroids.value, 100)
         let DBSCANCentroidsAndNoise = DBSCAN(points, radius.value, amountOfNeigbours.value)
-        debugger
+        let hierarchicalClusters = hierarchicalClustering(points, +amountOfCentroids.value)
+
+        for (let i = 0; i < hierarchicalClusters.length; i++) {
+            for (let j = 0; j < hierarchicalClusters[i].length; j++) {
+                let point = hierarchicalClusters[i][j]
+                let index = i
+                let color = colors[index]
+                ctx2.beginPath()
+                ctx2.fillStyle = color
+                ctx2.arc(point.x, point.y, 10, 0, 2 * Math.PI)
+                ctx2.fill()
+            }
+        }
 
         for (let i = 0; i < DBSCANCentroidsAndNoise.length; i++) {
             let point = DBSCANCentroidsAndNoise[i]
@@ -124,6 +153,7 @@ starter.addEventListener('click', function (e) {
 
         ctx.fillStyle = 'black'
         ctx1.fillStyle = 'black'
+        ctx2.fillStyle = 'black'
     } else if (points.length < amountOfCentroids.value) {
         alert('Поставьте больше точек или уменьшите кол-во главных')
     }
@@ -141,6 +171,10 @@ canvas.addEventListener('mousedown', function (e) {
     ctx1.arc(curClick.x, curClick.y, 10, 0, 2 * Math.PI)
     ctx1.fill()
     ctx1.moveTo(curClick.x, curClick.y)
+    ctx2.beginPath()
+    ctx2.arc(curClick.x, curClick.y, 10, 0, 2 * Math.PI)
+    ctx2.fill()
+    ctx2.moveTo(curClick.x, curClick.y)
     points.push(curClick)
     prevMouse.x = curClick.x
     prevMouse.y = curClick.y
@@ -159,6 +193,9 @@ canvas.addEventListener('mousemove', function (e) {
             ctx1.arc(curClick.x, curClick.y, 10, 0, 2 * Math.PI)
             ctx1.fill()
             ctx1.moveTo(curClick.x, curClick.y)
+            ctx2.arc(curClick.x, curClick.y, 10, 0, 2 * Math.PI)
+            ctx2.fill()
+            ctx2.moveTo(curClick.x, curClick.y)
             prevMouse.x = curClick.x
             prevMouse.y = curClick.y
         }
@@ -176,6 +213,9 @@ canvas.addEventListener('mouseup', function (e) {
     ctx1.arc(curClick.x, curClick.y, 10, 0, 2 * Math.PI)
     ctx1.fill()
     ctx1.moveTo(curClick.x, curClick.y)
+    ctx2.arc(curClick.x, curClick.y, 10, 0, 2 * Math.PI)
+    ctx2.fill()
+    ctx2.moveTo(curClick.x, curClick.y)
     drawFlag = false
 })
 
@@ -191,6 +231,10 @@ canvas1.addEventListener('mousedown', function (e) {
     ctx1.arc(curClick.x, curClick.y, 10, 0, 2 * Math.PI)
     ctx1.fill()
     ctx1.moveTo(curClick.x, curClick.y)
+    ctx2.beginPath()
+    ctx2.arc(curClick.x, curClick.y, 10, 0, 2 * Math.PI)
+    ctx2.fill()
+    ctx2.moveTo(curClick.x, curClick.y)
     points.push(curClick)
     prevMouse.x = curClick.x
     prevMouse.y = curClick.y
@@ -209,6 +253,9 @@ canvas1.addEventListener('mousemove', function (e) {
             ctx1.arc(curClick.x, curClick.y, 10, 0, 2 * Math.PI)
             ctx1.fill()
             ctx1.moveTo(curClick.x, curClick.y)
+            ctx2.arc(curClick.x, curClick.y, 10, 0, 2 * Math.PI)
+            ctx2.fill()
+            ctx2.moveTo(curClick.x, curClick.y)
             prevMouse.x = curClick.x
             prevMouse.y = curClick.y
         }
@@ -226,5 +273,68 @@ canvas1.addEventListener('mouseup', function (e) {
     ctx1.arc(curClick.x, curClick.y, 10, 0, 2 * Math.PI)
     ctx1.fill()
     ctx1.moveTo(curClick.x, curClick.y)
+    ctx2.arc(curClick.x, curClick.y, 10, 0, 2 * Math.PI)
+    ctx2.fill()
+    ctx2.moveTo(curClick.x, curClick.y)
+    drawFlag = false
+})
+
+canvas2.addEventListener('mousedown', function (e) {
+    let curClick = getMousePos(canvas2, e)
+    clickFlag = true
+    drawFlag = true
+    ctx.beginPath()
+    ctx.arc(curClick.x, curClick.y, 10, 0, 2 * Math.PI)
+    ctx.fill()
+    ctx.moveTo(curClick.x, curClick.y)
+    ctx1.beginPath()
+    ctx1.arc(curClick.x, curClick.y, 10, 0, 2 * Math.PI)
+    ctx1.fill()
+    ctx1.moveTo(curClick.x, curClick.y)
+    ctx2.beginPath()
+    ctx2.arc(curClick.x, curClick.y, 10, 0, 2 * Math.PI)
+    ctx2.fill()
+    ctx2.moveTo(curClick.x, curClick.y)
+    points.push(curClick)
+    prevMouse.x = curClick.x
+    prevMouse.y = curClick.y
+})
+
+canvas2.addEventListener('mousemove', function (e) {
+    if (drawFlag) {
+        ctx.beginPath()
+        ctx1.beginPath()
+        let curClick = getMousePos(canvas2, e)
+        if (Math.abs(curClick.x - prevMouse.x) > 30 || Math.abs(curClick.y - prevMouse.y) > 30) {
+            points.push(curClick)
+            ctx.arc(curClick.x, curClick.y, 10, 0, 2 * Math.PI)
+            ctx.fill()
+            ctx.moveTo(curClick.x, curClick.y)
+            ctx1.arc(curClick.x, curClick.y, 10, 0, 2 * Math.PI)
+            ctx1.fill()
+            ctx1.moveTo(curClick.x, curClick.y)
+            ctx2.arc(curClick.x, curClick.y, 10, 0, 2 * Math.PI)
+            ctx2.fill()
+            ctx2.moveTo(curClick.x, curClick.y)
+            prevMouse.x = curClick.x
+            prevMouse.y = curClick.y
+        }
+    }
+})
+
+canvas2.addEventListener('mouseup', function (e) {
+    ctx.beginPath()
+    ctx1.beginPath()
+    let curClick = getMousePos(canvas2, e)
+    points.push(curClick)
+    ctx.arc(curClick.x, curClick.y, 10, 0, 2 * Math.PI)
+    ctx.fill()
+    ctx.moveTo(curClick.x, curClick.y)
+    ctx1.arc(curClick.x, curClick.y, 10, 0, 2 * Math.PI)
+    ctx1.fill()
+    ctx1.moveTo(curClick.x, curClick.y)
+    ctx2.arc(curClick.x, curClick.y, 10, 0, 2 * Math.PI)
+    ctx2.fill()
+    ctx2.moveTo(curClick.x, curClick.y)
     drawFlag = false
 })
