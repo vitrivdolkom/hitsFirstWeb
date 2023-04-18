@@ -8,7 +8,7 @@ app = Flask(__name__)
 def GetSolve():
     img = request.form['data']
     #dots = literal_eval(img)
-
+    #0
 
     return {'ans': solver(img)}
 
