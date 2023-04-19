@@ -1,22 +1,22 @@
-const canv = document.querySelector('canvas')
-const canvasSize = document.querySelector('.wrapper').clientWidth > 1520 ? 500 : 300
-
-canv.width = canvasSize
-canv.height = canvasSize
-const ctx = canv.getContext('2d')
-
-let cords = []
 const num = document.querySelector('#number')
 const distfield = document.querySelector('#dist')
 const clearButton = document.querySelector('#clearButton')
 const solveButton = document.querySelector('#solveButton')
+const canv = document.querySelector('canvas')
+const ctx = canv.getContext('2d')
+
+const canvasSize = document.querySelector('.wrapper').clientWidth > 1520 ? 500 : 300
+canv.width = canvasSize
+canv.height = canvasSize
+
+let cords = []
 let deflt = 0
 
 clearButton.addEventListener('click', clearall)
 solveButton.addEventListener('click', solveExchange)
 
 canv.addEventListener('mousedown', function (e) {
-    num.innerHTML = +num.innerHTML + 1
+    num.textContent = +num.textContent + 1
     ctx.lineWidth = 0.1
     for (let ind = 0; ind < cords.length; ++ind) {
         ctx.strokeStyle = 'black'
@@ -42,13 +42,13 @@ canv.addEventListener('mousedown', function (e) {
 function clearall() {
     ctx.clearRect(0, 0, canv.width, canv.height)
     cords = []
-    num.innerHTML = 0
-    distfield.innerHTML = 0
+    num.textContent = 0
+    distfield.textContent = 0
     ctx.beginPath()
 }
 
 function solveExchange() {
-    distfield.innerHTML = '...'
+    distfield.textContent = '...'
     for (let ind = 0; ind < cords.length; ++ind) {
         for (let inj = 0; inj < cords.length; ++inj) {
             ctx.strokeStyle = 'white'
@@ -63,7 +63,7 @@ function solveExchange() {
             ctx.stroke()
         }
     }
-    distfield.innerHTML = '...'
+    distfield.textContent = '...'
     $.post(
         '/GetDots',
         {
