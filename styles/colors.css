@@ -1,6 +1,14 @@
 body {
-  --title: green;
-  --orange: #ffad57;
+  --orange: #ffa03a;
   --blue: #444f5e;
-  --back: white;
+  --back: #9CA0D2;
+
+  --btn: #001AFF;
+  --btn-hover: #0016D9;
+  --ok-btn: #419152;
+  --ok-btn-hover: #53b166;
+  --error-btn: #df474b;
+  --error-btn-hover: #b3383c;
+  --warn-btn: orange;
+  --warn-btn-hover: #d68b00;
 }

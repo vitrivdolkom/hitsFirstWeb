@@ -1,9 +1,11 @@
+@import './colors.css';
+
 /* ! main structure */
 
 body {
   margin: 0;
   padding: 0;
-  background-color: #9CA0D2;
+  background-color: var(--back);
 }
 
 .wrapper {
@@ -30,8 +32,6 @@ body {
   flex-wrap: wrap;
   padding: 20px;
 }
-
-/*  */
 
 .block {
   margin-top: 50px;
@@ -73,8 +73,6 @@ body {
   border-radius: 20px;
 }
 
-/* ! mixins */
-
 /* todo button */
 
 .btn {
@@ -83,7 +81,7 @@ body {
   align-items: center;
   padding: 7px 34px;
 
-  background: #001AFF;
+  background: var(--btn);
   border-radius: 10px;
   transition: all .3s linear;
   font-weight: 700;
@@ -91,7 +89,7 @@ body {
 }
 
 .btn:hover:not(:disabled) {
-  background: #0016D9;
+  background: var(--btn-hover);
 }
 
 .btn:disabled {
@@ -99,27 +97,27 @@ body {
 }
 
 .ok {
-  background-color: #419152;
+  background-color: var(--ok-btn);
 }
 
 .ok:hover:not(:disabled) {
-  background-color: #53b166;
+  background-color: var(--ok-btn-hover);
 }
 
 .error {
-  background-color: #df474b;
+  background-color: var(--error-btn);
 }
 
 .error:hover:not(:disabled) {
-  background-color: #b3383c;
+  background-color: var(--error-btn-hover);
 }
 
 .warning {
-  background-color: orange;
+  background-color: var(--warn-btn);
 }
 
 .warning:hover:not(:disabled) {
-  background-color: rgb(214, 139, 0);
+  background-color: var(--warn-btn-hover);
 }
 
 /* todo input */
@@ -137,7 +135,6 @@ body {
   font-style: normal;
   font-weight: 700;
   font-size: 16px;
-  color: #9CA0D2;
   color: #fff;
 }
 
@@ -158,7 +155,7 @@ input[type="range"]::-moz-range-track {
 input[type="range"]::-moz-range-thumb {
   border: none;
   border-radius: 50%;
-  background-color: #001AFF;
+  background-color: var(--btn);
   height: 16px;
   width: 16px;
 }
@@ -174,42 +171,8 @@ input[type="range"]::-webkit-slider-thumb {
   height: 16px;
   width: 16px;
   border-radius: 50%;
-  background-color: #001AFF;
+  background-color: var(--btn);
   margin-top: -5px;
-}
-
-/* todo a-back */
-
-.btnBack {
-  padding: 10px;
-  position: absolute;
-  top: 30px;
-  left: 30px;
-  width: 120px;
-  height: 40px;
-  background-color: #222;
-  transition: all .3s linear;
-  display: flex;
-  align-items: center;
-
-  font-weight: 500;
-  font-size: 14px;
-  color: white;
-}
-
-.arrow-left {
-  position: relative;
-  left: 5px;
-  width: 10px;
-  height: 10px;
-  border-top: 2px solid #fff;
-  border-right: 2px solid #fff;
-  margin-right: 10px;
-  transform: rotate(-135deg);
-}
-
-.btnBack:hover {
-  background-color: rgba(34, 34, 34, 0.829);
 }
 
 /* todo media quary */
@@ -242,16 +205,5 @@ input[type="range"]::-webkit-slider-thumb {
 
   .btn {
     padding: 4px 20px;
-  }
-
-  .btnBack {
-    top: 15px;
-    left: 15px;
-    width: 40px;
-    height: 35px;
-  }
-
-  .btnBack span {
-    display: none;
   }
 }

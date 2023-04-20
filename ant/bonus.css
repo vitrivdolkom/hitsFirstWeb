@@ -1,6 +1,10 @@
 body {
   background-color: black;
   color: white;
+
+  --red: #F73164;
+  --black-blue: #16182D;
+  --black-blue-hover: #23243E;
 }
 
 .wrapper {
@@ -39,7 +43,7 @@ label {
   transform: translate(0, -100%);
   left: 0;
   right: 0;
-  background-color: #16182D;
+  background-color: var(--black-blue);
   color: #fff;
   transition: all .3s ease-in-out;
 }
@@ -76,7 +80,7 @@ label {
   bottom: -39px;
   width: 80px;
   height: 40px;
-  background-color: #16182D;
+  background-color: var(--black-blue);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -84,11 +88,11 @@ label {
 }
 
 .openMenu:hover {
-  background-color: #23243E;
+  background-color: var(--black-blue-hover);
 }
 
 .arrow {
-  border: solid #F73164;
+  border: solid var(--red);
   border-width: 0 3px 3px 0;
   display: inline-block;
   padding: 3px;

@@ -1,3 +1,4 @@
+import { algorithmsInfo } from './algorithmsInfo.js'
 import { openModal } from './modal.js'
 
 const astarInfo = document.querySelector('div[data-algo="astar"]')
@@ -8,25 +9,25 @@ const network = document.querySelector('div[data-algo="network"]')
 const genetic = document.querySelector('div[data-algo="genetic"]')
 
 astarInfo.addEventListener('click', () => {
-    openModal('Информация об аСтаре')
+    openModal(algorithmsInfo.astar)
 })
 
 antsInfo.addEventListener('click', () => {
-    openModal('Информация об муравьях')
+    openModal(algorithmsInfo.ants)
 })
 
 treeInfo.addEventListener('click', () => {
-    openModal('Информация об дереве')
+    openModal(algorithmsInfo.tree)
 })
 
 clusterInfo.addEventListener('click', () => {
-    openModal('Информация об кластере')
+    openModal(algorithmsInfo.cluster)
 })
 
 network.addEventListener('click', () => {
-    openModal('Информация об нейронке')
+    openModal(algorithmsInfo.network)
 })
 
 genetic.addEventListener('click', () => {
-    openModal('Информация об генетике')
+    openModal(algorithmsInfo.genetic)
 })

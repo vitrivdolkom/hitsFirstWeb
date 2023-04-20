@@ -1,3 +1,5 @@
+@import '../../styles/colors.css';
+
 .rect {
   width: 100px;
   text-align: center;
@@ -70,11 +72,11 @@
   padding: 14px 40px;
   margin-top: 30px;
   font-size: 16px;
-  background-color: #419152;
+  background-color: var(--ok-btn);
 }
 
 .createTree:hover:not(:disabled) {
-  background-color: #53b166;
+  background-color: var(--ok-btn-hover);
 }
 
 label {
@@ -105,7 +107,7 @@ label {
   font-size: 14px;
   font-weight: 700;
   color: white;
-  background-color: #df474b;
+  background-color: var(--error-btn);
   display: inline-block;
   text-align: center;
   padding: 10px;
@@ -118,7 +120,7 @@ label {
 
 .csvFile:focus+label,
 .csvFile+label:hover {
-  background-color: #b3383c;
+  background-color: var(--error-btn-hover);
 }
 
 .csvFile+label {

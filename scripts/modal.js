@@ -18,7 +18,7 @@ const closeModal = (e) => {
 }
 
 export const openModal = (text) => {
-    modalText.textContent = text
+    modalText.innerHTML = text
     modalElem.style.visibility = 'visible'
     modalElem.style.opacity = 1
     window.addEventListener('keydown', closeModal)
