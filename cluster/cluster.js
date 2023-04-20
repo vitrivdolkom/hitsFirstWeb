@@ -85,7 +85,6 @@ clear.addEventListener('click', function (e) {
 })
 
 starter.addEventListener('click', function (e) {
-    debugger
     if (clickFlag == true) {
         deleteRepeats(points)
         clickFlag = false
