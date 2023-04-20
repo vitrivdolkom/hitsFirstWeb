@@ -1,99 +1,168 @@
-function getRandom(min, max) {
-    return Math.random() * (max - min) + min
-}
+import { checkCell, distanceBetweenTwoVertexes, getAngle, getCellIndexes, getNextPoint, getRandom } from './helpers.js'
 
 export class Ant {
-    constructor(id) {
+    constructor(colony, id, x, y, row, column, maxRow, maxColumn, angle) {
+        this.colony = colony
         this.id = id
-        this.location = id
-        this.taboo = []
+        this.x = x
+        this.y = y
+        this.row = row
+        this.column = column
+        this.radius = 2
+        this.angle = angle
         this.alfa = 1
-        this.beta = 1
-        this.pheroPerAnt = 5
+        this.beta = 2
+        this.maxRow = maxRow
+        this.maxColumn = maxColumn
+        this.food = 0
+        this.home = 10000
+        this.nextPoint = { row: this.row, column: this.column, x: this.x, y: this.y }
+        this.goHome = false
     }
 
-    canMove(vertexes) {
-        if (!this.taboo.length) return true
+    draw(context, cells, pxPerCell) {
+        const color = cells[this.row][this.column].color
+        context.beginPath()
+        context.save()
+        context.fillStyle = color
+        context.arc(this.x, this.y, this.radius + 0.2, 0, Math.PI * 2)
+        context.fill()
+        context.restore()
+        this.x = this.nextPoint.x
+        this.y = this.nextPoint.y
+        this.row = this.nextPoint.row
+        this.column = this.nextPoint.column
+        context.beginPath()
+        context.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
+        context.fill()
+    }
 
-        for (let i = 0; i < vertexes[this.location].adjacency.length; i++) {
-            const index = vertexes[this.location].adjacency[i]
+    getNeighbours(cells, distance) {
+        const arr = []
 
-            if (!this.taboo.includes(index)) {
-                return true
+        for (let i = -2; i <= 2; i++) {
+            for (let j = -2; j <= 2; j++) {
+                const toRow = this.row + i
+                const toColumn = this.column + j
+                if (
+                    !checkCell({ row: toRow, column: toColumn }, this.maxRow, this.maxColumn) ||
+                    cells[toRow][toColumn].isWall ||
+                    (Math.abs(i) < 2 && Math.abs(j) < 2)
+                )
+                    continue
+
+                const neighbour = {
+                    row: toRow,
+                    column: toColumn,
+                    x: getRandom(toColumn * distance, (toColumn + 1) * distance),
+                    y: getRandom(toRow * distance, (toRow + 1) * distance),
+                }
+
+                const toDistance = distanceBetweenTwoVertexes(this.x, this.y, neighbour.x, neighbour.y)
+
+                const angle = getAngle(this.x, this.y, this.angle, neighbour.x, neighbour.y, toDistance)
+
+                if (Math.abs(angle) > 90) continue
+
+                neighbour.angle = angle ? angle : 0.1
+
+                arr.push(neighbour)
             }
         }
 
-        return false
+        return arr
     }
 
-    isOnStart() {
-        return this.location === this.id && this.taboo.length
-    }
+    update(cells, pxPerCell, context) {
+        if (this.goHome) this.food = Math.max(1, this.food * 0.99)
+        else this.home = Math.max(1, this.home * 0.99)
 
-    makeChoice(distances, pheromones, vertexes) {
-        const alfa = this.alfa
-        const beta = this.beta
-        const from = this.location
-        let dis = []
+        const neighbours = this.getNeighbours(cells, pxPerCell)
 
-        // todo: check neighbours
-        for (let i = 0; i < vertexes[from].adjacency.length; i++) {
-            const index = +vertexes[from].adjacency[i]
-            const len = this.taboo.length
+        const variants = []
+        let fullP = 0
 
-            if (
-                !this.taboo.includes(index) &&
-                ((len === 1 && index !== this.id) || (len > 1 && index !== this.taboo[len - 1]) || !this.taboo.length)
-            ) {
-                dis.push({ index, distance: distances[from][index] })
-            }
+        // fill variants
+        for (let i = 0; i < neighbours.length; i++) {
+            const coordinate = neighbours[i]
+            const row = coordinate.row
+            const column = coordinate.column
+
+            cells[row][column].update(context)
+            const cell = cells[row][column]
+
+            let pheromone = this.goHome ? cell.homeMarker : cell.foodMarker
+
+            let p = Math.pow(pheromone, this.beta) * Math.pow(1 / Math.abs(coordinate.angle), this.alfa)
+
+            const variant = { ...cell, p: p, ...coordinate }
+            variants.push(variant)
+
+            fullP += p
         }
 
-        // todo: calculate probabilities
-        let sum = 0
-        const probabilities = []
-
-        for (let i = 0; i < dis.length; ++i) {
-            const a = Math.pow(1 / dis[i].distance, alfa)
-            const b = Math.pow(pheromones[from][dis[i].index], beta)
-            sum += a * b
+        // fill probabilities of variants
+        for (let i = 0; i < variants.length; i++) {
+            variants[i].p = variants[i].p / fullP
         }
 
-        for (let i = 0; i < dis.length; ++i) {
-            const to = dis[i].index
-            const p = sum === 0 ? 0 : (Math.pow(1 / dis[i].distance, alfa) * Math.pow(pheromones[from][to], beta)) / sum
+        // sort probabilities
+        variants.sort((a, b) => a.p - b.p)
 
-            probabilities.push(p)
+        const rand = Math.random()
+
+        if (rand > 0.95) {
+            const distance = 2 * pxPerCell
+            const direct = getNextPoint(this.x, this.y, distance, this.angle, 0)
+            const cell = getCellIndexes(direct.x, direct.y, pxPerCell)
+            const variant = { row: cell.row, column: cell.column, x: direct.x, y: direct.y, angle: 0 }
+            variants.push(variant)
         }
 
-        // todo: choose vertex
-        probabilities.sort((a, b) => a - b)
+        const variant = variants.length ? variants[variants.length - 1] : {}
 
-        const probabilitiesSum = probabilities.reduce((sum, el) => (sum += el), 0)
-        const probabilitiesSegment = []
-
-        probabilitiesSegment.push({ from: 0, to: probabilities[0] })
-        let currentSum = probabilities[0]
-
-        for (let i = 0; i < probabilities.length - 1; i++) {
-            probabilitiesSegment.push({ from: currentSum, to: currentSum + probabilities[i + 1] })
-            currentSum += probabilities[i + 1]
+        if (!checkCell(variant, this.maxRow, this.maxColumn)) {
+            variant.row = this.row
+            variant.column = this.column
+            variant.x = this.x
+            variant.y = this.y
+            variant.angle = 180
         }
 
-        const rand = getRandom(0, probabilitiesSum)
-        let toVertex
-
-        for (let i = 0; i < probabilitiesSegment.length; i++) {
-            const segment = probabilitiesSegment[i]
-
-            if (segment.from <= rand && segment.to > rand) {
-                toVertex = dis[i].index
-                break
-            }
+        // update food
+        if (variant.isFood) {
+            cells[variant.row][variant.column].visitFood(context)
+            variant.row = this.row
+            variant.column = this.column
+            variant.x = this.x
+            variant.y = this.y
+            variant.angle = 180
+            this.food = variant.foodBlock.amount
+            this.goHome = true
         }
 
-        this.location = toVertex
-        this.taboo.push(toVertex)
-        pheromones[from][toVertex] += this.pheroPerAnt / vertexes.length
+        // update home
+        if (variant.isHome) {
+            this.colony.food += this.food
+            this.food = 0
+            this.home = 10000
+            this.goHome = false
+            variant.row = this.row
+            variant.column = this.column
+            variant.x = this.x
+            variant.y = this.y
+            variant.angle = 180
+        }
+
+        // update next point
+        this.angle += variant.angle
+        const row = variant.row
+        const column = variant.column
+        cells[row][column].visit(this)
+
+        this.nextPoint.row = variant.row
+        this.nextPoint.column = variant.column
+        this.nextPoint.x = variant.x
+        this.nextPoint.y = variant.y
     }
 }

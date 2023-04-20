@@ -18,10 +18,10 @@ solveButton.addEventListener('click', solveExchange)
 canv.addEventListener('mousedown', function (e) {
     num.textContent = +num.textContent + 1
     ctx.lineWidth = 0.1
-    for (let ind = 0; ind < cords.length; ++ind) {
+    for (const currentCoords of cords) {
         ctx.strokeStyle = 'black'
         ctx.beginPath()
-        ctx.moveTo(cords[ind][0], cords[ind][1])
+        ctx.moveTo(currentCoords[0], currentCoords[1])
 
         ctx.lineTo(e.clientX - canv.offsetLeft, e.clientY - canv.offsetTop)
         ctx.stroke()
@@ -49,17 +49,17 @@ function clearall() {
 
 function solveExchange() {
     distfield.textContent = '...'
-    for (let ind = 0; ind < cords.length; ++ind) {
-        for (let inj = 0; inj < cords.length; ++inj) {
+    for (const fromCoords of cords) {
+        for (const toCoords of cords) {
             ctx.strokeStyle = 'white'
-            ctx.moveTo(cords[ind][0], cords[ind][1])
+            ctx.moveTo(fromCoords[0], fromCoords[1])
             ctx.lineWidth = 3
-            ctx.lineTo(cords[inj][0], cords[inj][1])
+            ctx.lineTo(toCoords[0], toCoords[1])
             ctx.stroke()
             ctx.strokeStyle = 'black'
-            ctx.moveTo(cords[ind][0], cords[ind][1])
+            ctx.moveTo(fromCoords[0], fromCoords[1])
             ctx.lineWidth = 1
-            ctx.lineTo(cords[inj][0], cords[inj][1])
+            ctx.lineTo(toCoords[0], toCoords[1])
             ctx.stroke()
         }
     }
@@ -98,23 +98,23 @@ async function show(data, color, lastroot, lastlength) {
         ctx.lineTo(cords[data[ind + 1] - 1][0], cords[data[ind + 1] - 1][1])
         ctx.stroke()
     }
-    if (color == 'green') {
+    if (color === 'green') {
         distfield.innerHTML = lastlength.toFixed(3)
     }
 }
 
 function RootCleaner() {
-    for (let ind = 0; ind < cords.length; ++ind) {
-        for (let inj = 0; inj < cords.length; ++inj) {
+    for (const fromCoords of cords) {
+        for (const toCoords of cords) {
             ctx.strokeStyle = 'white'
-            ctx.moveTo(cords[ind][0], cords[ind][1])
+            ctx.moveTo(fromCoords[0], fromCoords[1])
             ctx.lineWidth = 3
-            ctx.lineTo(cords[inj][0], cords[inj][1])
+            ctx.lineTo(toCoords[0], toCoords[1])
             ctx.stroke()
             ctx.strokeStyle = 'black'
-            ctx.moveTo(cords[ind][0], cords[ind][1])
+            ctx.moveTo(fromCoords[0], fromCoords[1])
             ctx.lineWidth = 1
-            ctx.lineTo(cords[inj][0], cords[inj][1])
+            ctx.lineTo(toCoords[0], toCoords[1])
             ctx.stroke()
         }
     }

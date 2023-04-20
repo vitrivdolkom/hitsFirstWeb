@@ -3,9 +3,9 @@ import { findDistance } from './additionalFunctions.js'
 function getDistanceBetweenClusters(firstCluster, secondCluster) {
     let minDistance = Infinity
 
-    for (let i = 0; i < firstCluster.length; i++) {
-        for (let j = 0; j < secondCluster.length; j++) {
-            let distance = findDistance(firstCluster[i], secondCluster[j])
+    for (const firstClusterPoint of firstCluster) {
+        for (const secondClusterPoint of secondCluster) {
+            const distance = findDistance(firstClusterPoint, secondClusterPoint)
 
             if (distance < minDistance) {
                 minDistance = distance
@@ -42,12 +42,12 @@ function mergeClusters(clusters, closestClusters) {
     let firstCluster = clusters[closestClusters.x]
     let secondCluster = clusters[closestClusters.y]
 
-    for (let i = 0; i < firstCluster.length; i++) {
-        mergedCluster.push(firstCluster[i])
+    for (const firstClusterPoint of firstCluster) {
+        mergedCluster.push(firstClusterPoint)
     }
 
-    for (let i = 0; i < secondCluster.length; i++) {
-        mergedCluster.push(secondCluster[i])
+    for (const secondClusterPoint of secondCluster) {
+        mergedCluster.push(secondClusterPoint)
     }
 
     clusters.splice(closestClusters.y, 1)

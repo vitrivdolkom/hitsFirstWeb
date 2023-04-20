@@ -1,143 +1,99 @@
-import { Vertex } from './Vertex.js'
-import { addCell } from './adjacencyMatrix.js'
-import { canvas, ctx, resetVertexes, vertexes } from './global.js'
-import { drawPath } from './drawPath.js'
-import { Ant } from './Ant.js'
-import { drawEdges } from './drawEdges.js'
+import { openModal } from '../../scripts/modal.js'
+import { COLONY_RADIUS, FOOD_RADIUS, PX_PER_CELL } from './constants.js'
+import { distanceBetweenTwoVertexes } from './helpers.js'
+import { WorldMap } from './Map.js'
 
-// DOM
-const executeBtn = document.querySelector('button[data-execute]')
-const resetBtn = document.querySelector('button[data-reset]')
-const fullAdjacencyBtn = document.querySelector('button[data-full-adj]')
+window.addEventListener('load', function () {
+    // todo DOM variables
+    const canvasWrapper = document.querySelector('.canvasWrapper')
+    const locateColonyInput = document.querySelector('#colony')
+    const locateFood = document.querySelector('#food')
+    const setWall = this.document.querySelector('#setWall')
+    const deleteWall = this.document.querySelector('#deleteWall')
+    const executeBtn = document.querySelector('.execute')
 
-// determine size
-ctx.canvas.width = 500
-ctx.canvas.height = 500
+    const foodAmountInput = document.querySelector('#foodAmount')
+    const foodAmountSpan = document.querySelector('.numberFood')
 
-// event listeners
-canvas.addEventListener('click', onCanvasClick)
-executeBtn.addEventListener('click', antAlgorithm)
-resetBtn.addEventListener('click', () => {
-    resetVertexes()
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-    document.querySelector('table').innerHTML = '<caption>Таблица смежности</caption>'
-})
-fullAdjacencyBtn.addEventListener('click', function (e) {
-    drawEdges(e, true)
-})
+    const antAmountInput = document.querySelector('#antAmount')
+    const antAmountSpan = document.querySelector('.numberAnt')
 
-// draw vertex
-function onCanvasClick(e) {
-    addCell()
-    const rect = canvas.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
+    const menu = document.querySelector('.top')
+    const openMenu = document.querySelector('.openMenu')
 
-    const vertex = new Vertex(x, y)
-    vertexes.push(vertex)
+    foodAmountSpan.textContent = +foodAmountInput.value
+    antAmountSpan.textContent = +antAmountInput.value
 
-    ctx.beginPath()
-    ctx.arc(x, y, 5, 0, Math.PI * 2)
-    ctx.fillStyle = '#000000'
-    ctx.fill()
-}
+    // todo canvas
+    const canvas = document.querySelector('canvas')
+    const ctx = canvas.getContext('2d')
+    canvas.width = canvasWrapper.clientWidth
+    canvas.height = canvasWrapper.clientHeight
+    ctx.fillStyle = `rgb(255, 0, 0)`
 
-function distanceBetweenTwoVertexes(a, b) {
-    return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2))
-}
+    // todo variables
+    let colonyCoordinates = { x: canvas.width / 2, y: canvas.height / 2, isSelected: false }
 
-function fullDistance(q, vertexes) {
-    let sum = 0
+    // todo Map
+    let map = new WorldMap(canvas, ctx, colonyCoordinates.x, colonyCoordinates.y, locateFood, setWall, deleteWall, +antAmountInput.value)
 
-    for (let i = 0; i < q.length - 1; i++) {
-        sum += distanceBetweenTwoVertexes(vertexes[q[i]], vertexes[q[i + 1]])
-    }
-
-    sum += distanceBetweenTwoVertexes(vertexes[q[q.length - 1]], vertexes[q[0]])
-
-    return sum
-}
-
-// main
-
-const EVAPORATION = 0.9
-const Q = 1
-
-async function antAlgorithm() {
-    const len = vertexes.length
-    let bestAnt = []
-
-    let pheromones = new Array(len)
-    let distances = new Array(len)
-
-    for (let i = 0; i < len; ++i) {
-        pheromones[i] = new Array(len)
-        distances[i] = new Array(len)
-    }
-
-    // fill distances
-    for (let i = 0; i < len; i++) {
-        for (let j = i; j < len; j++) {
-            let dis = !vertexes[i].adjacency.includes(j) || i === j ? Infinity : distanceBetweenTwoVertexes(vertexes[i], vertexes[j])
-
-            distances[i][j] = dis
-            distances[j][i] = dis
-
-            pheromones[i][j] = Q / dis
-            pheromones[j][i] = Q / dis
-        }
-    }
-
-    let count = 0
-    let minDis = Infinity
-    while (count < 40) {
-        let ants = []
-
-        for (let i = 0; i < len; i++) {
-            ants[i] = new Ant(i)
-
-            while (ants[i].location !== -1 && ants[i].canMove(vertexes)) {
-                ants[i].makeChoice(distances, pheromones, vertexes)
-            }
-
-            const path = ants[i].taboo
-
-            if (!ants[i].isOnStart() || path.length !== vertexes.length) {
-                continue
-            }
-
-            const dis = fullDistance(path, vertexes)
-
-            if (dis < minDis) {
-                bestAnt.push({ path, distance: dis })
-                minDis = dis
-                count = 0
-
-                await new Promise((res, rej) => {
-                    setTimeout(() => res(), 400)
-                })
-
-                drawEdges([], true)
-                drawPath(bestAnt[bestAnt.length - 1].path, vertexes, 'red')
-            }
-        }
-
-        ++count
-
-        // todo: pheromones evapoation
-        for (let i = 0; i < len; i++) {
-            for (let j = 0; j < len; j++) {
-                pheromones[i][j] *= EVAPORATION
-            }
-        }
-    }
-
-    const bestPath = bestAnt[bestAnt.length - 1].path
-    drawEdges([], true)
-    drawPath(bestPath, vertexes, 'green')
-
-    bestAnt.forEach((ant) => {
-        console.log(ant.distance)
-        console.log(ant.path)
+    // todo event listeners
+    foodAmountInput.addEventListener('input', function (e) {
+        foodAmountSpan.textContent = +e.target.value
     })
-}
+
+    antAmountInput.addEventListener('input', function (e) {
+        antAmountSpan.textContent = +e.target.value
+        map.antsNum = +e.target.value
+    })
+
+    openMenu.addEventListener('click', function (e) {
+        menu.classList.toggle('show')
+        openMenu.childNodes[0].classList.toggle('up')
+    })
+
+    canvas.addEventListener('click', (e) => {
+        const x = e.offsetX
+        const y = e.offsetY
+
+        if (locateFood.checked) {
+            ctx.save()
+            ctx.fillStyle = 'green'
+            ctx.fillRect(x - FOOD_RADIUS, y - FOOD_RADIUS, FOOD_RADIUS * 2, FOOD_RADIUS * 2)
+            ctx.restore()
+
+            return
+        }
+
+        if (locateColonyInput.checked) {
+            if (colonyCoordinates.isSelected) {
+                openModal('Может быть только 1 колония')
+                return
+            }
+
+            colonyCoordinates.x = x
+            colonyCoordinates.y = y
+            colonyCoordinates.isSelected = true
+
+            ctx.fillRect(x - COLONY_RADIUS, y - COLONY_RADIUS, COLONY_RADIUS * 2, COLONY_RADIUS * 2)
+
+            map.updateColony(colonyCoordinates)
+            return
+        }
+    })
+
+    executeBtn.addEventListener('click', function (e) {
+        executeBtn.disabled = true
+        map.first()
+        let i = 0
+        function animate() {
+            if (!(i % 800)) map.firstDraw(ctx)
+            map.render(ctx)
+            requestAnimationFrame(animate)
+
+            ++i
+        }
+
+        animate()
+    })
+})

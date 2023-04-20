@@ -13,7 +13,7 @@ class Point {
 }
 
 export function createMatrix(field, size) {
-    for (var i = 0; i < size; i++) {
+    for (let i = 0; i < size; i++) {
         field[i] = new Array(size)
     }
 

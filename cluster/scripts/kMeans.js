@@ -57,8 +57,8 @@ export function kMeans(points, k, maxIterations) {
             points[i].clusterIndex = closestCentroids
         }
     }
-    for (let i = 0; i < points.length; i++) {
-        points[i].visit = false
+    for (const point of points) {
+        point.visit = false
     }
     return centroids
 }

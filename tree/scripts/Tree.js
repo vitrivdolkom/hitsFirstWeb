@@ -26,9 +26,7 @@ export class Tree {
 
     dfs(node, question) {
         if (node.question !== question) {
-            for (let i = 0; i < node.children.length; i++) {
-                const child = node.children[i]
-
+            for (const child of node.children) {
                 const toNode = this.dfs(child, question)
 
                 if (toNode === undefined) continue

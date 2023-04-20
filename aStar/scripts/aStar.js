@@ -43,7 +43,7 @@ class Point {
 }
 
 function returnStartState() {
-    if (alreadyCalculate == false) {
+    if (alreadyCalculate === false) {
         draw()
         alreadyCalculate = false
         secondCalculating = false
@@ -107,7 +107,7 @@ async function aStar(field, start, end) {
     let cameFrom = []
 
     while (openSet.length > 0) {
-        if (stopAlgorithm == true) {
+        if (stopAlgorithm === true) {
             return -1
         }
         let win = 0
@@ -117,7 +117,7 @@ async function aStar(field, start, end) {
                 win = i
             }
 
-            if (openSet[i].f == openSet[win].f) {
+            if (openSet[i].f === openSet[win].f) {
                 if (openSet[i].g > openSet[win].g) {
                     win = i
                 }
@@ -152,10 +152,9 @@ async function aStar(field, start, end) {
 
         let neighbors = findNeighbors(field, currentNode, size)
 
-        for (let i = 0; i < neighbors.length; i++) {
-            let neighbor = neighbors[i]
+        for (const neighbor of neighbors) {
             if (!cameFrom.includes(neighbor)) {
-                let g = currentNode.g + calculateHeuristic(currentNode, neighbor)
+                const g = currentNode.g + calculateHeuristic(currentNode, neighbor)
 
                 if (!openSet.includes(neighbor)) {
                     openSet.push(neighbor)
@@ -239,7 +238,7 @@ switcher.addEventListener('click', function (e) {
 })
 
 stopButton.addEventListener('click', function (e) {
-    if (alreadyCalculate == true) {
+    if (alreadyCalculate === true) {
         stopAlgorithm = true
         alreadyCalculate = false
     }
@@ -260,24 +259,16 @@ nullField.addEventListener('click', function (e) {
             draw()
             ctx.fillStyle = '#000000'
             ctx.fill()
-            for (let i = 0; i < size; i++) {
-                for (let j = 0; j < size; j++) {
-                    field[i][j].wall = false
+
+            for (const row of field) {
+                for (const cell of row) {
+                    cell.wall = false
                     ctx.fillStyle = 'white'
-                    ctx.fillRect(
-                        field[i][j].x * (canvasSize / size),
-                        field[i][j].y * (canvasSize / size),
-                        canvasSize / size,
-                        canvasSize / size
-                    )
-                    ctx.strokeRect(
-                        field[i][j].x * (canvasSize / size),
-                        field[i][j].y * (canvasSize / size),
-                        canvasSize / size,
-                        canvasSize / size
-                    )
+                    ctx.fillRect(cell.x * (canvasSize / size), cell.y * (canvasSize / size), canvasSize / size, canvasSize / size)
+                    ctx.strokeRect(cell.x * (canvasSize / size), cell.y * (canvasSize / size), canvasSize / size, canvasSize / size)
                 }
             }
+
             normalizeCanvas(field)
         } else if (input.value <= 1) {
             openModal('Введите число, большее 1')
@@ -332,13 +323,13 @@ canvas.addEventListener('click', function (e) {
         for (let i = 0; i < canvasSize; i += canvasSize / size) {
             for (let j = 0; j < canvasSize; j += canvasSize / size) {
                 if (i < x && j < y && i + canvasSize / size > x && j + canvasSize / size > y) {
-                    if (startFlag && startX == i && startY == j) {
+                    if (startFlag && startX === i && startY === j) {
                         ctx.fillStyle = 'white'
                         ctx.fillRect(i, j, canvasSize / size, canvasSize / size)
                         ctx.strokeRect(i, j, canvasSize / size, canvasSize / size)
                         startFlag = false
                         start = undefined
-                    } else if (endFlag && endX == i && endY == j) {
+                    } else if (endFlag && endX === i && endY === j) {
                         ctx.fillStyle = 'white'
                         ctx.fillRect(i, j, canvasSize / size, canvasSize / size)
                         ctx.strokeRect(i, j, canvasSize / size, canvasSize / size)
@@ -382,14 +373,14 @@ calculateButton.addEventListener('click', async function (e) {
         secondCalculating = true
         alreadyCalculate = true
         openSet.push(start)
-        if (start == undefined || end == undefined) {
+        if (start === undefined || end === undefined) {
             openModal('Вы не поставили точку старта или точку конца')
         } else {
             const result = await aStar(field, start, end)
 
-            if (result == 1) {
+            if (result === 1) {
                 let path = reconstructPath(start, end)
-                for (let i = 0; i < path.length; i++) {
+                for (const pathElement of path) {
                     if (!fastDoing) {
                         await new Promise((res, rej) => {
                             setTimeout(() => res(), 25)
@@ -401,8 +392,8 @@ calculateButton.addEventListener('click', async function (e) {
                     }
                     ctx.fillStyle = 'green'
                     ctx.fillRect(
-                        Math.round(path[i].x * (canvasSize / size)),
-                        Math.round(path[i].y * (canvasSize / size)),
+                        Math.round(pathElement.x * (canvasSize / size)),
+                        Math.round(pathElement.y * (canvasSize / size)),
                         canvasSize / size,
                         canvasSize / size
                     )

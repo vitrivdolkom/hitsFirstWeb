@@ -59,7 +59,6 @@ export class WorldMap {
 
             const currentX = e.offsetX
             const currentY = e.offsetY
-            let toDelete = false
 
             if (distanceBetweenTwoVertexes(this.mouse.x, this.mouse.y, currentX, currentY) > PX_PER_CELL / 2) {
                 const cell = getCellIndexes(this.mouse.x, this.mouse.y, PX_PER_CELL)
@@ -108,9 +107,9 @@ export class WorldMap {
     firstDraw(context) {
         context.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
-        for (let i = 0; i < this.rows; i++) {
-            for (let j = 0; j < this.columns; j++) {
-                this.cells[i][j].draw(context)
+        for (const row of this.cells) {
+            for (const cell of row) {
+                cell.draw(context)
             }
         }
     }

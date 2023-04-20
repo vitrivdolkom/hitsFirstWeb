@@ -210,18 +210,18 @@ export class DecisionTree {
             })
         }
 
-        for (let i = 0; i < q.length; i++) {
-            const currentS = q[i].s
+        for (const currentBranch of q) {
+            const currentS = currentBranch.s
 
             currentS.forEach((element) => {
                 columnsToDelete
-                    .filter((columnName) => columnName !== q[i].best)
+                    .filter((columnName) => columnName !== currentBranch.best)
                     .forEach((columnName) => {
                         element.delete(columnName)
                     })
             })
 
-            this.createTree(currentS, q[i].best, depth + 1, maxDepth)
+            this.createTree(currentS, currentBranch.best, depth + 1, maxDepth)
         }
 
         return this.tree

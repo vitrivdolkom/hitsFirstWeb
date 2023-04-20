@@ -28,7 +28,7 @@ export function primMaze(field, size) {
         let index = Math.floor(getRandomArbitrary(0, coords.length))
         let x = coords[index].x
         let y = coords[index].y
-        if (field[x][y].wall == false) {
+        if (field[x][y].wall === false) {
             coords.splice(index, 1)
             continue
         }

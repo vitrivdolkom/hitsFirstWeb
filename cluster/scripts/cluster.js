@@ -85,7 +85,7 @@ clear.addEventListener('click', function (e) {
 })
 
 starter.addEventListener('click', function (e) {
-    if (clickFlag == true) {
+    if (clickFlag === true) {
         deleteRepeats(points)
         clickFlag = false
     }
@@ -104,8 +104,7 @@ starter.addEventListener('click', function (e) {
         let hierarchicalClusters = hierarchicalClustering(points, +amountOfCentroids.value)
 
         for (let i = 0; i < hierarchicalClusters.length; i++) {
-            for (let j = 0; j < hierarchicalClusters[i].length; j++) {
-                let point = hierarchicalClusters[i][j]
+            for (const point of hierarchicalClusters[i]) {
                 let index = i
                 let color = colors[index]
                 ctx2.beginPath()
@@ -115,11 +114,10 @@ starter.addEventListener('click', function (e) {
             }
         }
 
-        for (let i = 0; i < DBSCANCentroidsAndNoise.length; i++) {
-            let point = DBSCANCentroidsAndNoise[i]
-            let index = DBSCANCentroidsAndNoise[i].dbClusterIndex
+        for (const point of DBSCANCentroidsAndNoise) {
+            const index = point.dbClusterIndex
             let color = 'black'
-            if (point.noise == false) {
+            if (point.noise === false) {
                 color = colors[index]
             }
             ctx1.beginPath()
@@ -128,10 +126,8 @@ starter.addEventListener('click', function (e) {
             ctx1.fill()
         }
 
-        for (let i = 0; i < points.length; i++) {
-            let point = points[i]
-            let clusterIndex = point.clusterIndex
-            let color = colors[clusterIndex]
+        for (const point of points) {
+            const color = colors[point.clusterIndex]
 
             ctx.beginPath()
             ctx.fillStyle = color
@@ -139,9 +135,8 @@ starter.addEventListener('click', function (e) {
             ctx.fill()
         }
 
-        for (let i = 0; i < kMeansCentroids.length; i++) {
-            let centroid = kMeansCentroids[i]
-            let color = 'black'
+        for (const centroid of kMeansCentroids) {
+            const color = 'black'
 
             ctx.beginPath()
             ctx.arc(centroid.x, centroid.y, 10, 0, 2 * Math.PI)
