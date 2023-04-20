@@ -1,86 +1,157 @@
 @import './colors.css';
-@import url(https://fonts.googleapis.com/css?family=Shantell+Sans:300,regular,500,600,700,800,300italic,italic,500italic,600italic,700italic,800italic);
 @import url(https://fonts.googleapis.com/css?family=Montserrat:100,200,300,regular,500,600,700,800,900,100italic,200italic,300italic,italic,500italic,600italic,700italic,800italic,900italic);
 
 body {
   font-family: Montserrat;
+  background-image: linear-gradient(#727272 1.1px, transparent 1.1px), linear-gradient(to right, #444444 1.1px, #fffbdd 1.1px);
+  background-size: 50px 50px;
 }
-
-/* todo general */
 
 .wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   min-height: 100vh;
   width: 100%;
-  background-color: var(--back);
-  /* display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, 1fr); */
-}
-
-.box {
-  margin: 0 auto;
-  height: 100%;
-  width: 80%;
-}
-
-/* todo header */
-
-.headerContent {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
 }
 
 header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 90px;
-  border-bottom: 1px solid var(--blue);
-  z-index: 10;
-  background-color: var(--back);
+  height: 60px;
+  width: 100%;
+  background-color: #3D348B;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 18px;
+  font-weight: 800;
 }
 
-.logoWrapper {
-  width: 70px;
+main {
+  flex: 1 1 auto;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 30px;
 }
 
-.logoWrapper img {
-  max-width: 100%;
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 400px);
+  grid-template-rows: repeat(2, 300px);
+  row-gap: 30px;
+  column-gap: 70px;
 }
 
-.pageTitle {
-  margin-left: 100px;
+footer {
+  height: 60px;
+  width: 100%;
+  background-color: #5A529C;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.persons {
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.person {
+  margin-left: 50px;
   font-size: 18px;
   font-weight: 500;
+  text-align: center;
+}
+
+.person:first-child {
+  margin-left: 0;
 }
 
 /* todo card */
 
-.content {
-  width: 100%;
-  min-height: 100vh;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-}
-
 .algorithmCard {
-  background-color: var(--blue);
-  border: 1px solid black;
+  padding: 20px;
+  background-color: #3D348B;
+  border-radius: 20px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  -webkit-box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
+  -moz-box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
+  box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
+
+  transition: all .3s ease-in;
+}
+
+.algorithmCard:hover {
+  transform: translate(0, -20px);
 }
 
 .algorithmCard a {
-  color: var(--orange);
-  font-size: 20px;
   text-align: center;
+  color: var(--orange);
+  font-size: 30px;
+  font-weight: 600;
 }
 
 .openModal {
+  font-size: 16px;
+  margin-top: 20px;
+  padding: 8px;
+  padding-bottom: 30px;
   color: white;
+}
+
+.openModal:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+
+/* adaptive */
+
+@media screen and (max-width: 1500px) {
+  .cards {
+    grid-template-columns: repeat(3, 300px);
+    grid-template-rows: repeat(2, 225px);
+  }
+
+  .algorithmCard a {
+    font-size: 26px;
+  }
+
+}
+
+@media screen and (max-width: 1200px) {
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 160px);
+  }
+
+  .algorithmCard a {
+    font-size: 23px;
+  }
+
+}
+
+@media screen and (max-width: 700px) {
+  /* .cards {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+  } */
+
+  .algorithmCard a {
+    font-size: 18px;
+  }
+
+  header {
+    height: 50px;
+    font-size: 15px;
+  }
 }

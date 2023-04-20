@@ -13,33 +13,52 @@
 
     <body>
         <div class="modal">
-            <div class="modalWindow">
+            <div class="modalWindow general">
                 <button class="closeModal">&#10006;</button>
                 <div class="modalText"></div>
                 <button class="btn okModal">OK</button>
             </div>
         </div>
 
-        <div class="content">
-            <div class="algorithmCard" id="aStar">
-                <a data-page-href href="/aStar/bonus.html">A*</a>
-            </div>
-            <div class="algorithmCard" id="ant">
-                <a data-page-href href="/ant/bonus.html">Муравьиный алгоритм</a>
-                <div class="openModal">Узнать больше</div>
-            </div>
-            <div class="algorithmCard" id="genetic">
-                <a data-page-href href="/tree/bonus.html">Дерево решений</a>
-            </div>
-            <div class="algorithmCard" id="neiro">
-                <a data-page-href href="http://127.0.0.1:5000/">Генетический алгоритм</a>
-            </div>
-            <div class="algorithmCard" id="tree">
-                <a data-page-href href="/cluster/bonus.html">Кластеризация</a>
-            </div>
-            <div class="algorithmCard" id="genetic">
-                <a data-page-href href="http://127.0.0.1:8000/">Нейронная сеть</a>
-            </div>
+        <div class="wrapper">
+            <header>Я ХЭДЕР</header>
+
+            <main>
+                <div class="cards">
+                    <div class="algorithmCard">
+                        <a href="/aStar/bonus.html">A*</a>
+                        <div class="openModal" data-algo="astar">Узнать больше</div>
+                    </div>
+                    <div class="algorithmCard">
+                        <a href="/ant/bonus.html">Муравьиный алгоритм</a>
+                        <div class="openModal" data-algo="ants">Узнать больше</div>
+                    </div>
+                    <div class="algorithmCard">
+                        <a href="/tree/bonus.html">Дерево решений</a>
+                        <div class="openModal" data-algo="tree">Узнать больше</div>
+                    </div>
+                    <div class="algorithmCard">
+                        <a href="http://127.0.0.1:5000/">Генетический алгоритм</a>
+                        <div class="openModal" data-algo="genetic">Узнать больше</div>
+                    </div>
+                    <div class="algorithmCard">
+                        <a href="/cluster/bonus.html">Кластеризация</a>
+                        <div class="openModal" data-algo="cluster">Узнать больше</div>
+                    </div>
+                    <div class="algorithmCard">
+                        <a href="http://127.0.0.1:8000/">Нейронная сеть</a>
+                        <div class="openModal" data-algo="network">Узнать больше</div>
+                    </div>
+                </div>
+            </main>
+
+            <footer>
+                <ul class="persons">
+                    <li class="person">Васильев Данил</li>
+                    <li class="person">Волков Дмитрий</li>
+                    <li class="person">Шумков Алексей</li>
+                </ul>
+            </footer>
         </div>
 
         <script type="module" src="./scripts/script.js"></script>

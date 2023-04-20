@@ -6,9 +6,7 @@
   cursor: pointer;
   padding: 30px;
   overflow-y: auto;
-  display: none;
   transition: all .3s ease-in-out;
-
   display: flex;
   visibility: hidden;
   opacity: 0;
@@ -32,8 +30,21 @@
 .modalWindow.dark {
   margin: auto;
   background-color: #16182D;
-  color: white;
   color: aliceblue;
+}
+
+.modalWindow.general {
+  max-width: 600px;
+  background-color: #fffbdd;
+  color: #16182D;
+}
+
+.modalWindow.general .okModal {
+  background-color: #3D348B;
+}
+
+.modalWindow.general .okModal:hover {
+  opacity: 0.9;
 }
 
 .modalText {
@@ -47,6 +58,7 @@
   width: 120px;
   height: 35px;
 }
+
 
 .closeModal {
   background-color: transparent;
