@@ -69,7 +69,7 @@ function returnStartState() {
 }
 
 function findNeighbors(field, currentPoint, size) {
-    let neighbors = []
+    const neighbors = []
 
     if (currentPoint.x > 0) {
         if (field[currentPoint.x - 1][currentPoint.y].wall != true) {
@@ -102,9 +102,9 @@ function calculateHeuristic(first, second) {
 }
 
 async function aStar(field, start, end) {
-    let openSet = []
+    const openSet = []
     openSet.push(start)
-    let cameFrom = []
+    const cameFrom = []
 
     while (openSet.length > 0) {
         if (stopAlgorithm === true) {
@@ -369,7 +369,7 @@ canvas.addEventListener('click', function (e) {
 
 calculateButton.addEventListener('click', async function (e) {
     if (!alreadyCalculate && startFlag && endFlag && !secondCalculating) {
-        let openSet = []
+        const openSet = []
         secondCalculating = true
         alreadyCalculate = true
         openSet.push(start)

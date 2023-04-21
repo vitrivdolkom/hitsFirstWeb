@@ -138,7 +138,7 @@ export class DecisionTree {
 
     createTree(s, bestColumn, depth, maxDepth) {
         const copyS = [...s]
-        let variantToLeaf = []
+        const variantToLeaf = []
         let [targetVariants, columns] = this.setColumns(s)
 
         if (s[0].size === 3 || depth > maxDepth) {

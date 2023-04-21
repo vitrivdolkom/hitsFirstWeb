@@ -7,10 +7,10 @@ const closeModal = (e) => {
     const target = e.target
 
     if (target === modalElem || target === modalOk || target === modalClose || e.code === 'Escape') {
-        modalElem.style.opacity = 0
+        modalElem.classList.add('disableOpacity')
 
         setTimeout(() => {
-            modalElem.style.visibility = 'hidden'
+            modalElem.classList.add('hide')
         }, 300)
 
         window.removeEventListener('keydown', closeModal)
@@ -19,8 +19,11 @@ const closeModal = (e) => {
 
 export const openModal = (text) => {
     modalText.innerHTML = text
-    modalElem.style.visibility = 'visible'
-    modalElem.style.opacity = 1
+
+    modalElem.classList.add('show')
+    modalElem.classList.remove('disableOpacity')
+    modalElem.classList.remove('hide')
+
     window.addEventListener('keydown', closeModal)
 }
 

@@ -12,6 +12,19 @@
   opacity: 0;
 }
 
+.modal.show {
+  visibility: visible;
+  opacity: 1;
+}
+
+.modal.disableOpacity {
+  opacity: 0;
+}
+
+.modal.hide {
+  visibility: hidden;
+}
+
 .modalWindow {
   position: relative;
   max-width: 400px;

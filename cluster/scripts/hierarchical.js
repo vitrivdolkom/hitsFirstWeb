@@ -37,10 +37,10 @@ function findClosestClusters(clusters) {
 }
 
 function mergeClusters(clusters, closestClusters) {
-    let mergedCluster = []
+    const mergedCluster = []
 
-    let firstCluster = clusters[closestClusters.x]
-    let secondCluster = clusters[closestClusters.y]
+    const firstCluster = clusters[closestClusters.x]
+    const secondCluster = clusters[closestClusters.y]
 
     for (const firstClusterPoint of firstCluster) {
         mergedCluster.push(firstClusterPoint)
@@ -56,14 +56,14 @@ function mergeClusters(clusters, closestClusters) {
 }
 
 export function hierarchicalClustering(points, amountOfClusters) {
-    let clusters = []
+    const clusters = []
     for (let i = 0; i < points.length; i++) {
         clusters.push([])
         clusters[i].push(points[i])
     }
 
     while (clusters.length > amountOfClusters) {
-        let closestClusters = findClosestClusters(clusters)
+        const closestClusters = findClosestClusters(clusters)
         mergeClusters(clusters, closestClusters)
     }
 

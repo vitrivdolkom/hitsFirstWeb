@@ -23,7 +23,7 @@ function expandCluster(points, cluster, visited, minPts, point, neighbors, epsil
 }
 
 function getNeighbors(points, point, epsilon) {
-    let neighbors = []
+    const neighbors = []
     for (const currentPoint of points) {
         if (currentPoint.x != point.x && currentPoint.y != point.y) {
             if (findDistance(currentPoint, point) <= epsilon) {
@@ -35,22 +35,22 @@ function getNeighbors(points, point, epsilon) {
 }
 
 export function DBSCAN(points, epsilon, minPts) {
-    let allPoints = []
+    const allPoints = []
     for (const point of points) {
         point.noise = false
         point.dbClusterIndex = -1
     }
-    let clusters = []
-    let visited = []
+    const clusters = []
+    const visited = []
 
     for (const point of points) {
         if (!isHere(visited, point)) {
             visited.push(point)
-            let neighbors = getNeighbors(points, point, epsilon)
+            const neighbors = getNeighbors(points, point, epsilon)
             if (neighbors.length < minPts) {
                 point.noise = true
             } else {
-                let cluster = []
+                const cluster = []
                 expandCluster(points, cluster, visited, minPts, point, neighbors, epsilon)
                 clusters.push(cluster)
             }
@@ -58,7 +58,7 @@ export function DBSCAN(points, epsilon, minPts) {
     }
 
     for (let i = 0; i < clusters.length; i++) {
-        let cluster = clusters[i]
+        const cluster = clusters[i]
         for (let j = 0; j < cluster.length; j++) {
             let point = cluster[j]
             point.dbClusterIndex = i

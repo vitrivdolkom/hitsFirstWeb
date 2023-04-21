@@ -45,7 +45,7 @@ ctx.canvas.width = canvasWidth
 ctx.canvas.height = canvasHeight
 let drawFlag = false
 const prevMouse = { x: 0, y: 0, visit: false }
-const points = []
+let points = []
 let clickFlag = false
 
 ctx1.canvas.width = canvasWidth

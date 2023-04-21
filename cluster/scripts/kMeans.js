@@ -1,9 +1,9 @@
 import { findDistance } from './additionalFunctions.js'
 
 export function kMeans(points, k, maxIterations) {
-    let centroids = []
+    const centroids = []
+    const distances = []
     let i = 0
-    let distances = []
 
     for (let i = 0; i < points.length; i++) {
         distances.push(Infinity)

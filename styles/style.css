@@ -25,6 +25,12 @@ header {
   color: white;
   font-size: 18px;
   font-weight: 800;
+
+  transition: all .3s ease-in-out;
+}
+
+header:hover {
+  font-size: 27px;
 }
 
 main {

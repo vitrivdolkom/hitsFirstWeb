@@ -27,7 +27,7 @@ export function createMatrix(field, size) {
 }
 
 export function reconstructPath(start, end) {
-    let finalPath = []
+    const finalPath = []
     let current = end
     finalPath.push(current)
     while (current != start) {
