@@ -13,6 +13,10 @@
 
 Нейронная сеть:
 
+`pip install tensorflow`
+
+`pip install keras`
+
 `export FLASK_APP=genius.py`
 
 `export FLASK_RUN_PORT=8000`
