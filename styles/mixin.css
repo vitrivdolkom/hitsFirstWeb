@@ -161,10 +161,10 @@ input[type="range"]::-moz-range-thumb {
 }
 
 input[type="range"]::-webkit-slider-runnable-track {
-  background: #fff;
   height: 4px;
   border-radius: 30px;
   background-color: var(--btn);
+  margin-top: 5px;
 }
 
 input[type="range"]::-webkit-slider-thumb {
