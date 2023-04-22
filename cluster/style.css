@@ -46,6 +46,8 @@ input[type="range"]::-moz-range-track {
   font-size: 18px;
 }
 
+
+
 .slidecontainer {
   display: flex;
   flex-direction: column;
