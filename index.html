@@ -1,18 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Web first course</title>
+        <link rel="stylesheet" href="./styles/mixin.css" />
+        <link rel="stylesheet" href="./styles/zero.css" />
+        <link rel="stylesheet" href="./styles/modal.css" />
+        <link rel="stylesheet" href="./styles/style.css" />
+    </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <link rel="stylesheet" href="./style.css">
-</head>
+    <body>
+        <div class="modal">
+            <div class="modalWindow general">
+                <button class="closeModal">&#10006;</button>
+                <div class="modalText"></div>
+                <button class="btn okModal">OK</button>
+            </div>
+        </div>
 
-<body>
+        <div class="wrapper">
+            <header>Я ХЭДЕР</header>
 
+            <main>
+                <div class="cards">
+                    <div class="algorithmCard">
+                        <a href="/aStar/bonus.html">A*</a>
+                        <div class="openModal" data-algo="astar">Узнать больше</div>
+                    </div>
+                    <div class="algorithmCard">
+                        <a href="/ant/base/index.html">Муравьиный алгоритм</a>
+                        <div class="openModal" data-algo="ants">Узнать больше</div>
+                    </div>
+                    <div class="algorithmCard">
+                        <a href="/tree/bonus.html">Дерево решений</a>
+                        <div class="openModal" data-algo="tree">Узнать больше</div>
+                    </div>
+                    <div class="algorithmCard">
+                        <a href="http://127.0.0.1:5000/">Генетический алгоритм</a>
+                        <div class="openModal" data-algo="genetic">Узнать больше</div>
+                    </div>
+                    <div class="algorithmCard">
+                        <a href="/cluster/bonus.html">Кластеризация</a>
+                        <div class="openModal" data-algo="cluster">Узнать больше</div>
+                    </div>
+                    <div class="algorithmCard">
+                        <a href="http://127.0.0.1:8000/">Нейронная сеть</a>
+                        <div class="openModal" data-algo="network">Узнать больше</div>
+                    </div>
+                </div>
+            </main>
 
-  <script type="module" src="./script.js"></script>
-</body>
+            <footer>
+                <ul class="persons">
+                    <li class="person">Васильев Данил</li>
+                    <li class="person">Волков Дмитрий</li>
+                    <li class="person">Шумков Алексей</li>
+                </ul>
+            </footer>
+        </div>
 
+        <script type="module" src="./scripts/script.js"></script>
+    </body>
 </html>

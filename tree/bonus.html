@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Дерево решений</title>
+        <link rel="stylesheet" href="../styles/zero.css" />
+        <link rel="stylesheet" href="../styles/mixin.css" />
+        <link rel="stylesheet" href="../styles/modal.css" />
+        <link rel="stylesheet" href="../styles/menu.css" />
+        <link rel="stylesheet" href="./styles/custom.css" />
+    </head>
+    <body>
+        <div class="modal">
+            <div class="modalWindow">
+                <button class="closeModal">&#10006;</button>
+                <div class="modalText"></div>
+                <button class="btn okModal">OK</button>
+            </div>
+        </div>
+
+        <div class="wrapper">
+            <header class="header">
+                <div class="headerBox">
+                    <div class="menu">
+                        <div class="burger">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <nav class="nav">
+                            <ul class="links">
+                                <li><a href="http://127.0.0.1:5500" class="link">Главная</a></li>
+                                <li><a href="http://127.0.0.1:5500/aStar/bonus.html" class="link">A*</a></li>
+                                <li><a href="http://127.0.0.1:5500/tree/bonus.html" class="link selected">Дерево решений</a></li>
+                                <li><a href="http://127.0.0.1:5000" class="link">Генетика</a></li>
+                                <li><a href="http://127.0.0.1:5500/ant/base/index.html" class="link">Муравьи</a></li>
+                                <li><a href="http://127.0.0.1:5500/cluster/bonus.html" class="link">Кластеризация</a></li>
+                                <li><a href="http://127.0.0.1:8000" class="link">Нейронная сеть</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+
+            <div class="box">
+                <div class="mybox">
+                    <div class="left block">
+                        <input type="file" name="readCsv" id="readCsv" accept=".csv" class="csvFile" />
+                        <label for="readCsv"><strong>Выберите файл...</strong></label>
+
+                        <div class="labelInput">
+                            <label for="maxDepth">Максимальная глубина дерева:<span class="depthNum"></span></label>
+                            <input type="range" id="maxDepth" min="1" max="20" />
+                        </div>
+                        <button class="createTree btn">Построить дерево</button>
+                    </div>
+                    <div class="content block">Здесь могло быть ваше дерево...</div>
+                    <div class="right block">
+                        <label for="enterNewRow">Введите csv текст:</label>
+                        <input type="text" class="newRow inp" id="enterNewRow" />
+                        <button class="confirmRow btn">Подтвердить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="module" src="./scripts/script.js"></script>
+        <script src="../scripts/modal.js"></script>
+        <script src="../scripts/burger.js"></script>
+    </body>
+</html>

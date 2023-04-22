@@ -1,0 +1,101 @@
+.modal {
+  position: fixed;
+  z-index: 10;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  padding: 30px;
+  overflow-y: auto;
+  transition: all .3s ease-in-out;
+  display: flex;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.modal.show {
+  visibility: visible;
+  opacity: 1;
+}
+
+.modal.disableOpacity {
+  opacity: 0;
+}
+
+.modal.hide {
+  visibility: hidden;
+}
+
+.modalWindow {
+  position: relative;
+  max-width: 400px;
+  min-width: 300px;
+  background-color: white;
+  margin: auto;
+  color: black;
+  border-radius: 16px;
+  padding: 15px;
+  padding-top: 35px;
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+}
+
+.modalWindow.dark {
+  margin: auto;
+  background-color: #16182D;
+  color: aliceblue;
+}
+
+.modalWindow.general {
+  max-width: 600px;
+  background-color: #fffbdd;
+  color: #16182D;
+}
+
+.modalWindow.general .okModal {
+  background-color: #3D348B;
+}
+
+.modalWindow.general .okModal:hover {
+  opacity: 0.9;
+}
+
+.modalText {
+  font-size: 16px;
+}
+
+.okModal {
+  align-self: end;
+  margin-top: 30px;
+  float: right;
+  width: 120px;
+  height: 35px;
+}
+
+
+.closeModal {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 22px;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  outline: 1px solid transparent;
+  outline-offset: 3px;
+  transition: outline-color .15s ease-in-out;
+  border-radius: 3px;
+  padding: 0;
+  text-align: center;
+  display: block;
+  width: 30px;
+  height: 30px;
+}
+
+.closeModal:focus-visible {
+  outline-color: green;
+}
+
+.closeModal.light {
+  color: aliceblue;
+}
