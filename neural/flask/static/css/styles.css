@@ -1,0 +1,35 @@
+canvas {
+  border: 1px solid black;
+}
+
+#clearButton {
+  background-color: #df474b;
+  margin-bottom: 30px;
+  width: 240px;
+  padding: 14px 40px;
+  font-size: 16px;
+}
+
+#clearButton:hover {
+  background-color: #b3383c;
+}
+
+#solveButton {
+  width: 240px;
+  padding: 14px 40px;
+  font-size: 16px;
+}
+
+.answerField {
+  font-size: 20px;
+}
+
+.answer {
+  text-align: center;
+  font-size: 75px;
+  font-weight: 600;
+}
+
+.content {
+  min-width: 100px;
+}

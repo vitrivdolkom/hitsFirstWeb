@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/zero.css') }}" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/mixin.css') }}" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}" />
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <title>Нейронная сеть</title>
+    </head>
+    <body>
+        <div class="wrapper">
+            <header class="header">
+                <div class="headerBox">
+                    <div class="menu">
+                        <div class="burger">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <nav class="nav">
+                            <ul class="links">
+                                <li><a href="http://127.0.0.1:5500" class="link">Главная</a></li>
+                                <li><a href="http://127.0.0.1:5500/aStar/bonus.html" class="link">A*</a></li>
+                                <li><a href="http://127.0.0.1:5500/tree/bonus.html" class="link">Дерево решений</a></li>
+                                <li><a href="http://127.0.0.1:5000" class="link">Генетика</a></li>
+                                <li><a href="http://127.0.0.1:5500/ant/bonus.html" class="link">Муравьи</a></li>
+                                <li><a href="http://127.0.0.1:5500/cluster/bonus.html" class="link">Кластеризация</a></li>
+                                <li><a href="http://127.0.0.1:8000" class="link selected">Нейронная сеть</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+
+            <div class="box">
+                <div class="mybox">
+                    <div class="left block">
+                        <button id="clearButton" class="btn">Очистить</button>
+                        <button id="solveButton" class="btn">Решить</button>
+                    </div>
+                    <div class="content block">
+                        <canvas></canvas>
+                    </div>
+                    <div class="right block">
+                        <div class="answerField">
+                            Ответ нейросети:
+                            <div class="answer"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="{{url_for('static', filename='js/script.js')}}"></script>
+        <script src="{{url_for('static', filename='js/burger.js')}}"></script>
+    </body>
+</html>
